@@ -1,0 +1,35 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbo --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "clean": "rm -rf .turbo node_modules .next dist"
+  },
+  "dependencies": {
+    "@workspace/api-client": "workspace:*",
+    "@workspace/database": "workspace:^",
+    "@workspace/ui": "workspace:*",
+    "@workspace/store": "workspace:*",
+    "lucide-react": "0.475.0",
+    "next": "15.2.0-canary.64",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.7",
+    "@types/node": "^22.13.4",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
+    "@workspace/eslint-config": "workspace:^",
+    "@workspace/typescript-config": "workspace:*",
+    "tailwindcss": "^4.0.7",
+    "typescript": "^5.7.3"
+  }
+}
