@@ -1,5 +1,5 @@
 {
-  "id": "d14981fd-5cbf-4e97-88ec-a42cbb4f3926",
+  "id": "43dc5842-5772-4e47-9da8-d62f8c396aee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -174,6 +174,128 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.app_user": {
+      "name": "app_user",
+      "schema": "",
+      "columns": {
+        "uid": {
+          "name": "uid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "clerk_id": {
+          "name": "clerk_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_name": {
+          "name": "user_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_type": {
+          "name": "user_type",
+          "type": "user_type_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "extra_data": {
+          "name": "extra_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_updated_by": {
+          "name": "last_updated_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_app_user_type": {
+          "name": "idx_app_user_type",
+          "columns": [
+            {
+              "expression": "user_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_app_user_deleted_at": {
+          "name": "idx_app_user_deleted_at",
+          "columns": [
+            {
+              "expression": "deleted_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "app_user_clerk_id_unique": {
+          "name": "app_user_clerk_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "clerk_id"
+          ]
+        },
+        "app_user_user_name_unique": {
+          "name": "app_user_user_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.approval_comment": {
       "name": "approval_comment",
       "schema": "",
@@ -311,10 +433,10 @@
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
-        "approval_comment_comment_by_user_uid_user_uid_fk": {
-          "name": "approval_comment_comment_by_user_uid_user_uid_fk",
+        "approval_comment_comment_by_user_uid_app_user_uid_fk": {
+          "name": "approval_comment_comment_by_user_uid_app_user_uid_fk",
           "tableFrom": "approval_comment",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "comment_by_user_uid"
           ],
@@ -525,10 +647,10 @@
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
-        "approval_log_action_by_user_uid_user_uid_fk": {
-          "name": "approval_log_action_by_user_uid_user_uid_fk",
+        "approval_log_action_by_user_uid_app_user_uid_fk": {
+          "name": "approval_log_action_by_user_uid_app_user_uid_fk",
           "tableFrom": "approval_log",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "action_by_user_uid"
           ],
@@ -607,8 +729,8 @@
         }
       },
       "indexes": {
-        "approval_process_org_name_unique": {
-          "name": "approval_process_org_name_unique",
+        "idx_approval_process_org_name_unique": {
+          "name": "idx_approval_process_org_name_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -708,6 +830,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "term_uid": {
+          "name": "term_uid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "step_uid": {
           "name": "step_uid",
           "type": "uuid",
@@ -789,6 +917,21 @@
           "columns": [
             {
               "expression": "supplier_site_user_uid",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_approval_request_term": {
+          "name": "idx_approval_request_term",
+          "columns": [
+            {
+              "expression": "term_uid",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -896,6 +1039,19 @@
           ],
           "columnsTo": [
             "user_uid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "approval_request_term_uid_supplier_site_term_uid_fk": {
+          "name": "approval_request_term_uid_supplier_site_term_uid_fk",
+          "tableFrom": "approval_request",
+          "tableTo": "supplier_site_term",
+          "columnsFrom": [
+            "term_uid"
+          ],
+          "columnsTo": [
+            "uid"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -1128,10 +1284,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "approval_responsibility_employee_user_uid_user_uid_fk": {
-          "name": "approval_responsibility_employee_user_uid_user_uid_fk",
+        "approval_responsibility_employee_user_uid_app_user_uid_fk": {
+          "name": "approval_responsibility_employee_user_uid_app_user_uid_fk",
           "tableFrom": "approval_responsibility",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "employee_user_uid"
           ],
@@ -1167,10 +1323,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "approval_responsibility_fallback_employee_user_uid_user_uid_fk": {
-          "name": "approval_responsibility_fallback_employee_user_uid_user_uid_fk",
+        "approval_responsibility_fallback_employee_user_uid_app_user_uid_fk": {
+          "name": "approval_responsibility_fallback_employee_user_uid_app_user_uid_fk",
           "tableFrom": "approval_responsibility",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "fallback_employee_user_uid"
           ],
@@ -1249,8 +1405,8 @@
         }
       },
       "indexes": {
-        "approval_step_process_order_unique": {
-          "name": "approval_step_process_order_unique",
+        "idx_approval_step_process_order_unique": {
+          "name": "idx_approval_step_process_order_unique",
           "columns": [
             {
               "expression": "approval_process_uid",
@@ -1668,10 +1824,10 @@
         }
       },
       "foreignKeys": {
-        "employee_user_uid_user_uid_fk": {
-          "name": "employee_user_uid_user_uid_fk",
+        "employee_user_uid_app_user_uid_fk": {
+          "name": "employee_user_uid_app_user_uid_fk",
           "tableFrom": "employee",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "user_uid"
           ],
@@ -1847,10 +2003,10 @@
         }
       },
       "foreignKeys": {
-        "employee_org_unit_role_employee_user_uid_user_uid_fk": {
-          "name": "employee_org_unit_role_employee_user_uid_user_uid_fk",
+        "employee_org_unit_role_employee_user_uid_app_user_uid_fk": {
+          "name": "employee_org_unit_role_employee_user_uid_app_user_uid_fk",
           "tableFrom": "employee_org_unit_role",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "employee_user_uid"
           ],
@@ -1974,8 +2130,8 @@
         }
       },
       "indexes": {
-        "org_unit_org_name_unique": {
-          "name": "org_unit_org_name_unique",
+        "idx_org_unit_org_name_unique": {
+          "name": "idx_org_unit_org_name_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -1995,8 +2151,8 @@
           "method": "btree",
           "with": {}
         },
-        "org_unit_org_code_unique": {
-          "name": "org_unit_org_code_unique",
+        "idx_org_unit_org_code_unique": {
+          "name": "idx_org_unit_org_code_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2219,90 +2375,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.payment_term_type": {
-      "name": "payment_term_type",
-      "schema": "",
-      "columns": {
-        "uid": {
-          "name": "uid",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "term_code": {
-          "name": "term_code",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "term_name": {
-          "name": "term_name",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "last_updated_by": {
-          "name": "last_updated_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "payment_term_type_term_code_unique": {
-          "name": "payment_term_type_term_code_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "term_code"
-          ]
-        },
-        "payment_term_type_term_name_unique": {
-          "name": "payment_term_type_term_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "term_name"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.role": {
       "name": "role",
       "schema": "",
@@ -2371,8 +2443,8 @@
         }
       },
       "indexes": {
-        "role_org_name_unique": {
-          "name": "role_org_name_unique",
+        "idx_role_org_name_unique": {
+          "name": "idx_role_org_name_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2392,8 +2464,8 @@
           "method": "btree",
           "with": {}
         },
-        "role_org_code_unique": {
-          "name": "role_org_code_unique",
+        "idx_role_org_code_unique": {
+          "name": "idx_role_org_code_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2539,8 +2611,8 @@
         }
       },
       "indexes": {
-        "store_org_name_unique": {
-          "name": "store_org_name_unique",
+        "idx_store_org_name_unique": {
+          "name": "idx_store_org_name_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2560,8 +2632,8 @@
           "method": "btree",
           "with": {}
         },
-        "store_org_code_unique": {
-          "name": "store_org_code_unique",
+        "idx_store_org_code_unique": {
+          "name": "idx_store_org_code_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2786,8 +2858,8 @@
         }
       },
       "indexes": {
-        "supplier_org_name_unique": {
-          "name": "supplier_org_name_unique",
+        "idx_supplier_org_name_unique": {
+          "name": "idx_supplier_org_name_unique",
           "columns": [
             {
               "expression": "organization_uid",
@@ -2933,10 +3005,10 @@
         }
       },
       "foreignKeys": {
-        "supplier_user_uid_user_uid_fk": {
-          "name": "supplier_user_uid_user_uid_fk",
+        "supplier_user_uid_app_user_uid_fk": {
+          "name": "supplier_user_uid_app_user_uid_fk",
           "tableFrom": "supplier",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "user_uid"
           ],
@@ -3008,151 +3080,73 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.supplier_commercial_term": {
-      "name": "supplier_commercial_term",
+    "public.supplier_financial_term": {
+      "name": "supplier_financial_term",
       "schema": "",
       "columns": {
-        "uid": {
-          "name": "uid",
+        "term_uid": {
+          "name": "term_uid",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
-        "supplier_site_term_uid": {
-          "name": "supplier_site_term_uid",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "term_type": {
-          "name": "term_type",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount": {
-          "name": "amount",
-          "type": "numeric(10, 2)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "percentage": {
-          "name": "percentage",
-          "type": "numeric(5, 2)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "frequency": {
-          "name": "frequency",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "method": {
-          "name": "method",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "person_count": {
-          "name": "person_count",
+        "agreed_credit_days": {
+          "name": "agreed_credit_days",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "additional_details": {
-          "name": "additional_details",
-          "type": "jsonb",
+        "payment_method": {
+          "name": "payment_method",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp with time zone",
+        "turnover_incentive_amount": {
+          "name": "turnover_incentive_amount",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "uuid",
+        "turnover_incentive_percent": {
+          "name": "turnover_incentive_percent",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "last_updated_by": {
-          "name": "last_updated_by",
-          "type": "uuid",
+        "turnover_realization_frequency": {
+          "name": "turnover_realization_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "turnover_realization_method": {
+          "name": "turnover_realization_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vendor_listing_fees": {
+          "name": "vendor_listing_fees",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vendor_listing_fees_checked": {
+          "name": "vendor_listing_fees_checked",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": false
         }
       },
-      "indexes": {
-        "idx_commercial_term_site_term": {
-          "name": "idx_commercial_term_site_term",
-          "columns": [
-            {
-              "expression": "supplier_site_term_uid",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_commercial_term_type": {
-          "name": "idx_commercial_term_type",
-          "columns": [
-            {
-              "expression": "term_type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_supplier_commercial_term_deleted_at": {
-          "name": "idx_supplier_commercial_term_deleted_at",
-          "columns": [
-            {
-              "expression": "deleted_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "supplier_commercial_term_supplier_site_term_uid_supplier_site_term_uid_fk": {
-          "name": "supplier_commercial_term_supplier_site_term_uid_supplier_site_term_uid_fk",
-          "tableFrom": "supplier_commercial_term",
+        "supplier_financial_term_term_uid_supplier_site_term_uid_fk": {
+          "name": "supplier_financial_term_term_uid_supplier_site_term_uid_fk",
+          "tableFrom": "supplier_financial_term",
           "tableTo": "supplier_site_term",
           "columnsFrom": [
-            "supplier_site_term_uid"
+            "term_uid"
           ],
           "columnsTo": [
             "uid"
@@ -3311,10 +3305,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "supplier_invitation_invited_by_employee_user_uid_user_uid_fk": {
-          "name": "supplier_invitation_invited_by_employee_user_uid_user_uid_fk",
+        "supplier_invitation_invited_by_employee_user_uid_app_user_uid_fk": {
+          "name": "supplier_invitation_invited_by_employee_user_uid_app_user_uid_fk",
           "tableFrom": "supplier_invitation",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "invited_by_employee_user_uid"
           ],
@@ -3370,13 +3364,19 @@
           "name": "classification",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "business_type": {
+          "name": "business_type",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
         },
         "gst_number": {
           "name": "gst_number",
           "type": "varchar(15)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "fssai_number": {
           "name": "fssai_number",
@@ -3389,6 +3389,13 @@
           "type": "varchar(30)",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
         },
         "address_uid": {
           "name": "address_uid",
@@ -3436,8 +3443,8 @@
         }
       },
       "indexes": {
-        "supplier_site_name_unique": {
-          "name": "supplier_site_name_unique",
+        "idx_supplier_site_name_unique": {
+          "name": "idx_supplier_site_name_unique",
           "columns": [
             {
               "expression": "supplier_user_uid",
@@ -3519,10 +3526,10 @@
         }
       },
       "foreignKeys": {
-        "supplier_site_user_uid_user_uid_fk": {
-          "name": "supplier_site_user_uid_user_uid_fk",
+        "supplier_site_user_uid_app_user_uid_fk": {
+          "name": "supplier_site_user_uid_app_user_uid_fk",
           "tableFrom": "supplier_site",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "user_uid"
           ],
@@ -3560,15 +3567,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "supplier_site_gst_number_unique": {
-          "name": "supplier_site_gst_number_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "gst_number"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -3750,31 +3749,45 @@
           "primaryKey": false,
           "notNull": true
         },
+        "term_type": {
+          "name": "term_type",
+          "type": "term_type_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "effective_date": {
           "name": "effective_date",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
-        "agreed_credit_days": {
-          "name": "agreed_credit_days",
-          "type": "integer",
+        "expiration_date": {
+          "name": "expiration_date",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "lead_time_days": {
-          "name": "lead_time_days",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "sale_or_return": {
-          "name": "sale_or_return",
+        "is_active": {
+          "name": "is_active",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": true
+        },
+        "approval_status": {
+          "name": "approval_status",
+          "type": "approval_status_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_number": {
+          "name": "version_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
         },
         "created_at": {
           "name": "created_at",
@@ -3810,8 +3823,8 @@
         }
       },
       "indexes": {
-        "idx_term_site": {
-          "name": "idx_term_site",
+        "idx_site_term_site": {
+          "name": "idx_site_term_site",
           "columns": [
             {
               "expression": "supplier_site_user_uid",
@@ -3825,8 +3838,38 @@
           "method": "btree",
           "with": {}
         },
-        "idx_term_effective_date": {
-          "name": "idx_term_effective_date",
+        "idx_site_term_type": {
+          "name": "idx_site_term_type",
+          "columns": [
+            {
+              "expression": "term_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_site_term_status": {
+          "name": "idx_site_term_status",
+          "columns": [
+            {
+              "expression": "approval_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_site_term_effective_date": {
+          "name": "idx_site_term_effective_date",
           "columns": [
             {
               "expression": "effective_date",
@@ -3840,8 +3883,8 @@
           "method": "btree",
           "with": {}
         },
-        "idx_supplier_site_term_deleted_at": {
-          "name": "idx_supplier_site_term_deleted_at",
+        "idx_site_term_deleted_at": {
+          "name": "idx_site_term_deleted_at",
           "columns": [
             {
               "expression": "deleted_at",
@@ -3877,6 +3920,153 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.supplier_support_term": {
+      "name": "supplier_support_term",
+      "schema": "",
+      "columns": {
+        "term_uid": {
+          "name": "term_uid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "merchandising_support_amount": {
+          "name": "merchandising_support_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "merchandising_support_person_count": {
+          "name": "merchandising_support_person_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "merchandising_support_percent": {
+          "name": "merchandising_support_percent",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "merchandising_support_frequency": {
+          "name": "merchandising_support_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "merchandising_support_method": {
+          "name": "merchandising_support_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barcode_amount": {
+          "name": "barcode_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barcode_percent": {
+          "name": "barcode_percent",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barcode_frequency": {
+          "name": "barcode_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barcode_method": {
+          "name": "barcode_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_product_intro_fee_amount": {
+          "name": "new_product_intro_fee_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_product_intro_fee_percent": {
+          "name": "new_product_intro_fee_percent",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_product_intro_fee_frequency": {
+          "name": "new_product_intro_fee_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_product_intro_fee_method": {
+          "name": "new_product_intro_fee_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_opening_support_amount": {
+          "name": "store_opening_support_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_opening_support_frequency": {
+          "name": "store_opening_support_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_opening_support_method": {
+          "name": "store_opening_support_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_anniversary_support_amount": {
+          "name": "store_anniversary_support_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_anniversary_support_frequency": {
+          "name": "store_anniversary_support_frequency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_anniversary_support_method": {
+          "name": "store_anniversary_support_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "supplier_support_term_term_uid_supplier_site_term_uid_fk": {
+          "name": "supplier_support_term_term_uid_supplier_site_term_uid_fk",
+          "tableFrom": "supplier_support_term",
+          "tableTo": "supplier_site_term",
+          "columnsFrom": [
+            "term_uid"
+          ],
+          "columnsTo": [
+            "uid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.supplier_term_note": {
       "name": "supplier_term_note",
       "schema": "",
@@ -3887,8 +4077,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "supplier_site_term_uid": {
-          "name": "supplier_site_term_uid",
+        "term_uid": {
+          "name": "term_uid",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -3937,7 +4127,7 @@
           "name": "idx_term_note_term",
           "columns": [
             {
-              "expression": "supplier_site_term_uid",
+              "expression": "term_uid",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -3963,8 +4153,8 @@
           "method": "btree",
           "with": {}
         },
-        "idx_supplier_term_note_deleted_at": {
-          "name": "idx_supplier_term_note_deleted_at",
+        "idx_term_note_deleted_at": {
+          "name": "idx_term_note_deleted_at",
           "columns": [
             {
               "expression": "deleted_at",
@@ -3980,12 +4170,12 @@
         }
       },
       "foreignKeys": {
-        "supplier_term_note_supplier_site_term_uid_supplier_site_term_uid_fk": {
-          "name": "supplier_term_note_supplier_site_term_uid_supplier_site_term_uid_fk",
+        "supplier_term_note_term_uid_supplier_site_term_uid_fk": {
+          "name": "supplier_term_note_term_uid_supplier_site_term_uid_fk",
           "tableFrom": "supplier_term_note",
           "tableTo": "supplier_site_term",
           "columnsFrom": [
-            "supplier_site_term_uid"
+            "term_uid"
           ],
           "columnsTo": [
             "uid"
@@ -3993,10 +4183,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "supplier_term_note_created_by_user_uid_fk": {
-          "name": "supplier_term_note_created_by_user_uid_fk",
+        "supplier_term_note_created_by_app_user_uid_fk": {
+          "name": "supplier_term_note_created_by_app_user_uid_fk",
           "tableFrom": "supplier_term_note",
-          "tableTo": "user",
+          "tableTo": "app_user",
           "columnsFrom": [
             "created_by"
           ],
@@ -4013,124 +4203,72 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user": {
-      "name": "user",
+    "public.supplier_trade_term": {
+      "name": "supplier_trade_term",
       "schema": "",
       "columns": {
-        "uid": {
-          "name": "uid",
+        "term_uid": {
+          "name": "term_uid",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
-        "clerk_id": {
-          "name": "clerk_id",
-          "type": "uuid",
+        "lead_time_days": {
+          "name": "lead_time_days",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "user_name": {
-          "name": "user_name",
+        "sale_or_return": {
+          "name": "sale_or_return",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "discount_percent": {
+          "name": "discount_percent",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "days_earlier": {
+          "name": "days_earlier",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shrink_sharing": {
+          "name": "shrink_sharing",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
-        },
-        "user_type": {
-          "name": "user_type",
-          "type": "user_type_enum",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "extra_data": {
-          "name": "extra_data",
-          "type": "jsonb",
-          "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "last_updated_by": {
-          "name": "last_updated_by",
-          "type": "uuid",
+        "shrink_sharing_percent": {
+          "name": "shrink_sharing_percent",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
           "notNull": false
         }
       },
-      "indexes": {
-        "idx_user_type": {
-          "name": "idx_user_type",
-          "columns": [
-            {
-              "expression": "user_type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
+      "indexes": {},
+      "foreignKeys": {
+        "supplier_trade_term_term_uid_supplier_site_term_uid_fk": {
+          "name": "supplier_trade_term_term_uid_supplier_site_term_uid_fk",
+          "tableFrom": "supplier_trade_term",
+          "tableTo": "supplier_site_term",
+          "columnsFrom": [
+            "term_uid"
           ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_user_deleted_at": {
-          "name": "idx_user_deleted_at",
-          "columns": [
-            {
-              "expression": "deleted_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
+          "columnsTo": [
+            "uid"
           ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "user_clerk_id_unique": {
-          "name": "user_clerk_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "clerk_id"
-          ]
-        },
-        "user_user_name_unique": {
-          "name": "user_user_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "user_name"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -4207,6 +4345,15 @@
         "ACTIVE",
         "INACTIVE",
         "REJECTED"
+      ]
+    },
+    "public.term_type_enum": {
+      "name": "term_type_enum",
+      "schema": "public",
+      "values": [
+        "FINANCIAL",
+        "TRADE",
+        "SUPPORT"
       ]
     },
     "public.trade_type_enum": {

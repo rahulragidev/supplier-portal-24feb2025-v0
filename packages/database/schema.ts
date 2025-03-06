@@ -102,11 +102,17 @@ export const verificationStatusEnum = pgEnum("verification_status_enum", [
   "REQUIRES_UPDATE"
 ]);
 
+export const termTypeEnum = pgEnum("term_type_enum", [
+  "FINANCIAL",
+  "TRADE",
+  "SUPPORT"
+]);
+
 // ===================
 // CORE TABLES
 // ===================
 
-export const user = pgTable("user", {
+export const appUser = pgTable("app_user", {
   uid: uuid("uid").primaryKey().notNull(),
   clerkId: uuid("clerk_id").notNull().unique(),
   userName: varchar("user_name", { length: 100 }).notNull().unique(),
@@ -118,8 +124,8 @@ export const user = pgTable("user", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  index("idx_user_type").on(table.userType),
-  index("idx_user_deleted_at").on(table.deletedAt),
+  index("idx_app_user_type").on(table.userType),
+  index("idx_app_user_deleted_at").on(table.deletedAt),
 ]);
 
 export const organization = pgTable("organization", {
@@ -139,7 +145,7 @@ export const organization = pgTable("organization", {
 ]);
 
 export const employee = pgTable("employee", {
-  userUid: uuid("user_uid").notNull().references(() => user.uid, { onDelete: "cascade" }),
+  userUid: uuid("user_uid").notNull().references(() => appUser.uid, { onDelete: "cascade" }),
   organizationUid: uuid("organization_uid").notNull().references(() => organization.uid, { onDelete: "cascade" }),
   employeeCode: varchar("employee_code", { length: 50 }).notNull(),
   firstName: varchar("first_name", { length: 100 }).notNull(),
@@ -198,8 +204,8 @@ export const orgUnit = pgTable("org_unit", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("org_unit_org_name_unique").on(table.organizationUid, table.name),
-  uniqueIndex("org_unit_org_code_unique").on(table.organizationUid, table.orgUnitCode),
+  uniqueIndex("idx_org_unit_org_name_unique").on(table.organizationUid, table.name),
+  uniqueIndex("idx_org_unit_org_code_unique").on(table.organizationUid, table.orgUnitCode),
   index("idx_org_unit_org").on(table.organizationUid),
   index("idx_org_unit_parent").on(table.parentUid),
   index("idx_org_unit_type").on(table.unitType),
@@ -218,15 +224,15 @@ export const role = pgTable("role", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("role_org_name_unique").on(table.organizationUid, table.name),
-  uniqueIndex("role_org_code_unique").on(table.organizationUid, table.roleCode),
+  uniqueIndex("idx_role_org_name_unique").on(table.organizationUid, table.name),
+  uniqueIndex("idx_role_org_code_unique").on(table.organizationUid, table.roleCode),
   index("idx_role_org").on(table.organizationUid),
   index("idx_role_deleted_at").on(table.deletedAt),
 ]);
 
 export const employeeOrgUnitRole = pgTable("employee_org_unit_role", {
   uid: uuid("uid").primaryKey().notNull(),
-  employeeUserUid: uuid("employee_user_uid").notNull().references(() => user.uid, { onDelete: "cascade" }),
+  employeeUserUid: uuid("employee_user_uid").notNull().references(() => appUser.uid, { onDelete: "cascade" }),
   orgUnitUid: uuid("org_unit_uid").notNull().references(() => orgUnit.uid, { onDelete: "cascade" }),
   roleUid: uuid("role_uid").notNull().references(() => role.uid, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -254,8 +260,8 @@ export const store = pgTable("store", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("store_org_name_unique").on(table.organizationUid, table.name),
-  uniqueIndex("store_org_code_unique").on(table.organizationUid, table.storeCode),
+  uniqueIndex("idx_store_org_name_unique").on(table.organizationUid, table.name),
+  uniqueIndex("idx_store_org_code_unique").on(table.organizationUid, table.storeCode),
   index("idx_store_org").on(table.organizationUid),
   index("idx_store_address").on(table.addressUid),
   index("idx_store_deleted_at").on(table.deletedAt),
@@ -266,7 +272,7 @@ export const store = pgTable("store", {
 // ===================
 
 export const supplier = pgTable("supplier", {
-  userUid: uuid("user_uid").primaryKey().notNull().references(() => user.uid, { onDelete: "cascade" }),
+  userUid: uuid("user_uid").primaryKey().notNull().references(() => appUser.uid, { onDelete: "cascade" }),
   organizationUid: uuid("organization_uid").notNull().references(() => organization.uid, { onDelete: "cascade" }),
   supplierCode: varchar("supplier_code", { length: 50 }).unique(),
   pan: varchar("pan", { length: 10 }).notNull().unique(),
@@ -286,7 +292,7 @@ export const supplier = pgTable("supplier", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("supplier_org_name_unique").on(table.organizationUid, table.name),
+  uniqueIndex("idx_supplier_org_name_unique").on(table.organizationUid, table.name),
   index("idx_supplier_org").on(table.organizationUid),
   index("idx_supplier_status").on(table.status),
   index("idx_supplier_code").on(table.supplierCode),
@@ -308,7 +314,7 @@ export const supplier = pgTable("supplier", {
 export const supplierInvitation = pgTable("supplier_invitation", {
   uid: uuid("uid").primaryKey().notNull(),
   organizationUid: uuid("organization_uid").notNull().references(() => organization.uid, { onDelete: "cascade" }),
-  invitedByEmployeeUserUid: uuid("invited_by_employee_user_uid").references(() => user.uid, { onDelete: "set null" }),
+  invitedByEmployeeUserUid: uuid("invited_by_employee_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   email: varchar("email", { length: 255 }).notNull(),
   status: invitationStatusEnum("status").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
@@ -324,15 +330,17 @@ export const supplierInvitation = pgTable("supplier_invitation", {
 ]);
 
 export const supplierSite = pgTable("supplier_site", {
-  userUid: uuid("user_uid").primaryKey().notNull().references(() => user.uid, { onDelete: "cascade" }),
+  userUid: uuid("user_uid").primaryKey().notNull().references(() => appUser.uid, { onDelete: "cascade" }),
   supplierUserUid: uuid("supplier_user_uid").notNull().references(() => supplier.userUid, { onDelete: "cascade" }),
   siteName: varchar("site_name", { length: 200 }).notNull(),
   siteCode: varchar("site_code", { length: 50 }),
   status: verificationStatusEnum("status").notNull(),
-  classification: varchar("classification", { length: 100 }).notNull(),
-  gstNumber: varchar("gst_number", { length: 15 }).notNull().unique(),
+  classification: varchar("classification", { length: 100 }),
+  businessType: varchar("business_type", { length: 100 }),
+  gstNumber: varchar("gst_number", { length: 15 }),
   fssaiNumber: varchar("fssai_number", { length: 20 }),
   msmeNumber: varchar("msme_number", { length: 30 }),
+  isActive: boolean("is_active").notNull().default(true),
   addressUid: uuid("address_uid").notNull().references(() => address.uid, { onDelete: "restrict" }),
   extraData: jsonb("extra_data"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -341,7 +349,7 @@ export const supplierSite = pgTable("supplier_site", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("supplier_site_name_unique").on(table.supplierUserUid, table.siteName),
+  uniqueIndex("idx_supplier_site_name_unique").on(table.supplierUserUid, table.siteName),
   index("idx_site_supplier").on(table.supplierUserUid),
   index("idx_site_status").on(table.status),
   index("idx_site_address").on(table.addressUid),
@@ -391,70 +399,90 @@ export const documentVerification = pgTable("document_verification", {
 // PAYMENT & TERMS TABLES
 // ===================
 
-export const paymentTermType = pgTable("payment_term_type", {
-  uid: uuid("uid").primaryKey().notNull(),
-  termCode: varchar("term_code", { length: 50 }).notNull().unique(),
-  termName: varchar("term_name", { length: 100 }).notNull().unique(),
-  description: text("description"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-  createdBy: uuid("created_by"),
-  lastUpdatedBy: uuid("last_updated_by")
-});
-
+// Parent term table
 export const supplierSiteTerm = pgTable("supplier_site_term", {
   uid: uuid("uid").primaryKey().notNull(),
   supplierSiteUserUid: uuid("supplier_site_user_uid").notNull().references(() => supplierSite.userUid, { onDelete: "cascade" }),
+  termType: termTypeEnum("term_type").notNull(),
   effectiveDate: timestamp("effective_date", { withTimezone: true }),
-  agreedCreditDays: integer("agreed_credit_days").notNull(),
-  leadTimeDays: integer("lead_time_days").notNull().default(0),
-  saleOrReturn: boolean("sale_or_return").notNull().default(false),
+  expirationDate: timestamp("expiration_date", { withTimezone: true }),
+  isActive: boolean("is_active").notNull().default(true),
+  approvalStatus: approvalStatusEnum("approval_status"),
+  versionNumber: integer("version_number").notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  index("idx_term_site").on(table.supplierSiteUserUid),
-  index("idx_term_effective_date").on(table.effectiveDate),
-  index("idx_supplier_site_term_deleted_at").on(table.deletedAt),
+  index("idx_site_term_site").on(table.supplierSiteUserUid),
+  index("idx_site_term_type").on(table.termType),
+  index("idx_site_term_status").on(table.approvalStatus),
+  index("idx_site_term_effective_date").on(table.effectiveDate),
+  index("idx_site_term_deleted_at").on(table.deletedAt),
 ]);
 
-export const supplierCommercialTerm = pgTable("supplier_commercial_term", {
-  uid: uuid("uid").primaryKey().notNull(),
-  supplierSiteTermUid: uuid("supplier_site_term_uid").notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
-  termType: varchar("term_type", { length: 100 }).notNull(),
-  amount: decimal("amount", { precision: 10, scale: 2 }),
-  percentage: decimal("percentage", { precision: 5, scale: 2 }),
-  frequency: varchar("frequency", { length: 50 }),
-  method: varchar("method", { length: 50 }),
-  personCount: integer("person_count"),
-  additionalDetails: jsonb("additional_details"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-  createdBy: uuid("created_by"),
-  lastUpdatedBy: uuid("last_updated_by")
-}, (table) => [
-  index("idx_commercial_term_site_term").on(table.supplierSiteTermUid),
-  index("idx_commercial_term_type").on(table.termType),
-  index("idx_supplier_commercial_term_deleted_at").on(table.deletedAt),
-]);
+// Financial terms
+export const supplierFinancialTerm = pgTable("supplier_financial_term", {
+  termUid: uuid("term_uid").primaryKey().notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
+  agreedCreditDays: integer("agreed_credit_days"),
+  paymentMethod: varchar("payment_method", { length: 100 }),
+  turnoverIncentiveAmount: decimal("turnover_incentive_amount", { precision: 10, scale: 2 }),
+  turnoverIncentivePercent: decimal("turnover_incentive_percent", { precision: 5, scale: 2 }),
+  turnoverRealizationFrequency: varchar("turnover_realization_frequency", { length: 50 }),
+  turnoverRealizationMethod: varchar("turnover_realization_method", { length: 50 }),
+  vendorListingFees: decimal("vendor_listing_fees", { precision: 10, scale: 2 }),
+  vendorListingFeesChecked: boolean("vendor_listing_fees_checked")
+});
+
+// Trade terms
+export const supplierTradeTerm = pgTable("supplier_trade_term", {
+  termUid: uuid("term_uid").primaryKey().notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
+  leadTimeDays: integer("lead_time_days"),
+  saleOrReturn: boolean("sale_or_return").default(false),
+  discountPercent: decimal("discount_percent", { precision: 5, scale: 2 }),
+  daysEarlier: integer("days_earlier"),
+  shrinkSharing: varchar("shrink_sharing", { length: 100 }),
+  shrinkSharingPercent: decimal("shrink_sharing_percent", { precision: 5, scale: 2 })
+});
+
+// Support terms
+export const supplierSupportTerm = pgTable("supplier_support_term", {
+  termUid: uuid("term_uid").primaryKey().notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
+  merchandisingSupportAmount: decimal("merchandising_support_amount", { precision: 10, scale: 2 }),
+  merchandisingSupportPersonCount: integer("merchandising_support_person_count"),
+  merchandisingSupportPercent: decimal("merchandising_support_percent", { precision: 5, scale: 2 }),
+  merchandisingSupportFrequency: varchar("merchandising_support_frequency", { length: 50 }),
+  merchandisingSupportMethod: varchar("merchandising_support_method", { length: 50 }),
+  barcodeAmount: decimal("barcode_amount", { precision: 10, scale: 2 }),
+  barcodePercent: decimal("barcode_percent", { precision: 5, scale: 2 }),
+  barcodeFrequency: varchar("barcode_frequency", { length: 50 }),
+  barcodeMethod: varchar("barcode_method", { length: 50 }),
+  newProductIntroFeeAmount: decimal("new_product_intro_fee_amount", { precision: 10, scale: 2 }),
+  newProductIntroFeePercent: decimal("new_product_intro_fee_percent", { precision: 5, scale: 2 }),
+  newProductIntroFeeFrequency: varchar("new_product_intro_fee_frequency", { length: 50 }),
+  newProductIntroFeeMethod: varchar("new_product_intro_fee_method", { length: 50 }),
+  storeOpeningSupportAmount: decimal("store_opening_support_amount", { precision: 10, scale: 2 }),
+  storeOpeningSupportFrequency: varchar("store_opening_support_frequency", { length: 50 }),
+  storeOpeningSupportMethod: varchar("store_opening_support_method", { length: 50 }),
+  storeAnniversarySupportAmount: decimal("store_anniversary_support_amount", { precision: 10, scale: 2 }),
+  storeAnniversarySupportFrequency: varchar("store_anniversary_support_frequency", { length: 50 }),
+  storeAnniversarySupportMethod: varchar("store_anniversary_support_method", { length: 50 })
+});
 
 export const supplierTermNote = pgTable("supplier_term_note", {
   uid: uuid("uid").primaryKey().notNull(),
-  supplierSiteTermUid: uuid("supplier_site_term_uid").notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
+  termUid: uuid("term_uid").notNull().references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
   noteText: text("note_text").notNull(),
-  createdBy: uuid("created_by").notNull().references(() => user.uid, { onDelete: "set null" }),
+  createdBy: uuid("created_by").notNull().references(() => appUser.uid, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  index("idx_term_note_term").on(table.supplierSiteTermUid),
+  index("idx_term_note_term").on(table.termUid),
   index("idx_term_note_created_by").on(table.createdBy),
-  index("idx_supplier_term_note_deleted_at").on(table.deletedAt),
+  index("idx_term_note_deleted_at").on(table.deletedAt),
 ]);
 
 // ===================
@@ -472,7 +500,7 @@ export const approvalProcess = pgTable("approval_process", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("approval_process_org_name_unique").on(table.organizationUid, table.name),
+  uniqueIndex("idx_approval_process_org_name_unique").on(table.organizationUid, table.name),
   index("idx_approval_process_org").on(table.organizationUid),
   index("idx_approval_process_deleted_at").on(table.deletedAt),
 ]);
@@ -488,7 +516,7 @@ export const approvalStep = pgTable("approval_step", {
   createdBy: uuid("created_by"),
   lastUpdatedBy: uuid("last_updated_by")
 }, (table) => [
-  uniqueIndex("approval_step_process_order_unique").on(table.approvalProcessUid, table.stepOrder),
+  uniqueIndex("idx_approval_step_process_order_unique").on(table.approvalProcessUid, table.stepOrder),
   index("idx_approval_step_process").on(table.approvalProcessUid),
   index("idx_approval_step_deleted_at").on(table.deletedAt),
 ]);
@@ -499,10 +527,10 @@ export const approvalResponsibility = pgTable("approval_responsibility", {
   responsibilityType: varchar("responsibility_type", { length: 50 }).notNull(),
   roleUid: uuid("role_uid").references(() => role.uid, { onDelete: "set null" }),
   orgUnitUid: uuid("org_unit_uid").references(() => orgUnit.uid, { onDelete: "set null" }),
-  employeeUserUid: uuid("employee_user_uid").references(() => user.uid, { onDelete: "set null" }),
+  employeeUserUid: uuid("employee_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   fallbackRoleUid: uuid("fallback_role_uid").references(() => role.uid, { onDelete: "set null" }),
   fallbackOrgUnitUid: uuid("fallback_org_unit_uid").references(() => orgUnit.uid, { onDelete: "set null" }),
-  fallbackEmployeeUserUid: uuid("fallback_employee_user_uid").references(() => user.uid, { onDelete: "set null" }),
+  fallbackEmployeeUserUid: uuid("fallback_employee_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -521,6 +549,7 @@ export const approvalRequest = pgTable("approval_request", {
   approvalProcessUid: uuid("approval_process_uid").notNull().references(() => approvalProcess.uid, { onDelete: "restrict" }),
   supplierUserUid: uuid("supplier_user_uid").notNull().references(() => supplier.userUid, { onDelete: "cascade" }),
   supplierSiteUserUid: uuid("supplier_site_user_uid").references(() => supplierSite.userUid, { onDelete: "cascade" }),
+  termUid: uuid("term_uid").references(() => supplierSiteTerm.uid, { onDelete: "cascade" }),
   stepUid: uuid("step_uid").notNull().references(() => approvalStep.uid, { onDelete: "restrict" }),
   status: approvalStatusEnum("status").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -532,6 +561,7 @@ export const approvalRequest = pgTable("approval_request", {
   index("idx_approval_request_process").on(table.approvalProcessUid),
   index("idx_approval_request_supplier").on(table.supplierUserUid),
   index("idx_approval_request_site").on(table.supplierSiteUserUid),
+  index("idx_approval_request_term").on(table.termUid),
   index("idx_approval_request_step").on(table.stepUid),
   index("idx_approval_request_status").on(table.status),
   index("idx_approval_request_completed_at").on(table.completedAt),
@@ -542,7 +572,7 @@ export const approvalLog = pgTable("approval_log", {
   uid: uuid("uid").primaryKey().notNull(),
   approvalRequestUid: uuid("approval_request_uid").notNull().references(() => approvalRequest.uid, { onDelete: "cascade" }),
   approvalStepUid: uuid("approval_step_uid").notNull().references(() => approvalStep.uid, { onDelete: "restrict" }),
-  actionByUserUid: uuid("action_by_user_uid").references(() => user.uid, { onDelete: "set null" }),
+  actionByUserUid: uuid("action_by_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   actionDate: timestamp("action_date", { withTimezone: true }).notNull().defaultNow(),
   status: approvalStatusEnum("status").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -564,7 +594,7 @@ export const approvalComment = pgTable("approval_comment", {
   approvalRequestUid: uuid("approval_request_uid").notNull().references(() => approvalRequest.uid, { onDelete: "cascade" }),
   approvalStepUid: uuid("approval_step_uid").notNull().references(() => approvalStep.uid, { onDelete: "restrict" }),
   commentText: text("comment_text").notNull(),
-  commentByUserUid: uuid("comment_by_user_uid").notNull().references(() => user.uid, { onDelete: "set null" }),
+  commentByUserUid: uuid("comment_by_user_uid").notNull().references(() => appUser.uid, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   createdBy: uuid("created_by")
 }, (table) => [
@@ -578,21 +608,21 @@ export const approvalComment = pgTable("approval_comment", {
 // RELATIONSHIPS
 // ===================
 
-// Define relations for user
-export const userRelations = relations(user, ({ one, many }) => ({
+// Define relations for appUser
+export const appUserRelations = relations(appUser, ({ one, many }) => ({
   employee: one(employee, {
     relationName: "userToEmployee",
-    fields: [user.uid],
+    fields: [appUser.uid],
     references: [employee.userUid]
   }),
   supplier: one(supplier, {
     relationName: "userToSupplier",
-    fields: [user.uid],
+    fields: [appUser.uid],
     references: [supplier.userUid]
   }),
   supplierSite: one(supplierSite, {
     relationName: "userToSupplierSite",
-    fields: [user.uid],
+    fields: [appUser.uid],
     references: [supplierSite.userUid]
   }),
   comments: many(approvalComment, {
@@ -656,10 +686,10 @@ export const orgUnitRelations = relations(orgUnit, ({ one, many }) => ({
 
 // Define relations for employee
 export const employeeRelations = relations(employee, ({ one, many }) => ({
-  user: one(user, {
+  user: one(appUser, {
     relationName: "userToEmployee",
     fields: [employee.userUid],
-    references: [user.uid]
+    references: [appUser.uid]
   }),
   organization: one(organization, {
     relationName: "organizationToEmployees",
@@ -682,24 +712,24 @@ export const employeeRelations = relations(employee, ({ one, many }) => ({
 
 // Define relations for supplierInvitation
 export const supplierInvitationRelations = relations(supplierInvitation, ({ one }) => ({
-  supplier: one(supplier, {
-    relationName: "supplierToInvitations",
+  organization: one(organization, {
+    relationName: "organizationToInvitations",
     fields: [supplierInvitation.organizationUid],
-    references: [supplier.userUid]
+    references: [organization.uid]
   }),
-  invitedBy: one(employee, {
+  invitedBy: one(appUser, {
     relationName: "employeeToInvitations",
     fields: [supplierInvitation.invitedByEmployeeUserUid],
-    references: [employee.userUid]
+    references: [appUser.uid]
   })
 }));
 
 // Define relations for supplier
 export const supplierRelations = relations(supplier, ({ one, many }) => ({
-  user: one(user, {
+  user: one(appUser, {
     relationName: "userToSupplier",
     fields: [supplier.userUid],
-    references: [user.uid]
+    references: [appUser.uid]
   }),
   organization: one(organization, {
     relationName: "organizationToSuppliers",
@@ -714,9 +744,6 @@ export const supplierRelations = relations(supplier, ({ one, many }) => ({
   sites: many(supplierSite, {
     relationName: "supplierToSites"
   }),
-  invitations: many(supplierInvitation, {
-    relationName: "supplierToInvitations"
-  }),
   approvalRequests: many(approvalRequest, {
     relationName: "supplierToApprovalRequests"
   }),
@@ -727,10 +754,10 @@ export const supplierRelations = relations(supplier, ({ one, many }) => ({
 
 // Define relations for supplierSite
 export const supplierSiteRelations = relations(supplierSite, ({ one, many }) => ({
-  user: one(user, {
+  user: one(appUser, {
     relationName: "userToSupplierSite",
     fields: [supplierSite.userUid],
-    references: [user.uid]
+    references: [appUser.uid]
   }),
   supplier: one(supplier, {
     relationName: "supplierToSites",
@@ -786,34 +813,65 @@ export const supplierSiteTermRelations = relations(supplierSiteTerm, ({ one, man
     fields: [supplierSiteTerm.supplierSiteUserUid],
     references: [supplierSite.userUid]
   }),
-  commercialTerms: many(supplierCommercialTerm, {
-    relationName: "termToCommercialTerms"
+  financialTerm: one(supplierFinancialTerm, {
+    relationName: "termToFinancialTerm",
+    fields: [supplierSiteTerm.uid],
+    references: [supplierFinancialTerm.termUid]
+  }),
+  tradeTerm: one(supplierTradeTerm, {
+    relationName: "termToTradeTerm",
+    fields: [supplierSiteTerm.uid],
+    references: [supplierTradeTerm.termUid]
+  }),
+  supportTerm: one(supplierSupportTerm, {
+    relationName: "termToSupportTerm", 
+    fields: [supplierSiteTerm.uid],
+    references: [supplierSupportTerm.termUid]
   }),
   notes: many(supplierTermNote, {
     relationName: "termToNotes"
+  }),
+  approvalRequests: many(approvalRequest, {
+    relationName: "termToApprovalRequests"
   })
 }));
 
-// Define relations for supplierCommercialTerm
-export const supplierCommercialTermRelations = relations(supplierCommercialTerm, ({ one }) => ({
-  siteTerm: one(supplierSiteTerm, {
-    relationName: "termToCommercialTerms",
-    fields: [supplierCommercialTerm.supplierSiteTermUid],
+// Define relations for child term tables
+export const supplierFinancialTermRelations = relations(supplierFinancialTerm, ({ one }) => ({
+  term: one(supplierSiteTerm, {
+    relationName: "termToFinancialTerm",
+    fields: [supplierFinancialTerm.termUid],
+    references: [supplierSiteTerm.uid]
+  })
+}));
+
+export const supplierTradeTermRelations = relations(supplierTradeTerm, ({ one }) => ({
+  term: one(supplierSiteTerm, {
+    relationName: "termToTradeTerm",
+    fields: [supplierTradeTerm.termUid],
+    references: [supplierSiteTerm.uid]
+  })
+}));
+
+export const supplierSupportTermRelations = relations(supplierSupportTerm, ({ one }) => ({
+  term: one(supplierSiteTerm, {
+    relationName: "termToSupportTerm",
+    fields: [supplierSupportTerm.termUid],
     references: [supplierSiteTerm.uid]
   })
 }));
 
 // Define relations for supplierTermNote
 export const supplierTermNoteRelations = relations(supplierTermNote, ({ one }) => ({
-  siteTerm: one(supplierSiteTerm, {
+  term: one(supplierSiteTerm, {
     relationName: "termToNotes",
-    fields: [supplierTermNote.supplierSiteTermUid],
+    fields: [supplierTermNote.termUid],
     references: [supplierSiteTerm.uid]
   }),
-  creator: one(user, {
+  creator: one(appUser, {
     relationName: "userToTermNotes",
     fields: [supplierTermNote.createdBy],
-    references: [user.uid]
+    references: [appUser.uid]
   })
 }));
 
@@ -909,6 +967,11 @@ export const approvalRequestRelations = relations(approvalRequest, ({ one, many 
     fields: [approvalRequest.supplierSiteUserUid],
     references: [supplierSite.userUid]
   }),
+  term: one(supplierSiteTerm, {
+    relationName: "termToApprovalRequests",
+    fields: [approvalRequest.termUid],
+    references: [supplierSiteTerm.uid]
+  }),
   currentStep: one(approvalStep, {
     relationName: "stepToRequests",
     fields: [approvalRequest.stepUid],
@@ -934,10 +997,10 @@ export const approvalLogRelations = relations(approvalLog, ({ one }) => ({
     fields: [approvalLog.approvalStepUid],
     references: [approvalStep.uid]
   }),
-  actionBy: one(user, {
+  actionBy: one(appUser, {
     relationName: "userToApprovalLogs",
     fields: [approvalLog.actionByUserUid],
-    references: [user.uid]
+    references: [appUser.uid]
   })
 }));
 
@@ -953,10 +1016,10 @@ export const approvalCommentRelations = relations(approvalComment, ({ one }) => 
     fields: [approvalComment.approvalStepUid],
     references: [approvalStep.uid]
   }),
-  commentBy: one(user, {
+  commentBy: one(appUser, {
     relationName: "userToComments",
     fields: [approvalComment.commentByUserUid],
-    references: [user.uid]
+    references: [appUser.uid]
   })
 }));
 
@@ -1011,7 +1074,7 @@ export const employeeOrgUnitRoleRelations = relations(employeeOrgUnitRole, ({ on
   })
 }));
 
-// Define relations for address (if needed)
+// Define relations for address
 export const addressRelations = relations(address, ({ many }) => ({
   suppliers: many(supplier, {
     relationName: "addressToSuppliers"
