@@ -42,8 +42,8 @@ export const PincodeSchema = z.string().regex(
 // ===================
 
 // Core tables
-export const UserSchema = createSelectSchema(schema.user);
-export const NewUserSchema = createInsertSchema(schema.user);
+export const AppUserSchema = createSelectSchema(schema.appUser);
+export const NewAppUserSchema = createInsertSchema(schema.appUser);
 
 export const OrganizationSchema = createSelectSchema(schema.organization);
 export const NewOrganizationSchema = createInsertSchema(schema.organization);
@@ -83,14 +83,17 @@ export const DocumentVerificationSchema = createSelectSchema(schema.documentVeri
 export const NewDocumentVerificationSchema = createInsertSchema(schema.documentVerification);
 
 // Payment & Terms tables
-export const PaymentTermTypeSchema = createSelectSchema(schema.paymentTermType);
-export const NewPaymentTermTypeSchema = createInsertSchema(schema.paymentTermType);
-
 export const SupplierSiteTermSchema = createSelectSchema(schema.supplierSiteTerm);
 export const NewSupplierSiteTermSchema = createInsertSchema(schema.supplierSiteTerm);
 
-export const SupplierCommercialTermSchema = createSelectSchema(schema.supplierCommercialTerm);
-export const NewSupplierCommercialTermSchema = createInsertSchema(schema.supplierCommercialTerm);
+export const SupplierFinancialTermSchema = createSelectSchema(schema.supplierFinancialTerm);
+export const NewSupplierFinancialTermSchema = createInsertSchema(schema.supplierFinancialTerm);
+
+export const SupplierTradeTermSchema = createSelectSchema(schema.supplierTradeTerm);
+export const NewSupplierTradeTermSchema = createInsertSchema(schema.supplierTradeTerm);
+
+export const SupplierSupportTermSchema = createSelectSchema(schema.supplierSupportTerm);
+export const NewSupplierSupportTermSchema = createInsertSchema(schema.supplierSupportTerm);
 
 export const SupplierTermNoteSchema = createSelectSchema(schema.supplierTermNote);
 export const NewSupplierTermNoteSchema = createInsertSchema(schema.supplierTermNote);
@@ -118,7 +121,7 @@ export const NewApprovalCommentSchema = createInsertSchema(schema.approvalCommen
 // CLIENT SCHEMAS (WITH ADDITIONAL VALIDATION)
 // ===================
 
-export const ClientUserSchema = z.object({
+export const ClientAppUserSchema = z.object({
   userName: z.string().min(3, "Username must be at least 3 characters"),
   userType: z.enum(["EMPLOYEE", "SUPPLIER", "SUPPLIER_SITE", "ADMIN"]),
 });
@@ -159,29 +162,84 @@ export const ClientSupplierSchema = z.object({
   contactPhone: PhoneSchema,
   organizationUid: UuidSchema,
   supplierCode: z.string().min(2, "Supplier code must be at least 2 characters").optional(),
+  addressUid: UuidSchema,
+  status: z.enum(["DRAFT", "PENDING_APPROVAL", "ACTIVE", "INACTIVE", "REJECTED"]).default("DRAFT"),
 });
 
 export const ClientSupplierSiteSchema = z.object({
   siteName: z.string().min(3, "Site name must be at least 3 characters"),
   siteCode: z.string().min(2, "Site code must be at least 2 characters").optional(),
-  classification: z.string().min(2, "Classification must be at least 2 characters"),
-  gstNumber: GstSchema,
+  classification: z.string().min(2, "Classification must be at least 2 characters").optional(),
+  businessType: z.string().min(2, "Business type must be at least 2 characters").optional(),
+  gstNumber: GstSchema.optional(),
   fssaiNumber: z.string().regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits").optional(),
   msmeNumber: z.string().min(2, "MSME number must be at least 2 characters").optional(),
   supplierUserUid: UuidSchema,
+  addressUid: UuidSchema,
+  status: z.enum(["PENDING", "VERIFIED", "REJECTED", "EXPIRED", "REQUIRES_UPDATE"]),
+  isActive: z.boolean().default(true),
 });
 
 export const ClientSupplierSiteTermSchema = z.object({
   supplierSiteUserUid: UuidSchema,
+  termType: z.enum(["FINANCIAL", "TRADE", "SUPPORT"]),
   effectiveDate: z.date().optional(),
-  agreedCreditDays: z.number().int().positive("Credit days must be a positive number"),
-  leadTimeDays: z.number().int().min(0, "Lead time days must be a non-negative number"),
-  saleOrReturn: z.boolean().default(false),
+  expirationDate: z.date().optional(),
+  isActive: z.boolean().default(true),
+  approvalStatus: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]).optional(),
+  versionNumber: z.number().int().positive().optional(),
+});
+
+export const ClientFinancialTermSchema = z.object({
+  termUid: UuidSchema,
+  agreedCreditDays: z.number().int().positive("Credit days must be a positive number").optional(),
+  paymentMethod: z.string().min(2, "Payment method must be at least 2 characters").optional(),
+  turnoverIncentiveAmount: z.number().optional(),
+  turnoverIncentivePercent: z.number().optional(),
+  turnoverRealizationFrequency: z.string().optional(),
+  turnoverRealizationMethod: z.string().optional(),
+  vendorListingFees: z.number().optional(),
+  vendorListingFeesChecked: z.boolean().optional(),
+});
+
+export const ClientTradeTermSchema = z.object({
+  termUid: UuidSchema,
+  leadTimeDays: z.number().int().min(0, "Lead time days must be a non-negative number").optional(),
+  saleOrReturn: z.boolean().default(false).optional(),
+  discountPercent: z.number().optional(),
+  daysEarlier: z.number().int().optional(),
+  shrinkSharing: z.string().optional(),
+  shrinkSharingPercent: z.number().optional(),
+});
+
+export const ClientSupportTermSchema = z.object({
+  termUid: UuidSchema,
+  merchandisingSupportAmount: z.number().optional(),
+  merchandisingSupportPersonCount: z.number().int().optional(),
+  merchandisingSupportPercent: z.number().optional(),
+  merchandisingSupportFrequency: z.string().optional(),
+  merchandisingSupportMethod: z.string().optional(),
+  barcodeAmount: z.number().optional(),
+  barcodePercent: z.number().optional(),
+  barcodeFrequency: z.string().optional(),
+  barcodeMethod: z.string().optional(),
+  newProductIntroFeeAmount: z.number().optional(),
+  newProductIntroFeePercent: z.number().optional(),
+  newProductIntroFeeFrequency: z.string().optional(),
+  newProductIntroFeeMethod: z.string().optional(),
+  storeOpeningSupportAmount: z.number().optional(),
+  storeOpeningSupportFrequency: z.string().optional(),
+  storeOpeningSupportMethod: z.string().optional(),
+  storeAnniversarySupportAmount: z.number().optional(),
+  storeAnniversarySupportFrequency: z.string().optional(),
+  storeAnniversarySupportMethod: z.string().optional(),
 });
 
 export const ClientApprovalRequestSchema = z.object({
   approvalProcessUid: UuidSchema,
   supplierUserUid: UuidSchema,
   supplierSiteUserUid: UuidSchema.optional(),
+  termUid: UuidSchema.optional(),
+  stepUid: UuidSchema,
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]),
 });

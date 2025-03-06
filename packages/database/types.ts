@@ -23,8 +23,8 @@ export type Json = Record<string, unknown>;
 // ===================
 
 // Core tables
-export type User = InferSelectModel<typeof schema.user>;
-export type NewUser = InferInsertModel<typeof schema.user>;
+export type AppUser = InferSelectModel<typeof schema.appUser>;
+export type NewAppUser = InferInsertModel<typeof schema.appUser>;
 
 export type Organization = InferSelectModel<typeof schema.organization>;
 export type NewOrganization = InferInsertModel<typeof schema.organization>;
@@ -64,14 +64,17 @@ export type DocumentVerification = InferSelectModel<typeof schema.documentVerifi
 export type NewDocumentVerification = InferInsertModel<typeof schema.documentVerification>;
 
 // Payment & Terms tables
-export type PaymentTermType = InferSelectModel<typeof schema.paymentTermType>;
-export type NewPaymentTermType = InferInsertModel<typeof schema.paymentTermType>;
-
 export type SupplierSiteTerm = InferSelectModel<typeof schema.supplierSiteTerm>;
 export type NewSupplierSiteTerm = InferInsertModel<typeof schema.supplierSiteTerm>;
 
-export type SupplierCommercialTerm = InferSelectModel<typeof schema.supplierCommercialTerm>;
-export type NewSupplierCommercialTerm = InferInsertModel<typeof schema.supplierCommercialTerm>;
+export type SupplierFinancialTerm = InferSelectModel<typeof schema.supplierFinancialTerm>;
+export type NewSupplierFinancialTerm = InferInsertModel<typeof schema.supplierFinancialTerm>;
+
+export type SupplierTradeTerm = InferSelectModel<typeof schema.supplierTradeTerm>;
+export type NewSupplierTradeTerm = InferInsertModel<typeof schema.supplierTradeTerm>;
+
+export type SupplierSupportTerm = InferSelectModel<typeof schema.supplierSupportTerm>;
+export type NewSupplierSupportTerm = InferInsertModel<typeof schema.supplierSupportTerm>;
 
 export type SupplierTermNote = InferSelectModel<typeof schema.supplierTermNote>;
 export type NewSupplierTermNote = InferInsertModel<typeof schema.supplierTermNote>;
@@ -99,13 +102,16 @@ export type NewApprovalComment = InferInsertModel<typeof schema.approvalComment>
 // ZOD SCHEMA TYPES (CLIENT-SIDE)
 // ===================
 
-export type ClientUserInput = z.infer<typeof zodSchema.ClientUserSchema>;
+export type ClientAppUserInput = z.infer<typeof zodSchema.ClientAppUserSchema>;
 export type ClientOrganizationInput = z.infer<typeof zodSchema.ClientOrganizationSchema>;
 export type ClientEmployeeInput = z.infer<typeof zodSchema.ClientEmployeeSchema>;
 export type ClientAddressInput = z.infer<typeof zodSchema.ClientAddressSchema>;
 export type ClientSupplierInput = z.infer<typeof zodSchema.ClientSupplierSchema>;
 export type ClientSupplierSiteInput = z.infer<typeof zodSchema.ClientSupplierSiteSchema>;
 export type ClientSupplierSiteTermInput = z.infer<typeof zodSchema.ClientSupplierSiteTermSchema>;
+export type ClientFinancialTermInput = z.infer<typeof zodSchema.ClientFinancialTermSchema>;
+export type ClientTradeTermInput = z.infer<typeof zodSchema.ClientTradeTermSchema>;
+export type ClientSupportTermInput = z.infer<typeof zodSchema.ClientSupportTermSchema>;
 export type ClientApprovalRequestInput = z.infer<typeof zodSchema.ClientApprovalRequestSchema>;
 
 // ===================
@@ -122,6 +128,7 @@ export type DocumentType = "PAN" | "GST" | "MSME" | "FSSAI" | "CANCELLED_CHEQUE"
   "TAX_CERTIFICATE" | "INSURANCE_CERTIFICATE" | "TRADE_LICENSE" | "OTHER";
 export type OrgUnitType = "DIVISION" | "DEPARTMENT" | "TEAM" | "REGION" | "BUSINESS_UNIT" | "SUBSIDIARY";
 export type VerificationStatus = "PENDING" | "VERIFIED" | "REJECTED" | "EXPIRED" | "REQUIRES_UPDATE";
+export type TermType = "FINANCIAL" | "TRADE" | "SUPPORT";
 
 // ===================
 // RELATION TYPES
@@ -129,10 +136,13 @@ export type VerificationStatus = "PENDING" | "VERIFIED" | "REJECTED" | "EXPIRED"
 
 // These are helper types for working with relations
 
-export interface UserWithRelations extends User {
+export interface AppUserWithRelations extends AppUser {
   employee?: Employee;
   supplier?: Supplier;
   supplierSite?: SupplierSite;
+  comments?: ApprovalComment[];
+  approvalLogs?: ApprovalLog[];
+  termNotes?: SupplierTermNote[];
 }
 
 export interface OrganizationWithRelations extends Organization {
@@ -144,28 +154,149 @@ export interface OrganizationWithRelations extends Organization {
   approvalProcesses?: ApprovalProcess[];
 }
 
+export interface OrgUnitWithRelations extends OrgUnit {
+  parent?: OrgUnit;
+  children?: OrgUnit[];
+  organization?: Organization;
+  employeeOrgUnitRoles?: EmployeeOrgUnitRole[];
+  responsibilities?: ApprovalResponsibility[];
+  fallbackResponsibilities?: ApprovalResponsibility[];
+}
+
+export interface EmployeeWithRelations extends Employee {
+  user?: AppUser;
+  organization?: Organization;
+  orgUnitRoles?: EmployeeOrgUnitRole[];
+  responsibilities?: ApprovalResponsibility[];
+  fallbackResponsibilities?: ApprovalResponsibility[];
+  invitations?: SupplierInvitation[];
+}
+
+export interface SupplierInvitationWithRelations extends SupplierInvitation {
+  organization?: Organization;
+  invitedBy?: AppUser;
+}
+
 export interface SupplierWithRelations extends Supplier {
-  user?: User;
+  user?: AppUser;
   organization?: Organization;
   address?: Address;
   sites?: SupplierSite[];
-  invitations?: SupplierInvitation[];
   approvalRequests?: ApprovalRequest[];
+  verifications?: DocumentVerification[];
 }
 
 export interface SupplierSiteWithRelations extends SupplierSite {
-  user?: User;
+  user?: AppUser;
   supplier?: Supplier;
   address?: Address;
   documents?: SupplierSiteDocument[];
   terms?: SupplierSiteTerm[];
+  verifications?: DocumentVerification[];
+  approvalRequests?: ApprovalRequest[];
+}
+
+export interface SupplierSiteDocumentWithRelations extends SupplierSiteDocument {
+  supplierSite?: SupplierSite;
+}
+
+export interface DocumentVerificationWithRelations extends DocumentVerification {
+  supplier?: Supplier;
+  supplierSite?: SupplierSite;
+}
+
+export interface SupplierSiteTermWithRelations extends SupplierSiteTerm {
+  supplierSite?: SupplierSite;
+  financialTerm?: SupplierFinancialTerm;
+  tradeTerm?: SupplierTradeTerm;
+  supportTerm?: SupplierSupportTerm;
+  notes?: SupplierTermNote[];
+  approvalRequests?: ApprovalRequest[];
+}
+
+export interface SupplierFinancialTermWithRelations extends SupplierFinancialTerm {
+  term?: SupplierSiteTerm;
+}
+
+export interface SupplierTradeTermWithRelations extends SupplierTradeTerm {
+  term?: SupplierSiteTerm;
+}
+
+export interface SupplierSupportTermWithRelations extends SupplierSupportTerm {
+  term?: SupplierSiteTerm;
+}
+
+export interface SupplierTermNoteWithRelations extends SupplierTermNote {
+  term?: SupplierSiteTerm;
+  creator?: AppUser;
+}
+
+export interface ApprovalProcessWithRelations extends ApprovalProcess {
+  organization?: Organization;
+  steps?: ApprovalStep[];
+  requests?: ApprovalRequest[];
+}
+
+export interface ApprovalStepWithRelations extends ApprovalStep {
+  process?: ApprovalProcess;
+  responsibilities?: ApprovalResponsibility[];
+  requests?: ApprovalRequest[];
+  logs?: ApprovalLog[];
+  comments?: ApprovalComment[];
+}
+
+export interface ApprovalResponsibilityWithRelations extends ApprovalResponsibility {
+  step?: ApprovalStep;
+  role?: Role;
+  orgUnit?: OrgUnit;
+  employee?: Employee;
+  fallbackRole?: Role;
+  fallbackOrgUnit?: OrgUnit;
+  fallbackEmployee?: Employee;
 }
 
 export interface ApprovalRequestWithRelations extends ApprovalRequest {
   process?: ApprovalProcess;
-  step?: ApprovalStep;
   supplier?: Supplier;
   supplierSite?: SupplierSite;
+  term?: SupplierSiteTerm;
+  currentStep?: ApprovalStep;
   logs?: ApprovalLog[];
   comments?: ApprovalComment[];
+}
+
+export interface ApprovalLogWithRelations extends ApprovalLog {
+  request?: ApprovalRequest;
+  step?: ApprovalStep;
+  actionBy?: AppUser;
+}
+
+export interface ApprovalCommentWithRelations extends ApprovalComment {
+  request?: ApprovalRequest;
+  step?: ApprovalStep;
+  commentBy?: AppUser;
+}
+
+export interface AddressWithRelations extends Address {
+  suppliers?: Supplier[];
+  supplierSites?: SupplierSite[];
+  stores?: Store[];
+}
+
+export interface RoleWithRelations extends Role {
+  organization?: Organization;
+  employeeOrgUnitRoles?: EmployeeOrgUnitRole[];
+  approvalResponsibilities?: ApprovalResponsibility[];
+  fallbackResponsibilities?: ApprovalResponsibility[];
+}
+
+export interface EmployeeOrgUnitRoleWithRelations extends EmployeeOrgUnitRole {
+  employee?: Employee;
+  orgUnit?: OrgUnit;
+  role?: Role;
+}
+
+export interface StoreWithRelations extends Store {
+  organization?: Organization;
+  address?: Address;
 }
