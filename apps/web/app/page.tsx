@@ -15,12 +15,6 @@ export default function Home() {
           >
             View Users
           </Link>
-          <Link
-            href="/posts"
-            className={cn(buttonVariants({ variant: "default" }))}
-          >
-            View Posts
-          </Link>
         </div>
       </main>
     </div>
