@@ -75,6 +75,9 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 import crypto from "crypto";
 
+// Replace Bun.serve with Node.js http server
+import { serve } from '@hono/node-server';
+
 const app = new Hono();
 
 // Add middleware
@@ -94,8 +97,27 @@ app.use(
   }),
 );
 
-// Get port from command line argument or use default
-//const port = 3030;
+// Update port configuration
+const port = Number(process.env.PORT) || 3030;
+const hostname = 'localhost';
+
+// Use this server config instead
+const server = serve({
+  fetch: app.fetch,
+  port,
+  hostname
+}, (info) => {
+  console.log(`Server running at http://${hostname}:${info.port}`);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use`);
+    process.exit(1);
+  }
+  console.error('Server error:', err);
+});
 
 // Root route
 app.get("/", (c) => {
