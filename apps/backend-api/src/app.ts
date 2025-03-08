@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { timing } from "hono/timing";
+import { swaggerUI } from "@hono/swagger-ui";
 
 // Import routes
 import userRoutes from "./routes/userRoutes.js";
@@ -16,6 +17,9 @@ import storeRoutes from "./routes/storeRoutes.js";
 import approvalRoutes from "./routes/approvalRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import termRoutes from "./routes/termRoutes.js";
+
+// Import OpenAPI setup
+import { setupOpenAPI } from "./openapi/index.js";
 
 const app = new Hono();
 
@@ -53,5 +57,63 @@ app.route("/stores", storeRoutes);
 app.route("/approval-processes", approvalRoutes);
 app.route("/documents", documentRoutes);
 app.route("/supplier-terms", termRoutes);
+
+// Setup OpenAPI documentation and UI
+setupOpenAPI(app);
+
+// Add a direct link to the Swagger UI
+app.get("/api", (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Supplier Management System API</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          h1 {
+            color: #0066cc;
+          }
+          a {
+            color: #0066cc;
+            text-decoration: none;
+          }
+          a:hover {
+            text-decoration: underline;
+          }
+          .card {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Supplier Management System API</h1>
+        <div class="card">
+          <h2>API Documentation</h2>
+          <p>Interactive API documentation with Swagger UI:</p>
+          <p><a href="/swagger" target="_blank">Open Swagger UI</a></p>
+        </div>
+        <div class="card">
+          <h2>OpenAPI Specification</h2>
+          <p>Raw OpenAPI specification in JSON format:</p>
+          <p><a href="/api-doc" target="_blank">View OpenAPI Spec</a></p>
+        </div>
+      </body>
+    </html>
+  `);
+});
 
 export default app;

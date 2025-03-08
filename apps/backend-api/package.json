@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@hono/swagger-ui": "^0.5.1",
+    "@hono/zod-openapi": "^0.19.2",
     "@workspace/database": "workspace:*",
     "drizzle-orm": "^0.39.3",
     "hono": "^4.7.2",
