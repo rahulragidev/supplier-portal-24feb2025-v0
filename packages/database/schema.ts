@@ -1,10 +1,3 @@
-/**
- * Enterprise-Grade Supplier Management System
- * Database Schema Definition
- * 
- * Updated according to latest Drizzle ORM best practices (v0.30.x, March 2025)
- */
-
 import {
   pgTable,
   text,
@@ -126,7 +119,7 @@ export const appUser = pgTable("app_user", {
 }, (table) => [
   index("idx_app_user_type").on(table.userType),
   index("idx_app_user_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const organization = pgTable("organization", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -142,7 +135,7 @@ export const organization = pgTable("organization", {
 }, (table) => [
   index("idx_organization_name").on(table.name),
   index("idx_organization_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const employee = pgTable("employee", {
   userUid: uuid("user_uid").notNull().references(() => appUser.uid, { onDelete: "cascade" }),
@@ -164,7 +157,7 @@ export const employee = pgTable("employee", {
   index("idx_employee_email").on(table.email),
   index("idx_employee_name").on(table.firstName, table.lastName),
   index("idx_employee_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const address = pgTable("address", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -187,7 +180,7 @@ export const address = pgTable("address", {
   index("idx_address_city_state").on(table.city, table.state, table.country),
   index("idx_address_type").on(table.addressType),
   index("idx_address_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 // Define orgUnit table
 export const orgUnit = pgTable("org_unit", {
@@ -210,7 +203,7 @@ export const orgUnit = pgTable("org_unit", {
   index("idx_org_unit_parent").on(table.parentUid),
   index("idx_org_unit_type").on(table.unitType),
   index("idx_org_unit_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const role = pgTable("role", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -228,7 +221,7 @@ export const role = pgTable("role", {
   uniqueIndex("idx_role_org_code_unique").on(table.organizationUid, table.roleCode),
   index("idx_role_org").on(table.organizationUid),
   index("idx_role_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const employeeOrgUnitRole = pgTable("employee_org_unit_role", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -245,7 +238,7 @@ export const employeeOrgUnitRole = pgTable("employee_org_unit_role", {
   index("idx_employee_org_unit_role_org_unit").on(table.orgUnitUid),
   index("idx_employee_org_unit_role_role").on(table.roleUid),
   index("idx_employee_org_unit_role_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const store = pgTable("store", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -265,7 +258,7 @@ export const store = pgTable("store", {
   index("idx_store_org").on(table.organizationUid),
   index("idx_store_address").on(table.addressUid),
   index("idx_store_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 // ===================
 // SUPPLIER TABLES
@@ -309,7 +302,7 @@ export const supplier = pgTable("supplier", {
     table.contactPhone
   ),
   index("idx_supplier_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const supplierInvitation = pgTable("supplier_invitation", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -327,7 +320,7 @@ export const supplierInvitation = pgTable("supplier_invitation", {
   index("idx_supplier_invitation_email").on(table.email),
   index("idx_supplier_invitation_status").on(table.status),
   index("idx_supplier_invitation_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const supplierSite = pgTable("supplier_site", {
   userUid: uuid("user_uid").primaryKey().notNull().references(() => appUser.uid, { onDelete: "cascade" }),
@@ -354,7 +347,7 @@ export const supplierSite = pgTable("supplier_site", {
   index("idx_site_status").on(table.status),
   index("idx_site_address").on(table.addressUid),
   index("idx_site_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const supplierSiteDocument = pgTable("supplier_site_document", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -372,7 +365,7 @@ export const supplierSiteDocument = pgTable("supplier_site_document", {
   index("idx_document_type").on(table.documentType),
   index("idx_document_status").on(table.verificationStatus),
   index("idx_document_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const documentVerification = pgTable("document_verification", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -393,7 +386,7 @@ export const documentVerification = pgTable("document_verification", {
   index("idx_verification_type").on(table.documentType),
   index("idx_verification_status").on(table.status),
   index("idx_document_verification_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 // ===================
 // PAYMENT & TERMS TABLES
@@ -420,7 +413,7 @@ export const supplierSiteTerm = pgTable("supplier_site_term", {
   index("idx_site_term_status").on(table.approvalStatus),
   index("idx_site_term_effective_date").on(table.effectiveDate),
   index("idx_site_term_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 // Financial terms
 export const supplierFinancialTerm = pgTable("supplier_financial_term", {
@@ -433,7 +426,7 @@ export const supplierFinancialTerm = pgTable("supplier_financial_term", {
   turnoverRealizationMethod: varchar("turnover_realization_method", { length: 50 }),
   vendorListingFees: decimal("vendor_listing_fees", { precision: 10, scale: 2 }),
   vendorListingFeesChecked: boolean("vendor_listing_fees_checked")
-});
+}).enableRLS();
 
 // Trade terms
 export const supplierTradeTerm = pgTable("supplier_trade_term", {
@@ -444,7 +437,7 @@ export const supplierTradeTerm = pgTable("supplier_trade_term", {
   daysEarlier: integer("days_earlier"),
   shrinkSharing: varchar("shrink_sharing", { length: 100 }),
   shrinkSharingPercent: decimal("shrink_sharing_percent", { precision: 5, scale: 2 })
-});
+}).enableRLS();
 
 // Support terms
 export const supplierSupportTerm = pgTable("supplier_support_term", {
@@ -468,7 +461,7 @@ export const supplierSupportTerm = pgTable("supplier_support_term", {
   storeAnniversarySupportAmount: decimal("store_anniversary_support_amount", { precision: 10, scale: 2 }),
   storeAnniversarySupportFrequency: varchar("store_anniversary_support_frequency", { length: 50 }),
   storeAnniversarySupportMethod: varchar("store_anniversary_support_method", { length: 50 })
-});
+}).enableRLS();
 
 export const supplierTermNote = pgTable("supplier_term_note", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -483,7 +476,7 @@ export const supplierTermNote = pgTable("supplier_term_note", {
   index("idx_term_note_term").on(table.termUid),
   index("idx_term_note_created_by").on(table.createdBy),
   index("idx_term_note_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 // ===================
 // APPROVAL WORKFLOW TABLES
@@ -503,7 +496,7 @@ export const approvalProcess = pgTable("approval_process", {
   uniqueIndex("idx_approval_process_org_name_unique").on(table.organizationUid, table.name),
   index("idx_approval_process_org").on(table.organizationUid),
   index("idx_approval_process_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const approvalStep = pgTable("approval_step", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -519,7 +512,7 @@ export const approvalStep = pgTable("approval_step", {
   uniqueIndex("idx_approval_step_process_order_unique").on(table.approvalProcessUid, table.stepOrder),
   index("idx_approval_step_process").on(table.approvalProcessUid),
   index("idx_approval_step_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const approvalResponsibility = pgTable("approval_responsibility", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -542,7 +535,7 @@ export const approvalResponsibility = pgTable("approval_responsibility", {
   index("idx_approval_responsibility_org_unit").on(table.orgUnitUid),
   index("idx_approval_responsibility_employee").on(table.employeeUserUid),
   index("idx_approval_responsibility_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const approvalRequest = pgTable("approval_request", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -566,7 +559,7 @@ export const approvalRequest = pgTable("approval_request", {
   index("idx_approval_request_status").on(table.status),
   index("idx_approval_request_completed_at").on(table.completedAt),
   index("idx_approval_request_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const approvalLog = pgTable("approval_log", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -587,7 +580,7 @@ export const approvalLog = pgTable("approval_log", {
   index("idx_approval_log_date").on(table.actionDate),
   index("idx_approval_log_status").on(table.status),
   index("idx_approval_log_deleted_at").on(table.deletedAt),
-]);
+]).enableRLS();
 
 export const approvalComment = pgTable("approval_comment", {
   uid: uuid("uid").primaryKey().notNull(),
@@ -602,7 +595,7 @@ export const approvalComment = pgTable("approval_comment", {
   index("idx_approval_comment_step").on(table.approvalStepUid),
   index("idx_approval_comment_user").on(table.commentByUserUid),
   index("idx_approval_comment_created_at").on(table.createdAt),
-]);
+]).enableRLS();
 
 // ===================
 // RELATIONSHIPS
