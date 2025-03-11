@@ -150,6 +150,7 @@ export const ClientAddressSchema = z.object({
   country: z.string().min(2, "Country must be at least 2 characters"),
   pincode: PincodeSchema,
   addressType: z.enum(["BILLING", "SHIPPING", "REGISTERED", "OPERATIONAL"]),
+  extraData: z.any().optional()
 });
 
 export const ClientSupplierSchema = z.object({
@@ -162,8 +163,8 @@ export const ClientSupplierSchema = z.object({
   contactPhone: PhoneSchema,
   organizationUid: UuidSchema,
   supplierCode: z.string().min(2, "Supplier code must be at least 2 characters").optional(),
-  addressUid: UuidSchema,
   status: z.enum(["DRAFT", "PENDING_APPROVAL", "ACTIVE", "INACTIVE", "REJECTED"]).default("DRAFT"),
+  address: ClientAddressSchema
 });
 
 export const ClientSupplierSiteSchema = z.object({
@@ -175,9 +176,9 @@ export const ClientSupplierSiteSchema = z.object({
   fssaiNumber: z.string().regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits").optional(),
   msmeNumber: z.string().min(2, "MSME number must be at least 2 characters").optional(),
   supplierUserUid: UuidSchema,
-  addressUid: UuidSchema,
   status: z.enum(["PENDING", "VERIFIED", "REJECTED", "EXPIRED", "REQUIRES_UPDATE"]),
   isActive: z.boolean().default(true),
+  address: ClientAddressSchema
 });
 
 export const ClientSupplierSiteTermSchema = z.object({
@@ -242,4 +243,12 @@ export const ClientApprovalRequestSchema = z.object({
   termUid: UuidSchema.optional(),
   stepUid: UuidSchema,
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]),
+});
+
+export const ClientStoreSchema = z.object({
+  organizationUid: UuidSchema,
+  name: z.string().min(3, "Store name must be at least 3 characters"),
+  storeCode: z.string().min(2, "Store code must be at least 2 characters"),
+  extraData: z.any().optional(),
+  address: ClientAddressSchema
 });

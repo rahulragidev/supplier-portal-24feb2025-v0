@@ -7,7 +7,11 @@ import {
   approvalResponsibility, 
   approvalRequest,
   approvalLog,
-  approvalComment
+  approvalComment,
+  appUser,
+  supplier,
+  supplierSite,
+  supplierSiteTerm
 } from "@workspace/database/schema";
 import { 
   NewApprovalProcessSchema,
@@ -313,6 +317,34 @@ export const approvalController = {
     try {
       const data = await c.req.json();
       
+      // Check if employee users exist in app_user table
+      if (data.employeeUserUid) {
+        const existingEmployee = await db
+          .select()
+          .from(appUser)
+          .where(eq(appUser.uid, data.employeeUserUid));
+        
+        if (existingEmployee.length === 0) {
+          return c.json({ 
+            error: "Employee user does not exist. Please create the employee first." 
+          }, 400);
+        }
+      }
+      
+      // Check if fallback employee user exists
+      if (data.fallbackEmployeeUserUid) {
+        const existingFallbackEmployee = await db
+          .select()
+          .from(appUser)
+          .where(eq(appUser.uid, data.fallbackEmployeeUserUid));
+        
+        if (existingFallbackEmployee.length === 0) {
+          return c.json({ 
+            error: "Fallback employee user does not exist. Please create the employee first." 
+          }, 400);
+        }
+      }
+      
       // Prepare the data for the database
       const newResponsibility = NewApprovalResponsibilitySchema.parse({
         uid: data.uid || generateUUID(),
@@ -462,6 +494,85 @@ export const approvalController = {
     try {
       const data = await c.req.json();
       const validated = ClientApprovalRequestSchema.parse(data);
+      
+      // Check if approval process exists
+      const existingProcess = await db
+        .select()
+        .from(approvalProcess)
+        .where(and(
+          eq(approvalProcess.uid, validated.approvalProcessUid),
+          isNull(approvalProcess.deletedAt)
+        ));
+      
+      if (existingProcess.length === 0) {
+        return c.json({ 
+          error: "Approval process does not exist" 
+        }, 400);
+      }
+
+      // Check if supplier exists
+      const existingSupplier = await db
+        .select()
+        .from(supplier)
+        .where(and(
+          eq(supplier.userUid, validated.supplierUserUid),
+          isNull(supplier.deletedAt)
+        ));
+      
+      if (existingSupplier.length === 0) {
+        return c.json({ 
+          error: "Supplier does not exist" 
+        }, 400);
+      }
+
+      // Check if supplier site exists (if provided)
+      if (validated.supplierSiteUserUid) {
+        const existingSite = await db
+          .select()
+          .from(supplierSite)
+          .where(and(
+            eq(supplierSite.userUid, validated.supplierSiteUserUid),
+            isNull(supplierSite.deletedAt)
+          ));
+        
+        if (existingSite.length === 0) {
+          return c.json({ 
+            error: "Supplier site does not exist" 
+          }, 400);
+        }
+      }
+
+      // Check if term exists (if provided)
+      if (validated.termUid) {
+        const existingTerm = await db
+          .select()
+          .from(supplierSiteTerm)
+          .where(and(
+            eq(supplierSiteTerm.uid, validated.termUid),
+            isNull(supplierSiteTerm.deletedAt)
+          ));
+        
+        if (existingTerm.length === 0) {
+          return c.json({ 
+            error: "Term does not exist" 
+          }, 400);
+        }
+      }
+
+      // Check if step exists
+      const existingStep = await db
+        .select()
+        .from(approvalStep)
+        .where(and(
+          eq(approvalStep.uid, validated.stepUid),
+          isNull(approvalStep.deletedAt)
+        ));
+      
+      if (existingStep.length === 0) {
+        return c.json({ 
+          error: "Approval step does not exist" 
+        }, 400);
+      }
       
       // Prepare the data for the database
       const newRequest = NewApprovalRequestSchema.parse({

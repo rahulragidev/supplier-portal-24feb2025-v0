@@ -107,13 +107,12 @@ export const addressController = {
   async deleteAddress(c: Context) {
     try {
       const uid = c.req.param("uid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(address)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(address.uid, uid),

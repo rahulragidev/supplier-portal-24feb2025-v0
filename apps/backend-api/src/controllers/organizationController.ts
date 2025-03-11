@@ -107,13 +107,12 @@ export const organizationController = {
   async deleteOrganization(c: Context) {
     try {
       const uid = c.req.param("uid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(organization)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(organization.uid, uid),

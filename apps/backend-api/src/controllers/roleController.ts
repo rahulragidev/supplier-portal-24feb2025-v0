@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { z } from "zod";
 import { db } from "../../../../packages/database/database.js";
-import { role, employeeOrgUnitRole } from "@workspace/database/schema";
+import { role, employeeOrgUnitRole, appUser } from "@workspace/database/schema";
 import { 
   NewRoleSchema,
   NewEmployeeOrgUnitRoleSchema 
@@ -175,10 +175,24 @@ export const roleController = {
     try {
       const data = await c.req.json();
       
+      // Check if user exists in app_user table
+      const employeeUserUid = data.employeeUserUid;
+      const existingUser = await db
+        .select()
+        .from(appUser)
+        .where(eq(appUser.uid, employeeUserUid));
+      
+      // If user doesn't exist, return an error
+      if (existingUser.length === 0) {
+        return c.json({ 
+          error: "Employee user does not exist. Please create the employee first." 
+        }, 400);
+      }
+      
       // Prepare the data for the database
       const newOrgUnitRole = NewEmployeeOrgUnitRoleSchema.parse({
         uid: data.uid || generateUUID(),
-        employeeUserUid: data.employeeUserUid,
+        employeeUserUid: employeeUserUid,
         orgUnitUid: data.orgUnitUid,
         roleUid: data.roleUid,
         createdAt: formatDate(),

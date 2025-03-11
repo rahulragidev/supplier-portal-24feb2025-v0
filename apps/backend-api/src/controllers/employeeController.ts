@@ -9,6 +9,7 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
+import { appUser } from "@workspace/database/schema";
 
 export const employeeController = {
   // Get all employees (non-deleted)
@@ -71,10 +72,34 @@ export const employeeController = {
       const data = await c.req.json();
       const validated = ClientEmployeeSchema.parse(data);
       
-      // Prepare the data for the database
+      // Generate a UUID if not provided
+      const userUid = data.userUid || generateUUID();
+      
+      // Check if user exists in app_user table
+      const existingUser = await db
+        .select()
+        .from(appUser)
+        .where(eq(appUser.uid, userUid));
+      
+      // If user doesn't exist, create one first
+      if (existingUser.length === 0) {
+        // Create basic app_user first to satisfy foreign key constraint
+        await db.insert(appUser).values({
+          uid: userUid,
+          clerkId: data.clerkId || generateUUID(), // Generate if not provided
+          userName: `${validated.email}`, // Use email as username for now
+          userType: "EMPLOYEE", // Since we're creating an employee
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+      }
+      
+      // Prepare the data for the database with the same userUid
       const newEmployee = NewEmployeeSchema.parse({
         ...validated,
-        userUid: data.userUid || generateUUID(),
+        userUid: userUid,
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
@@ -125,13 +150,12 @@ export const employeeController = {
   async deleteEmployee(c: Context) {
     try {
       const userUid = c.req.param("userUid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(employee)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(employee.userUid, userUid),

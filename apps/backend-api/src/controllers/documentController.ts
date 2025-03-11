@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { z } from "zod";
 import { db } from "../../../../packages/database/database.js";
-import { supplierSiteDocument, documentVerification } from "@workspace/database/schema";
+import { supplierSiteDocument, documentVerification, supplierSite, supplier } from "@workspace/database/schema";
 import { 
   NewSupplierSiteDocumentSchema,
   NewDocumentVerificationSchema
@@ -57,6 +57,21 @@ export const documentController = {
   async createDocument(c: Context) {
     try {
       const data = await c.req.json();
+      
+      // Check if supplier site exists
+      const existingSite = await db
+        .select()
+        .from(supplierSite)
+        .where(and(
+          eq(supplierSite.userUid, data.supplierSiteUserUid),
+          isNull(supplierSite.deletedAt)
+        ));
+      
+      if (existingSite.length === 0) {
+        return c.json({ 
+          error: "Supplier site does not exist" 
+        }, 400);
+      }
       
       // Prepare the data for the database
       const newDocument = NewSupplierSiteDocumentSchema.parse({
@@ -116,13 +131,12 @@ export const documentController = {
   async deleteDocument(c: Context) {
     try {
       const uid = c.req.param("uid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(supplierSiteDocument)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(supplierSiteDocument.uid, uid),
@@ -178,6 +192,36 @@ export const documentController = {
   async createVerification(c: Context) {
     try {
       const data = await c.req.json();
+      
+      // Check if supplier exists
+      const existingSupplier = await db
+        .select()
+        .from(supplier)
+        .where(and(
+          eq(supplier.userUid, data.supplierUserUid),
+          isNull(supplier.deletedAt)
+        ));
+      
+      if (existingSupplier.length === 0) {
+        return c.json({ 
+          error: "Supplier does not exist" 
+        }, 400);
+      }
+
+      // Check if supplier site exists
+      const existingSite = await db
+        .select()
+        .from(supplierSite)
+        .where(and(
+          eq(supplierSite.userUid, data.supplierSiteUserUid),
+          isNull(supplierSite.deletedAt)
+        ));
+      
+      if (existingSite.length === 0) {
+        return c.json({ 
+          error: "Supplier site does not exist" 
+        }, 400);
+      }
       
       // Prepare the data for the database
       const newVerification = NewDocumentVerificationSchema.parse({

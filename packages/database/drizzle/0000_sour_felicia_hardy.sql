@@ -27,6 +27,7 @@ CREATE TABLE "address" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "address" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "app_user" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"clerk_id" uuid NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE "app_user" (
 	CONSTRAINT "app_user_user_name_unique" UNIQUE("user_name")
 );
 --> statement-breakpoint
+ALTER TABLE "app_user" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_comment" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"approval_request_uid" uuid NOT NULL,
@@ -52,6 +54,7 @@ CREATE TABLE "approval_comment" (
 	"created_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_comment" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_log" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"approval_request_uid" uuid NOT NULL,
@@ -66,6 +69,7 @@ CREATE TABLE "approval_log" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_log" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_process" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -78,6 +82,7 @@ CREATE TABLE "approval_process" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_process" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_request" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"approval_process_uid" uuid NOT NULL,
@@ -93,6 +98,7 @@ CREATE TABLE "approval_request" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_request" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_responsibility" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"approval_step_uid" uuid NOT NULL,
@@ -110,6 +116,7 @@ CREATE TABLE "approval_responsibility" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_responsibility" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "approval_step" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"approval_process_uid" uuid NOT NULL,
@@ -122,6 +129,7 @@ CREATE TABLE "approval_step" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "approval_step" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "document_verification" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_user_uid" uuid NOT NULL,
@@ -137,6 +145,7 @@ CREATE TABLE "document_verification" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "document_verification" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "employee" (
 	"user_uid" uuid NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -156,6 +165,7 @@ CREATE TABLE "employee" (
 	CONSTRAINT "employee_phone_unique" UNIQUE("phone")
 );
 --> statement-breakpoint
+ALTER TABLE "employee" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "employee_org_unit_role" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"employee_user_uid" uuid NOT NULL,
@@ -168,6 +178,7 @@ CREATE TABLE "employee_org_unit_role" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "employee_org_unit_role" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "org_unit" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -183,10 +194,10 @@ CREATE TABLE "org_unit" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "org_unit" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "organization" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(200) NOT NULL,
-	"license_key" uuid NOT NULL,
 	"max_user_count" integer NOT NULL,
 	"extra_data" jsonb,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -194,10 +205,10 @@ CREATE TABLE "organization" (
 	"deleted_at" timestamp with time zone,
 	"created_by" uuid,
 	"last_updated_by" uuid,
-	CONSTRAINT "organization_name_unique" UNIQUE("name"),
-	CONSTRAINT "organization_license_key_unique" UNIQUE("license_key")
+	CONSTRAINT "organization_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
+ALTER TABLE "organization" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "role" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -211,6 +222,7 @@ CREATE TABLE "role" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "role" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "store" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -225,6 +237,7 @@ CREATE TABLE "store" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "store" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier" (
 	"user_uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -251,6 +264,7 @@ CREATE TABLE "supplier" (
 	CONSTRAINT "supplier_contact_phone_unique" UNIQUE("contact_phone")
 );
 --> statement-breakpoint
+ALTER TABLE "supplier" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_financial_term" (
 	"term_uid" uuid PRIMARY KEY NOT NULL,
 	"agreed_credit_days" integer,
@@ -263,6 +277,7 @@ CREATE TABLE "supplier_financial_term" (
 	"vendor_listing_fees_checked" boolean
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_financial_term" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_invitation" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"organization_uid" uuid NOT NULL,
@@ -276,6 +291,7 @@ CREATE TABLE "supplier_invitation" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_invitation" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_site" (
 	"user_uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_user_uid" uuid NOT NULL,
@@ -297,6 +313,7 @@ CREATE TABLE "supplier_site" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_site" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_site_document" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_site_user_uid" uuid NOT NULL,
@@ -311,6 +328,7 @@ CREATE TABLE "supplier_site_document" (
 	CONSTRAINT "supplier_site_document_file_path_unique" UNIQUE("file_path")
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_site_document" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_site_term" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_site_user_uid" uuid NOT NULL,
@@ -327,6 +345,7 @@ CREATE TABLE "supplier_site_term" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_site_term" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_support_term" (
 	"term_uid" uuid PRIMARY KEY NOT NULL,
 	"merchandising_support_amount" numeric(10, 2),
@@ -350,6 +369,7 @@ CREATE TABLE "supplier_support_term" (
 	"store_anniversary_support_method" varchar(50)
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_support_term" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_term_note" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"term_uid" uuid NOT NULL,
@@ -361,6 +381,7 @@ CREATE TABLE "supplier_term_note" (
 	"last_updated_by" uuid
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_term_note" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_trade_term" (
 	"term_uid" uuid PRIMARY KEY NOT NULL,
 	"lead_time_days" integer,
@@ -371,6 +392,7 @@ CREATE TABLE "supplier_trade_term" (
 	"shrink_sharing_percent" numeric(5, 2)
 );
 --> statement-breakpoint
+ALTER TABLE "supplier_trade_term" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "approval_comment" ADD CONSTRAINT "approval_comment_approval_request_uid_approval_request_uid_fk" FOREIGN KEY ("approval_request_uid") REFERENCES "public"."approval_request"("uid") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "approval_comment" ADD CONSTRAINT "approval_comment_approval_step_uid_approval_step_uid_fk" FOREIGN KEY ("approval_step_uid") REFERENCES "public"."approval_step"("uid") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "approval_comment" ADD CONSTRAINT "approval_comment_comment_by_user_uid_app_user_uid_fk" FOREIGN KEY ("comment_by_user_uid") REFERENCES "public"."app_user"("uid") ON DELETE set null ON UPDATE no action;--> statement-breakpoint

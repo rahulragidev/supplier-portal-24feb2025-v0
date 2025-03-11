@@ -124,7 +124,6 @@ export const appUser = pgTable("app_user", {
 export const organization = pgTable("organization", {
   uid: uuid("uid").primaryKey().notNull(),
   name: varchar("name", { length: 200 }).notNull().unique(),
-  licenseKey: uuid("license_key").notNull().unique(),
   maxUserCount: integer("max_user_count").notNull(),
   extraData: jsonb("extra_data"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -6,7 +6,9 @@ import {
   supplierFinancialTerm, 
   supplierTradeTerm, 
   supplierSupportTerm,
-  supplierTermNote
+  supplierTermNote,
+  supplierSite,
+  appUser
 } from "@workspace/database/schema";
 import { 
   NewSupplierSiteTermSchema,
@@ -85,6 +87,21 @@ export const termController = {
     try {
       const data = await c.req.json();
       const validated = ClientSupplierSiteTermSchema.parse(data);
+      
+      // Check if supplier site exists
+      const existingSite = await db
+        .select()
+        .from(supplierSite)
+        .where(and(
+          eq(supplierSite.userUid, validated.supplierSiteUserUid),
+          isNull(supplierSite.deletedAt)
+        ));
+      
+      if (existingSite.length === 0) {
+        return c.json({ 
+          error: "Supplier site does not exist" 
+        }, 400);
+      }
       
       // Prepare the data for the database
       const newTerm = NewSupplierSiteTermSchema.parse({
@@ -457,6 +474,33 @@ export const termController = {
     try {
       const data = await c.req.json();
       
+      // Check if term exists
+      const existingTerm = await db
+        .select()
+        .from(supplierSiteTerm)
+        .where(and(
+          eq(supplierSiteTerm.uid, data.termUid),
+          isNull(supplierSiteTerm.deletedAt)
+        ));
+      
+      if (existingTerm.length === 0) {
+        return c.json({ 
+          error: "Term does not exist" 
+        }, 400);
+      }
+
+      // Check if user exists
+      const existingUser = await db
+        .select()
+        .from(appUser)
+        .where(eq(appUser.uid, data.createdBy));
+      
+      if (existingUser.length === 0) {
+        return c.json({ 
+          error: "User does not exist" 
+        }, 400);
+      }
+      
       // Prepare the data for the database
       const newNote = NewSupplierTermNoteSchema.parse({
         uid: data.uid || generateUUID(),
@@ -465,7 +509,7 @@ export const termController = {
         createdBy: data.createdBy,
         createdAt: formatDate(),
         updatedAt: formatDate(),
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy
       });
       
       const inserted = await db.insert(supplierTermNote).values(newNote).returning();

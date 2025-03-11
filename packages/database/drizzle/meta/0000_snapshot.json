@@ -1,5 +1,5 @@
 {
-  "id": "43dc5842-5772-4e47-9da8-d62f8c396aee",
+  "id": "9192324e-8e09-41f3-a0a0-043f68719c30",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -172,7 +172,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.app_user": {
       "name": "app_user",
@@ -294,7 +294,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_comment": {
       "name": "approval_comment",
@@ -451,7 +451,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_log": {
       "name": "approval_log",
@@ -665,7 +665,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_process": {
       "name": "approval_process",
@@ -800,7 +800,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_request": {
       "name": "approval_request",
@@ -1074,7 +1074,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_responsibility": {
       "name": "approval_responsibility",
@@ -1341,7 +1341,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.approval_step": {
       "name": "approval_step",
@@ -1476,7 +1476,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.document_verification": {
       "name": "document_verification",
@@ -1668,7 +1668,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.employee": {
       "name": "employee",
@@ -1877,7 +1877,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.employee_org_unit_role": {
       "name": "employee_org_unit_role",
@@ -2047,7 +2047,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.org_unit": {
       "name": "org_unit",
@@ -2252,7 +2252,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.organization": {
       "name": "organization",
@@ -2267,12 +2267,6 @@
         "name": {
           "name": "name",
           "type": "varchar(200)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "license_key": {
-          "name": "license_key",
-          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -2362,18 +2356,11 @@
           "columns": [
             "name"
           ]
-        },
-        "organization_license_key_unique": {
-          "name": "organization_license_key_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "license_key"
-          ]
         }
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.role": {
       "name": "role",
@@ -2535,7 +2522,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.store": {
       "name": "store",
@@ -2731,7 +2718,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier": {
       "name": "supplier",
@@ -3078,7 +3065,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_financial_term": {
       "name": "supplier_financial_term",
@@ -3159,7 +3146,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_invitation": {
       "name": "supplier_invitation",
@@ -3323,7 +3310,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_site": {
       "name": "supplier_site",
@@ -3570,7 +3557,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_site_document": {
       "name": "supplier_site_document",
@@ -3731,7 +3718,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_site_term": {
       "name": "supplier_site_term",
@@ -3918,7 +3905,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_support_term": {
       "name": "supplier_support_term",
@@ -4065,7 +4052,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_term_note": {
       "name": "supplier_term_note",
@@ -4201,7 +4188,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.supplier_trade_term": {
       "name": "supplier_trade_term",
@@ -4271,7 +4258,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     }
   },
   "enums": {

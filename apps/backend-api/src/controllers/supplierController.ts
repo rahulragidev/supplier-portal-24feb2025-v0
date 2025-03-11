@@ -1,13 +1,14 @@
 import type { Context } from "hono";
 import { z } from "zod";
 import { db } from "../../../../packages/database/database.js";
-import { supplier, supplierSite, supplierInvitation } from "@workspace/database/schema";
+import { supplier, supplierSite, supplierInvitation, appUser, address } from "@workspace/database/schema";
 import { 
   NewSupplierSchema, 
   ClientSupplierSchema,
   NewSupplierInvitationSchema,
   NewSupplierSiteSchema,
-  ClientSupplierSiteSchema
+  ClientSupplierSiteSchema,
+  NewAddressSchema
 } from "@workspace/database/zod-schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
@@ -74,10 +75,57 @@ export const supplierController = {
       const data = await c.req.json();
       const validated = ClientSupplierSchema.parse(data);
       
+      // Generate a UUID if not provided
+      const userUid = data.userUid || generateUUID();
+      
+      // Check if user exists in app_user table
+      const existingUser = await db
+        .select()
+        .from(appUser)
+        .where(eq(appUser.uid, userUid));
+      
+      // If user doesn't exist, create one first
+      if (existingUser.length === 0) {
+        // Create basic app_user first to satisfy foreign key constraint
+        await db.insert(appUser).values({
+          uid: userUid,
+          clerkId: data.clerkId || generateUUID(), // Generate if not provided
+          userName: `${validated.contactEmail || validated.name}`, // Use contact email or name as username
+          userType: "SUPPLIER", // Since we're creating a supplier
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+      }
+
+      // Create address first
+      const addressUid = data.addressUid || generateUUID();
+      const newAddress = NewAddressSchema.parse({
+        uid: addressUid,
+        line1: data.address.line1,
+        line2: data.address.line2,
+        line3: data.address.line3,
+        line4: data.address.line4,
+        city: data.address.city,
+        state: data.address.state,
+        country: data.address.country,
+        pincode: data.address.pincode,
+        addressType: data.address.addressType || "REGISTERED",
+        extraData: data.address.extraData,
+        createdAt: formatDate(),
+        updatedAt: formatDate(),
+        createdBy: data.createdBy || null,
+        lastUpdatedBy: data.createdBy || null
+      });
+      
+      await db.insert(address).values(newAddress);
+      
       // Prepare the data for the database
       const newSupplier = NewSupplierSchema.parse({
         ...validated,
-        userUid: data.userUid || generateUUID(),
+        userUid: userUid,
+        addressUid: addressUid,
         status: data.status || "DRAFT", // Default status
         revisionNumber: 1,
         createdAt: formatDate(),
@@ -104,7 +152,10 @@ export const supplierController = {
       
       // Get the current supplier to increment revision number
       const currentSupplier = await db
-        .select()
+        .select({
+          revisionNumber: supplier.revisionNumber,
+          addressUid: supplier.addressUid
+        })
         .from(supplier)
         .where(and(
           eq(supplier.userUid, userUid),
@@ -118,11 +169,38 @@ export const supplierController = {
       // Increment revision number
       const revisionNumber = currentSupplier[0]?.revisionNumber ? currentSupplier[0].revisionNumber + 1 : 1;
       
-      // Update with the validated data
+      // If address is being updated, update it first
+      if (data.address) {
+        if (!currentSupplier[0]?.addressUid) {
+          return c.json({ error: "Supplier address not found" }, 404);
+        }
+        
+        // Update the address
+        await db
+          .update(address)
+          .set({
+            line1: data.address.line1,
+            line2: data.address.line2,
+            line3: data.address.line3,
+            line4: data.address.line4,
+            city: data.address.city,
+            state: data.address.state,
+            country: data.address.country,
+            pincode: data.address.pincode,
+            addressType: data.address.addressType || "REGISTERED",
+            extraData: data.address.extraData,
+            updatedAt: formatDate(),
+            lastUpdatedBy: data.lastUpdatedBy || null
+          })
+          .where(eq(address.uid, currentSupplier[0].addressUid));
+      }
+      
+      // Update supplier with the validated data
+      const { address: _, ...supplierData } = validated; // Remove address from supplier update
       const updated = await db
         .update(supplier)
         .set({
-          ...validated,
+          ...supplierData,
           revisionNumber,
           updatedAt: formatDate(),
           lastUpdatedBy: data.lastUpdatedBy || null
@@ -177,13 +255,12 @@ export const supplierController = {
   async deleteSupplier(c: Context) {
     try {
       const userUid = c.req.param("userUid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(supplier)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(supplier.userUid, userUid),
@@ -360,10 +437,57 @@ export const supplierController = {
       const data = await c.req.json();
       const validated = ClientSupplierSiteSchema.parse(data);
       
+      // Generate a UUID if not provided
+      const userUid = data.userUid || generateUUID();
+      
+      // Check if user exists in app_user table
+      const existingUser = await db
+        .select()
+        .from(appUser)
+        .where(eq(appUser.uid, userUid));
+      
+      // If user doesn't exist, create one first
+      if (existingUser.length === 0) {
+        // Create basic app_user first to satisfy foreign key constraint
+        await db.insert(appUser).values({
+          uid: userUid,
+          clerkId: data.clerkId || generateUUID(), // Generate if not provided
+          userName: `${validated.siteName}`, // Use site name as username
+          userType: "SUPPLIER_SITE", // Since we're creating a supplier site
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+      }
+
+      // Create address first
+      const addressUid = data.addressUid || generateUUID();
+      const newAddress = NewAddressSchema.parse({
+        uid: addressUid,
+        line1: data.address.line1,
+        line2: data.address.line2,
+        line3: data.address.line3,
+        line4: data.address.line4,
+        city: data.address.city,
+        state: data.address.state,
+        country: data.address.country,
+        pincode: data.address.pincode,
+        addressType: data.address.addressType || "OPERATIONAL",
+        extraData: data.address.extraData,
+        createdAt: formatDate(),
+        updatedAt: formatDate(),
+        createdBy: data.createdBy || null,
+        lastUpdatedBy: data.createdBy || null
+      });
+      
+      await db.insert(address).values(newAddress);
+      
       // Prepare the data for the database
       const newSite = NewSupplierSiteSchema.parse({
         ...validated,
-        userUid: data.userUid || generateUUID(),
+        userUid: userUid,
+        addressUid: addressUid,
         status: data.status || "PENDING", // Default status
         createdAt: formatDate(),
         updatedAt: formatDate(),
@@ -387,11 +511,49 @@ export const supplierController = {
       // Validate the input with client schema
       const validated = ClientSupplierSiteSchema.partial().parse(data);
       
-      // Update with the validated data
+      // If address is being updated, update it first
+      if (data.address) {
+        // Get the current addressUid
+        const currentSite = await db
+          .select({
+            addressUid: supplierSite.addressUid
+          })
+          .from(supplierSite)
+          .where(and(
+            eq(supplierSite.userUid, userUid),
+            isNull(supplierSite.deletedAt)
+          ));
+          
+        if (currentSite.length === 0 || !currentSite[0]?.addressUid) {
+          return c.json({ error: "Supplier site or address not found" }, 404);
+        }
+        
+        // Update the address
+        await db
+          .update(address)
+          .set({
+            line1: data.address.line1,
+            line2: data.address.line2,
+            line3: data.address.line3,
+            line4: data.address.line4,
+            city: data.address.city,
+            state: data.address.state,
+            country: data.address.country,
+            pincode: data.address.pincode,
+            addressType: data.address.addressType || "OPERATIONAL",
+            extraData: data.address.extraData,
+            updatedAt: formatDate(),
+            lastUpdatedBy: data.lastUpdatedBy || null
+          })
+          .where(eq(address.uid, currentSite[0].addressUid));
+      }
+      
+      // Update supplier site with the validated data
+      const { address: _, ...siteData } = validated; // Remove address from site update
       const updated = await db
         .update(supplierSite)
         .set({
-          ...validated,
+          ...siteData,
           updatedAt: formatDate(),
           lastUpdatedBy: data.lastUpdatedBy || null
         })
@@ -449,13 +611,12 @@ export const supplierController = {
   async deleteSite(c: Context) {
     try {
       const userUid = c.req.param("userUid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(supplierSite)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(supplierSite.userUid, userUid),

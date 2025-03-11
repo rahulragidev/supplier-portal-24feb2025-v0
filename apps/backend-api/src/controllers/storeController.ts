@@ -1,8 +1,12 @@
 import type { Context } from "hono";
 import { z } from "zod";
 import { db } from "../../../../packages/database/database.js";
-import { store } from "@workspace/database/schema";
-import { NewStoreSchema } from "@workspace/database/zod-schema";
+import { store, address } from "@workspace/database/schema";
+import { 
+  NewStoreSchema, 
+  ClientStoreSchema,
+  NewAddressSchema 
+} from "@workspace/database/zod-schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
@@ -66,15 +70,38 @@ export const storeController = {
   async createStore(c: Context) {
     try {
       const data = await c.req.json();
+      const validated = ClientStoreSchema.parse(data);
+      
+      // Create address first
+      const addressUid = data.addressUid || generateUUID();
+      const newAddress = NewAddressSchema.parse({
+        uid: addressUid,
+        line1: data.address.line1,
+        line2: data.address.line2,
+        line3: data.address.line3,
+        line4: data.address.line4,
+        city: data.address.city,
+        state: data.address.state,
+        country: data.address.country,
+        pincode: data.address.pincode,
+        addressType: data.address.addressType || "OPERATIONAL",
+        extraData: data.address.extraData,
+        createdAt: formatDate(),
+        updatedAt: formatDate(),
+        createdBy: data.createdBy || null,
+        lastUpdatedBy: data.createdBy || null
+      });
+      
+      await db.insert(address).values(newAddress);
       
       // Prepare the data for the database
       const newStore = NewStoreSchema.parse({
         uid: data.uid || generateUUID(),
-        organizationUid: data.organizationUid,
-        name: data.name,
-        storeCode: data.storeCode,
-        addressUid: data.addressUid,
-        extraData: data.extraData || {},
+        organizationUid: validated.organizationUid,
+        name: validated.name,
+        storeCode: validated.storeCode,
+        addressUid: addressUid,
+        extraData: validated.extraData || {},
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
@@ -125,13 +152,12 @@ export const storeController = {
   async deleteStore(c: Context) {
     try {
       const uid = c.req.param("uid");
-      const data = await c.req.json();
       
       const updated = await db
         .update(store)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: null
         })
         .where(and(
           eq(store.uid, uid),

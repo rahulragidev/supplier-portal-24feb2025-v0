@@ -154,7 +154,6 @@ export const UserListSchema = z.array(UserSchema).openapi('UserList');
 export const OrganizationSchema = z.object({
   uid: z.string().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
   name: z.string().openapi({ example: 'ACME Corporation' }),
-  licenseKey: z.string().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
   maxUserCount: z.number().int().openapi({ example: 100 }),
   extraData: z.any().optional().openapi({ example: { industry: 'Technology' } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
@@ -165,7 +164,6 @@ export const OrganizationSchema = z.object({
 }).openapi('Organization');
 
 export const CreateOrganizationSchema = ClientOrganizationSchema.extend({
-  licenseKey: z.string().optional().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
 }).openapi('CreateOrganization');
 
 export const OrganizationListSchema = z.array(OrganizationSchema).openapi('OrganizationList');
