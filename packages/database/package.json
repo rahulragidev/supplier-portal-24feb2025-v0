@@ -6,7 +6,9 @@
   "exports": {
     "./types": "./types.ts",
     "./schema": "./schema.ts",
-    "./zod-schema": "./zod-schema.ts"
+    "./zod-schema": "./zod-schema.ts",
+    "./abac": "./abac.ts",
+    "./database": "./database.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

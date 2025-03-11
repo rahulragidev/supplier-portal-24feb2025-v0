@@ -7,7 +7,7 @@
 
 import { z } from "zod";
 import * as zodSchema from "./zod-schema.js";
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import * as schema from "./schema.js";
 
 // ===================
