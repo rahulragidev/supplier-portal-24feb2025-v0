@@ -96,6 +96,35 @@ openAPIApp.openapi(routes.createApprovalProcessRoute, proxyToApp);
 openAPIApp.openapi(routes.updateApprovalProcessRoute, proxyToApp);
 openAPIApp.openapi(routes.deleteApprovalProcessRoute, proxyToApp);
 
+// Register approval step routes
+openAPIApp.openapi(routes.getStepsByProcessRoute, proxyToApp);
+openAPIApp.openapi(routes.getStepByIdRoute, proxyToApp);
+openAPIApp.openapi(routes.createStepRoute, proxyToApp);
+openAPIApp.openapi(routes.updateStepRoute, proxyToApp);
+openAPIApp.openapi(routes.deleteStepRoute, proxyToApp);
+
+// Register approval responsibility routes
+openAPIApp.openapi(routes.getResponsibilitiesByStepRoute, proxyToApp);
+openAPIApp.openapi(routes.createResponsibilityRoute, proxyToApp);
+openAPIApp.openapi(routes.updateResponsibilityRoute, proxyToApp);
+openAPIApp.openapi(routes.deleteResponsibilityRoute, proxyToApp);
+
+// Register approval request routes
+openAPIApp.openapi(routes.getApprovalRequestsRoute, proxyToApp);
+openAPIApp.openapi(routes.getApprovalRequestByIdRoute, proxyToApp);
+openAPIApp.openapi(routes.getRequestsBySupplierRoute, proxyToApp);
+openAPIApp.openapi(routes.createApprovalRequestRoute, proxyToApp);
+openAPIApp.openapi(routes.updateRequestStatusRoute, proxyToApp);
+openAPIApp.openapi(routes.updateRequestStepRoute, proxyToApp);
+
+// Register approval log routes
+openAPIApp.openapi(routes.getLogsByRequestRoute, proxyToApp);
+openAPIApp.openapi(routes.createLogRoute, proxyToApp);
+
+// Register approval comment routes
+openAPIApp.openapi(routes.getCommentsByRequestRoute, proxyToApp);
+openAPIApp.openapi(routes.createCommentRoute, proxyToApp);
+
 // Register document routes
 openAPIApp.openapi(routes.getDocumentsRoute, proxyToApp);
 openAPIApp.openapi(routes.getDocumentByIdRoute, proxyToApp);
