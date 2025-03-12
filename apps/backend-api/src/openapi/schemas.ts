@@ -267,7 +267,22 @@ export const CreateSupplierSchema = z.object({
     example: 'ACTIVE',
     description: 'Status of the supplier'
   }),
-  extraData: z.any().optional().openapi({ example: { rating: 4.5, preferredPaymentTerms: 'NET30' } })
+  extraData: z.any().optional().openapi({ example: { rating: 4.5, preferredPaymentTerms: 'NET30' } }),
+  address: z.object({
+    line1: z.string().openapi({ example: '123 Main Street' }),
+    line2: z.string().optional().openapi({ example: undefined }),
+    line3: z.string().optional().openapi({ example: undefined }),
+    line4: z.string().optional().openapi({ example: undefined }),
+    city: z.string().openapi({ example: 'New York' }),
+    state: z.string().openapi({ example: 'NY' }),
+    country: z.string().openapi({ example: 'USA' }),
+    pincode: z.string().openapi({ example: '10001' }),
+    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
+      example: 'OPERATIONAL',
+      description: 'Type of address'
+    }),
+    extraData: z.any().optional().openapi({ example: undefined })
+  }).openapi({ description: 'Address details for the supplier' })
 }).openapi('CreateSupplier');
 
 export const SupplierListSchema = z.array(SupplierSchema).openapi('SupplierList');
@@ -296,7 +311,37 @@ export const SupplierSiteSchema = z.object({
   lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('SupplierSite');
 
-export const CreateSupplierSiteSchema = ClientSupplierSiteSchema.openapi('CreateSupplierSite');
+export const CreateSupplierSiteSchema = z.object({
+  supplierUid: UuidSchema.openapi({ example: Examples.uuid }),
+  siteName: ClientSupplierSiteSchema.shape.siteName.openapi({ example: 'Main Office' }),
+  siteCode: ClientSupplierSiteSchema.shape.siteCode.openapi({ example: 'SITE001' }),
+  classification: ClientSupplierSiteSchema.shape.classification.openapi({ example: 'Manufacturing' }),
+  businessType: ClientSupplierSiteSchema.shape.businessType.openapi({ example: 'Production' }),
+  gstNumber: ClientSupplierSiteSchema.shape.gstNumber.openapi({ example: '29ABCDE1234F1Z5' }),
+  fssaiNumber: ClientSupplierSiteSchema.shape.fssaiNumber.openapi({ example: '12345678901234' }),
+  msmeNumber: ClientSupplierSiteSchema.shape.msmeNumber.openapi({ example: 'MSME123456' }),
+  status: ClientSupplierSiteSchema.shape.status.openapi({
+    example: 'VERIFIED',
+    description: 'Status of the supplier site'
+  }),
+  isActive: ClientSupplierSiteSchema.shape.isActive.openapi({ example: true }),
+  extraData: z.any().optional().openapi({ example: { isPrimary: true } }),
+  address: z.object({
+    line1: z.string().openapi({ example: '123 Main Street' }),
+    line2: z.string().optional().openapi({ example: undefined }),
+    line3: z.string().optional().openapi({ example: undefined }),
+    line4: z.string().optional().openapi({ example: undefined }),
+    city: z.string().openapi({ example: 'New York' }),
+    state: z.string().openapi({ example: 'NY' }),
+    country: z.string().openapi({ example: 'USA' }),
+    pincode: z.string().openapi({ example: '10001' }),
+    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
+      example: 'OPERATIONAL',
+      description: 'Type of address'
+    }),
+    extraData: z.any().optional().openapi({ example: undefined })
+  }).openapi({ description: 'Address details for the supplier site' })
+}).openapi('CreateSupplierSite');
 
 export const SupplierSiteListSchema = z.array(SupplierSiteSchema).openapi('SupplierSiteList');
 
@@ -369,7 +414,7 @@ export const StoreSchema = z.object({
   uid: UuidSchema.openapi({ example: Examples.uuid }),
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Downtown Store' }),
-  code: z.string().min(1).max(50).openapi({ example: 'STORE001' }),
+  storeCode: z.string().min(1).max(50).openapi({ example: 'STORE001' }),
   addressUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
   extraData: z.any().optional().openapi({ example: { size: 'LARGE' } }),
   createdAt: z.string().datetime().openapi({ example: Examples.datetime }),
@@ -382,9 +427,23 @@ export const StoreSchema = z.object({
 export const CreateStoreSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Downtown Store' }),
-  code: z.string().min(1).max(50).openapi({ example: 'STORE001' }),
-  addressUid: UuidSchema.optional().openapi({ example: Examples.uuid }),
-  extraData: z.any().optional().openapi({ example: { size: 'LARGE' } })
+  storeCode: z.string().min(1).max(50).openapi({ example: 'STORE001' }),
+  extraData: z.any().optional().openapi({ example: { size: 'LARGE' } }),
+  address: z.object({
+    line1: z.string().openapi({ example: '123 Main Street' }),
+    line2: z.string().optional().openapi({ example: undefined }),
+    line3: z.string().optional().openapi({ example: undefined }),
+    line4: z.string().optional().openapi({ example: undefined }),
+    city: z.string().openapi({ example: 'New York' }),
+    state: z.string().openapi({ example: 'NY' }),
+    country: z.string().openapi({ example: 'USA' }),
+    pincode: z.string().openapi({ example: '10001' }),
+    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
+      example: 'OPERATIONAL',
+      description: 'Type of address'
+    }),
+    extraData: z.any().optional().openapi({ example: undefined })
+  }).openapi({ description: 'Address details for the store' })
 }).openapi('CreateStore');
 
 export const StoreListSchema = z.array(StoreSchema).openapi('StoreList');
