@@ -971,6 +971,11 @@ export const approvalCommentRelations = relations(approvalComment, ({ one }) => 
     relationName: "stepToComments",
     fields: [approvalComment.approvalStepUid],
     references: [approvalStep.uid]
+  }),
+  user: one(appUser, {
+    relationName: "userToComments",
+    fields: [approvalComment.commentByUserUid],
+    references: [appUser.uid]
   })
 }));
 
