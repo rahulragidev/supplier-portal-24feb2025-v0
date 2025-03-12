@@ -10,6 +10,7 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
+import { sql } from "drizzle-orm";
 
 export const storeController = {
   // Get all stores (non-deleted)
@@ -72,44 +73,49 @@ export const storeController = {
       const data = await c.req.json();
       const validated = ClientStoreSchema.parse(data);
       
-      // Create address first
-      const addressUid = data.addressUid || generateUUID();
-      const newAddress = NewAddressSchema.parse({
-        uid: addressUid,
-        line1: data.address.line1,
-        line2: data.address.line2,
-        line3: data.address.line3,
-        line4: data.address.line4,
-        city: data.address.city,
-        state: data.address.state,
-        country: data.address.country,
-        pincode: data.address.pincode,
-        addressType: data.address.addressType || "OPERATIONAL",
-        extraData: data.address.extraData,
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+      // Use transaction to ensure atomic operation
+      const inserted = await db.transaction(async (tx) => {
+        // Create address first
+        const addressUid = data.addressUid || generateUUID();
+        const newAddress = NewAddressSchema.parse({
+          uid: addressUid,
+          line1: data.address.line1,
+          line2: data.address.line2,
+          line3: data.address.line3,
+          line4: data.address.line4,
+          city: data.address.city,
+          state: data.address.state,
+          country: data.address.country,
+          pincode: data.address.pincode,
+          addressType: data.address.addressType || "OPERATIONAL",
+          extraData: data.address.extraData,
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+        
+        await tx.insert(address).values(newAddress);
+        
+        // Prepare the data for the database
+        const newStore = NewStoreSchema.parse({
+          uid: data.uid || generateUUID(),
+          organizationUid: validated.organizationUid,
+          name: validated.name,
+          storeCode: validated.storeCode,
+          addressUid: addressUid,
+          extraData: validated.extraData || {},
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+        
+        const inserted = await tx.insert(store).values(newStore).returning();
+        return inserted[0];
       });
-      
-      await db.insert(address).values(newAddress);
-      
-      // Prepare the data for the database
-      const newStore = NewStoreSchema.parse({
-        uid: data.uid || generateUUID(),
-        organizationUid: validated.organizationUid,
-        name: validated.name,
-        storeCode: validated.storeCode,
-        addressUid: addressUid,
-        extraData: validated.extraData || {},
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
-      });
-      
-      const inserted = await db.insert(store).values(newStore).returning();
-      return c.json(inserted[0], 201);
+
+      return c.json(inserted, 201);
     } catch (error) {
       return handleError(c, error);
     }

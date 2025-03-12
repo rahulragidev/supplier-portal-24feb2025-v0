@@ -10,6 +10,7 @@ import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
 import { appUser } from "@workspace/database/schema";
+import { sql } from "drizzle-orm";
 
 export const employeeController = {
   // Get all employees (non-deleted)
@@ -74,40 +75,46 @@ export const employeeController = {
       
       // Generate a UUID if not provided
       const userUid = data.userUid || generateUUID();
-      
-      // Check if user exists in app_user table
-      const existingUser = await db
-        .select()
-        .from(appUser)
-        .where(eq(appUser.uid, userUid));
-      
-      // If user doesn't exist, create one first
-      if (existingUser.length === 0) {
-        // Create basic app_user first to satisfy foreign key constraint
-        await db.insert(appUser).values({
-          uid: userUid,
-          clerkId: data.clerkId || generateUUID(), // Generate if not provided
-          userName: `${validated.email}`, // Use email as username for now
-          userType: "EMPLOYEE", // Since we're creating an employee
+
+      // Use transaction to ensure atomic operation
+      const inserted = await db.transaction(async (tx) => {
+        // Check if user exists in app_user table
+        const existingUser = await tx
+          .select()
+          .from(appUser)
+          .where(eq(appUser.uid, userUid));
+        
+        // If user doesn't exist, create one first
+        if (existingUser.length === 0) {
+          // Create basic app_user first to satisfy foreign key constraint
+          await tx.insert(appUser).values({
+            uid: userUid,
+            clerkId: data.clerkId || generateUUID(), // Generate if not provided
+            userName: `${validated.email}`, // Use email as username for now
+            userType: "EMPLOYEE", // Since we're creating an employee
+            createdAt: formatDate(),
+            updatedAt: formatDate(),
+            createdBy: data.createdBy || null,
+            lastUpdatedBy: data.createdBy || null
+          });
+        }
+        
+        // Prepare the data for the database with the same userUid
+        const newEmployee = NewEmployeeSchema.parse({
+          ...validated,
+          userUid: userUid,
           createdAt: formatDate(),
           updatedAt: formatDate(),
           createdBy: data.createdBy || null,
           lastUpdatedBy: data.createdBy || null
         });
-      }
-      
-      // Prepare the data for the database with the same userUid
-      const newEmployee = NewEmployeeSchema.parse({
-        ...validated,
-        userUid: userUid,
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        
+        // Insert employee record
+        const inserted = await tx.insert(employee).values(newEmployee).returning();
+        return inserted[0];
       });
-      
-      const inserted = await db.insert(employee).values(newEmployee).returning();
-      return c.json(inserted[0], 201);
+
+      return c.json(inserted, 201);
     } catch (error) {
       return handleError(c, error);
     }

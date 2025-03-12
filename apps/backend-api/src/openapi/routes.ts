@@ -725,12 +725,12 @@ export const getAllSitesRoute = createRoute({
 
 export const getSitesBySupplierRoute = createRoute({
   method: 'get',
-  path: '/suppliers/{supplierUid}/sites',
+  path: '/suppliers/{supplierUserUid}/sites',
   tags: ['Suppliers'],
   summary: 'Get sites by supplier',
   description: 'Retrieve all sites for a specific supplier',
   request: {
-    params: schemas.SupplierUidParam,
+    params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {
@@ -2166,12 +2166,12 @@ export const getApprovalRequestByIdRoute = createRoute({
 
 export const getRequestsBySupplierRoute = createRoute({
   method: 'get',
-  path: '/approval-processes/requests/supplier/{supplierUid}',
+  path: '/approval-processes/requests/supplier/{supplierUserUid}',
   tags: ['Approvals'],
   summary: 'Get requests by supplier',
   description: 'Retrieve all approval requests for a specific supplier',
   request: {
-    params: schemas.SupplierUidParam,
+    params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {
@@ -2706,7 +2706,7 @@ export const getSupplierTermsBySupplierRoute = createRoute({
   summary: 'Get supplier terms by supplier',
   description: 'Retrieve all terms for a specific supplier',
   request: {
-    params: schemas.SupplierUidParam,
+    params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {

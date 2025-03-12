@@ -13,6 +13,7 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
+import { sql } from "drizzle-orm";
 
 export const supplierController = {
   // Get all suppliers (non-deleted)
@@ -78,64 +79,69 @@ export const supplierController = {
       // Generate a UUID if not provided
       const userUid = data.userUid || generateUUID();
       
-      // Check if user exists in app_user table
-      const existingUser = await db
-        .select()
-        .from(appUser)
-        .where(eq(appUser.uid, userUid));
-      
-      // If user doesn't exist, create one first
-      if (existingUser.length === 0) {
-        // Create basic app_user first to satisfy foreign key constraint
-        await db.insert(appUser).values({
-          uid: userUid,
-          clerkId: data.clerkId || generateUUID(), // Generate if not provided
-          userName: `${validated.contactEmail || validated.name}`, // Use contact email or name as username
-          userType: "SUPPLIER", // Since we're creating a supplier
+      // Use transaction to ensure atomic operation
+      const inserted = await db.transaction(async (tx) => {
+        // Check if user exists in app_user table
+        const existingUser = await tx
+          .select()
+          .from(appUser)
+          .where(eq(appUser.uid, userUid));
+        
+        // If user doesn't exist, create one first
+        if (existingUser.length === 0) {
+          // Create basic app_user first to satisfy foreign key constraint
+          await tx.insert(appUser).values({
+            uid: userUid,
+            clerkId: data.clerkId || generateUUID(), // Generate if not provided
+            userName: `${validated.contactEmail || validated.name}`, // Use contact email or name as username
+            userType: "SUPPLIER", // Since we're creating a supplier
+            createdAt: formatDate(),
+            updatedAt: formatDate(),
+            createdBy: data.createdBy || null,
+            lastUpdatedBy: data.createdBy || null
+          });
+        }
+
+        // Create address first
+        const addressUid = data.addressUid || generateUUID();
+        const newAddress = NewAddressSchema.parse({
+          uid: addressUid,
+          line1: data.address.line1,
+          line2: data.address.line2,
+          line3: data.address.line3,
+          line4: data.address.line4,
+          city: data.address.city,
+          state: data.address.state,
+          country: data.address.country,
+          pincode: data.address.pincode,
+          addressType: data.address.addressType || "REGISTERED",
+          extraData: data.address.extraData,
           createdAt: formatDate(),
           updatedAt: formatDate(),
           createdBy: data.createdBy || null,
           lastUpdatedBy: data.createdBy || null
         });
-      }
+        
+        await tx.insert(address).values(newAddress);
+        
+        // Prepare the data for the database
+        const newSupplier = NewSupplierSchema.parse({
+          ...validated,
+          userUid: userUid,
+          addressUid: addressUid,
+          status: data.status || "DRAFT", // Default status
+          revisionNumber: 1,
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+        
+        const inserted = await tx.insert(supplier).values(newSupplier).returning();
+        return inserted[0];
+      });
 
-      // Create address first
-      const addressUid = data.addressUid || generateUUID();
-      const newAddress = NewAddressSchema.parse({
-        uid: addressUid,
-        line1: data.address.line1,
-        line2: data.address.line2,
-        line3: data.address.line3,
-        line4: data.address.line4,
-        city: data.address.city,
-        state: data.address.state,
-        country: data.address.country,
-        pincode: data.address.pincode,
-        addressType: data.address.addressType || "REGISTERED",
-        extraData: data.address.extraData,
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
-      });
-      
-      await db.insert(address).values(newAddress);
-      
-      // Prepare the data for the database
-      const newSupplier = NewSupplierSchema.parse({
-        ...validated,
-        userUid: userUid,
-        addressUid: addressUid,
-        status: data.status || "DRAFT", // Default status
-        revisionNumber: 1,
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
-      });
-      
-      const inserted = await db.insert(supplier).values(newSupplier).returning();
-      return c.json(inserted[0], 201);
+      return c.json(inserted, 201);
     } catch (error) {
       return handleError(c, error);
     }
@@ -440,63 +446,68 @@ export const supplierController = {
       // Generate a UUID if not provided
       const userUid = data.userUid || generateUUID();
       
-      // Check if user exists in app_user table
-      const existingUser = await db
-        .select()
-        .from(appUser)
-        .where(eq(appUser.uid, userUid));
-      
-      // If user doesn't exist, create one first
-      if (existingUser.length === 0) {
-        // Create basic app_user first to satisfy foreign key constraint
-        await db.insert(appUser).values({
-          uid: userUid,
-          clerkId: data.clerkId || generateUUID(), // Generate if not provided
-          userName: `${validated.siteName}`, // Use site name as username
-          userType: "SUPPLIER_SITE", // Since we're creating a supplier site
+      // Use transaction to ensure atomic operation
+      const inserted = await db.transaction(async (tx) => {
+        // Check if user exists in app_user table
+        const existingUser = await tx
+          .select()
+          .from(appUser)
+          .where(eq(appUser.uid, userUid));
+        
+        // If user doesn't exist, create one first
+        if (existingUser.length === 0) {
+          // Create basic app_user first to satisfy foreign key constraint
+          await tx.insert(appUser).values({
+            uid: userUid,
+            clerkId: data.clerkId || generateUUID(), // Generate if not provided
+            userName: `${validated.siteName}`, // Use site name as username
+            userType: "SUPPLIER_SITE", // Since we're creating a supplier site
+            createdAt: formatDate(),
+            updatedAt: formatDate(),
+            createdBy: data.createdBy || null,
+            lastUpdatedBy: data.createdBy || null
+          });
+        }
+
+        // Create address first
+        const addressUid = data.addressUid || generateUUID();
+        const newAddress = NewAddressSchema.parse({
+          uid: addressUid,
+          line1: data.address.line1,
+          line2: data.address.line2,
+          line3: data.address.line3,
+          line4: data.address.line4,
+          city: data.address.city,
+          state: data.address.state,
+          country: data.address.country,
+          pincode: data.address.pincode,
+          addressType: data.address.addressType || "OPERATIONAL",
+          extraData: data.address.extraData,
           createdAt: formatDate(),
           updatedAt: formatDate(),
           createdBy: data.createdBy || null,
           lastUpdatedBy: data.createdBy || null
         });
-      }
+        
+        await tx.insert(address).values(newAddress);
+        
+        // Prepare the data for the database
+        const newSite = NewSupplierSiteSchema.parse({
+          ...validated,
+          userUid: userUid,
+          addressUid: addressUid,
+          status: data.status || "PENDING", // Default status
+          createdAt: formatDate(),
+          updatedAt: formatDate(),
+          createdBy: data.createdBy || null,
+          lastUpdatedBy: data.createdBy || null
+        });
+        
+        const inserted = await tx.insert(supplierSite).values(newSite).returning();
+        return inserted[0];
+      });
 
-      // Create address first
-      const addressUid = data.addressUid || generateUUID();
-      const newAddress = NewAddressSchema.parse({
-        uid: addressUid,
-        line1: data.address.line1,
-        line2: data.address.line2,
-        line3: data.address.line3,
-        line4: data.address.line4,
-        city: data.address.city,
-        state: data.address.state,
-        country: data.address.country,
-        pincode: data.address.pincode,
-        addressType: data.address.addressType || "OPERATIONAL",
-        extraData: data.address.extraData,
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
-      });
-      
-      await db.insert(address).values(newAddress);
-      
-      // Prepare the data for the database
-      const newSite = NewSupplierSiteSchema.parse({
-        ...validated,
-        userUid: userUid,
-        addressUid: addressUid,
-        status: data.status || "PENDING", // Default status
-        createdAt: formatDate(),
-        updatedAt: formatDate(),
-        createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
-      });
-      
-      const inserted = await db.insert(supplierSite).values(newSite).returning();
-      return c.json(inserted[0], 201);
+      return c.json(inserted, 201);
     } catch (error) {
       return handleError(c, error);
     }

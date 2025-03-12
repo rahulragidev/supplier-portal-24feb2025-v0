@@ -81,7 +81,7 @@ export const TermUidParam = createPathParam('termUid', Examples.uuid);
 export const ProcessUidParam = createPathParam('processUid', Examples.uuid);
 export const StepUidParam = createPathParam('stepUid', Examples.uuid);
 export const RequestUidParam = createPathParam('requestUid', Examples.uuid);
-export const SupplierUidParam = createPathParam('supplierUid', Examples.uuid);
+export const SupplierUserUidParam = createPathParam('supplierUserUid', Examples.uuid);
 
 // Entity params for document routes
 export const EntityParams = z.object({
@@ -240,10 +240,29 @@ export const SupplierSchema = z.object({
   contactEmail: EmailSchema.openapi({ example: 'contact@acmesupplies.com' }),
   contactPhone: PhoneSchema.openapi({ example: '+1-555-123-4567' }),
   status: ClientSupplierSchema.shape.status.openapi({
-    example: 'ACTIVE',
-    description: 'Status of the supplier'
+    example: 'PENDING_APPROVAL',
+    description: 'Status of the supplier (DRAFT, PENDING_APPROVAL, ACTIVE, INACTIVE, REJECTED)'
   }),
   extraData: z.any().optional().openapi({ example: { rating: 4.5, preferredPaymentTerms: 'NET30' } }),
+  address: AddressSchema.openapi({ 
+    description: 'Address details for the supplier',
+    example: {
+      uid: Examples.uuid,
+      line1: Examples.addressLine1,
+      line2: Examples.addressLine2,
+      city: Examples.city,
+      state: Examples.state,
+      country: Examples.country,
+      pincode: Examples.pincode,
+      addressType: 'REGISTERED',
+      extraData: null,
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+      deletedAt: null,
+      createdBy: Examples.uuid,
+      lastUpdatedBy: Examples.uuid
+    }
+  }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
@@ -264,33 +283,55 @@ export const CreateSupplierSchema = z.object({
   contactEmail: EmailSchema.openapi({ example: 'contact@acmesupplies.com' }),
   contactPhone: PhoneSchema.openapi({ example: '+1-555-123-4567' }),
   status: ClientSupplierSchema.shape.status.openapi({
-    example: 'ACTIVE',
-    description: 'Status of the supplier'
+    example: 'PENDING_APPROVAL',
+    description: 'Status of the supplier (DRAFT, PENDING_APPROVAL, ACTIVE, INACTIVE, REJECTED)'
   }),
   extraData: z.any().optional().openapi({ example: { rating: 4.5, preferredPaymentTerms: 'NET30' } }),
   address: z.object({
-    line1: z.string().openapi({ example: '123 Main Street' }),
-    line2: z.string().optional().openapi({ example: undefined }),
+    line1: z.string().openapi({ example: Examples.addressLine1 }),
+    line2: z.string().optional().openapi({ example: Examples.addressLine2 }),
     line3: z.string().optional().openapi({ example: undefined }),
     line4: z.string().optional().openapi({ example: undefined }),
-    city: z.string().openapi({ example: 'New York' }),
-    state: z.string().openapi({ example: 'NY' }),
-    country: z.string().openapi({ example: 'USA' }),
-    pincode: z.string().openapi({ example: '10001' }),
-    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
-      example: 'OPERATIONAL',
+    city: z.string().openapi({ example: Examples.city }),
+    state: z.string().openapi({ example: Examples.state }),
+    country: z.string().openapi({ example: Examples.country }),
+    pincode: z.string().openapi({ example: Examples.pincode }),
+    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).openapi({
+      example: 'REGISTERED',
       description: 'Type of address'
     }),
     extraData: z.any().optional().openapi({ example: undefined })
   }).openapi({ description: 'Address details for the supplier' })
-}).openapi('CreateSupplier');
+}).openapi('CreateSupplier', {
+  example: {
+    organizationUid: Examples.uuid,
+    name: 'Acme Supplies Inc.',
+    pan: 'ABCDE1234F',
+    constitutionOfBusiness: 'Private Limited',
+    tradeType: 'GOODS',
+    contactName: 'John Smith',
+    contactEmail: 'contact@acmesupplies.com',
+    contactPhone: '+1-555-123-4567',
+    status: 'PENDING_APPROVAL',
+    extraData: { rating: 4.5, preferredPaymentTerms: 'NET30' },
+    address: {
+      line1: Examples.addressLine1,
+      line2: Examples.addressLine2,
+      city: Examples.city,
+      state: Examples.state,
+      country: Examples.country,
+      pincode: Examples.pincode,
+      addressType: 'REGISTERED'
+    }
+  }
+});
 
 export const SupplierListSchema = z.array(SupplierSchema).openapi('SupplierList');
 
 // Supplier Site schemas
 export const SupplierSiteSchema = z.object({
-  uid: UuidSchema.openapi({ example: Examples.uuid }),
-  supplierUid: UuidSchema.openapi({ example: Examples.uuid }),
+  userUid: UuidSchema.openapi({ example: Examples.uuid }),
+  supplierUserUid: UuidSchema.openapi({ example: Examples.uuid }),
   siteName: ClientSupplierSiteSchema.shape.siteName.openapi({ example: 'Main Office' }),
   siteCode: ClientSupplierSiteSchema.shape.siteCode.openapi({ example: 'SITE001' }),
   classification: ClientSupplierSiteSchema.shape.classification.openapi({ example: 'Manufacturing' }),
@@ -299,11 +340,30 @@ export const SupplierSiteSchema = z.object({
   fssaiNumber: ClientSupplierSiteSchema.shape.fssaiNumber.openapi({ example: '12345678901234' }),
   msmeNumber: ClientSupplierSiteSchema.shape.msmeNumber.openapi({ example: 'MSME123456' }),
   status: ClientSupplierSiteSchema.shape.status.openapi({
-    example: 'VERIFIED',
-    description: 'Status of the supplier site'
+    example: 'PENDING',
+    description: 'Status of the supplier site (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
   isActive: ClientSupplierSiteSchema.shape.isActive.openapi({ example: true }),
   extraData: z.any().optional().openapi({ example: { isPrimary: true } }),
+  address: AddressSchema.openapi({ 
+    description: 'Address details for the supplier site',
+    example: {
+      uid: Examples.uuid,
+      line1: Examples.addressLine1,
+      line2: Examples.addressLine2,
+      city: Examples.city,
+      state: Examples.state,
+      country: Examples.country,
+      pincode: Examples.pincode,
+      addressType: 'OPERATIONAL',
+      extraData: null,
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+      deletedAt: null,
+      createdBy: Examples.uuid,
+      lastUpdatedBy: Examples.uuid
+    }
+  }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
@@ -312,7 +372,7 @@ export const SupplierSiteSchema = z.object({
 }).openapi('SupplierSite');
 
 export const CreateSupplierSiteSchema = z.object({
-  supplierUid: UuidSchema.openapi({ example: Examples.uuid }),
+  supplierUserUid: UuidSchema.openapi({ example: Examples.uuid }),
   siteName: ClientSupplierSiteSchema.shape.siteName.openapi({ example: 'Main Office' }),
   siteCode: ClientSupplierSiteSchema.shape.siteCode.openapi({ example: 'SITE001' }),
   classification: ClientSupplierSiteSchema.shape.classification.openapi({ example: 'Manufacturing' }),
@@ -321,27 +381,50 @@ export const CreateSupplierSiteSchema = z.object({
   fssaiNumber: ClientSupplierSiteSchema.shape.fssaiNumber.openapi({ example: '12345678901234' }),
   msmeNumber: ClientSupplierSiteSchema.shape.msmeNumber.openapi({ example: 'MSME123456' }),
   status: ClientSupplierSiteSchema.shape.status.openapi({
-    example: 'VERIFIED',
-    description: 'Status of the supplier site'
+    example: 'PENDING',
+    description: 'Status of the supplier site (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
   isActive: ClientSupplierSiteSchema.shape.isActive.openapi({ example: true }),
   extraData: z.any().optional().openapi({ example: { isPrimary: true } }),
   address: z.object({
-    line1: z.string().openapi({ example: '123 Main Street' }),
-    line2: z.string().optional().openapi({ example: undefined }),
+    line1: z.string().openapi({ example: Examples.addressLine1 }),
+    line2: z.string().optional().openapi({ example: Examples.addressLine2 }),
     line3: z.string().optional().openapi({ example: undefined }),
     line4: z.string().optional().openapi({ example: undefined }),
-    city: z.string().openapi({ example: 'New York' }),
-    state: z.string().openapi({ example: 'NY' }),
-    country: z.string().openapi({ example: 'USA' }),
-    pincode: z.string().openapi({ example: '10001' }),
-    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
+    city: z.string().openapi({ example: Examples.city }),
+    state: z.string().openapi({ example: Examples.state }),
+    country: z.string().openapi({ example: Examples.country }),
+    pincode: z.string().openapi({ example: Examples.pincode }),
+    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).openapi({
       example: 'OPERATIONAL',
       description: 'Type of address'
     }),
     extraData: z.any().optional().openapi({ example: undefined })
   }).openapi({ description: 'Address details for the supplier site' })
-}).openapi('CreateSupplierSite');
+}).openapi('CreateSupplierSite', {
+  example: {
+    supplierUserUid: Examples.uuid,
+    siteName: 'Main Office',
+    siteCode: 'SITE001',
+    classification: 'Manufacturing',
+    businessType: 'Production',
+    gstNumber: '29ABCDE1234F1Z5',
+    fssaiNumber: '12345678901234',
+    msmeNumber: 'MSME123456',
+    status: 'PENDING',
+    isActive: true,
+    extraData: { isPrimary: true },
+    address: {
+      line1: Examples.addressLine1,
+      line2: Examples.addressLine2,
+      city: Examples.city,
+      state: Examples.state,
+      country: Examples.country,
+      pincode: Examples.pincode,
+      addressType: 'OPERATIONAL'
+    }
+  }
+});
 
 export const SupplierSiteListSchema = z.array(SupplierSiteSchema).openapi('SupplierSiteList');
 
@@ -551,7 +634,7 @@ export const DocumentSchema = z.object({
   expiryDate: z.string().datetime().nullable().openapi({ example: '2024-01-01T00:00:00Z' }),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
     example: 'PENDING',
-    description: 'Status of the document'
+    description: 'Status of the document (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
   extraData: z.any().optional().openapi({ example: { verified: true } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
@@ -574,7 +657,7 @@ export const CreateDocumentSchema = z.object({
   expiryDate: z.string().datetime().optional().openapi({ example: '2024-01-01T00:00:00Z' }),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
     example: 'PENDING',
-    description: 'Status of the document'
+    description: 'Status of the document (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
   extraData: z.any().optional().openapi({ example: { verified: true } })
 }).openapi('CreateDocument');
@@ -636,9 +719,9 @@ export const TermSchema = z.object({
   description: z.string().max(500).nullable().openapi({ example: 'Payment due within 30 days' }),
   validFrom: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   validTo: z.string().datetime().nullable().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']).openapi({
-    example: 'APPROVED',
-    description: 'Status of the term'
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED']).openapi({
+    example: 'PENDING',
+    description: 'Status of the term (PENDING, APPROVED, REJECTED, CANCELLED, EXPIRED)'
   }),
   extraData: z.any().optional().openapi({ example: { gracePeriod: 5, lateFee: 2.5 } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
@@ -659,9 +742,9 @@ export const CreateTermSchema = z.object({
   description: z.string().max(500).optional().openapi({ example: 'Payment due within 30 days' }),
   validFrom: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   validTo: z.string().datetime().optional().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']).openapi({
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED']).openapi({
     example: 'PENDING',
-    description: 'Status of the term'
+    description: 'Status of the term (PENDING, APPROVED, REJECTED, CANCELLED, EXPIRED)'
   }),
   extraData: z.any().optional().openapi({ example: { gracePeriod: 5, lateFee: 2.5 } })
 }).openapi('CreateTerm');

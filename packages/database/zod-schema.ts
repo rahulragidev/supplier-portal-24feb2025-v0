@@ -210,7 +210,7 @@ export const ClientSupplierSiteSchema = z.object({
   fssaiNumber: z.string().regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits").optional(),
   msmeNumber: z.string().min(2, "MSME number must be at least 2 characters").optional(),
   supplierUserUid: UuidSchema,
-  status: z.enum(["PENDING", "VERIFIED", "REJECTED", "EXPIRED", "REQUIRES_UPDATE"]),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]),
   isActive: z.boolean().default(true),
   address: ClientAddressSchema
 });

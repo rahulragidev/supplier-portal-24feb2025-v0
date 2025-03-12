@@ -17,31 +17,14 @@ const UidParamSchema = z.object({
 // Get all suppliers
 supplierRoutes.get("/", supplierController.getAllSuppliers);
 
-// Get supplier by ID 
-supplierRoutes.get("/:userUid", supplierController.getSupplierById);
-
-// Create a new supplier
-supplierRoutes.post("/", validateBody(ClientSupplierSchema), supplierController.createSupplier);
-
-// Update a supplier
-supplierRoutes.put("/:userUid", validateBody(ClientSupplierSchema.partial()), supplierController.updateSupplier);
-
-// Update supplier status
-supplierRoutes.put("/:userUid/status", supplierController.updateSupplierStatus);
-
-// Soft delete a supplier
-supplierRoutes.delete("/:userUid", supplierController.deleteSupplier);
-
 // Get suppliers by organization
 supplierRoutes.get("/organization/:orgUid", supplierController.getSuppliersByOrganization);
 
 // --- SUPPLIER SITES ---
+// Note: These specific routes must come before the parameterized routes like /:userUid
 
 // Get all supplier sites
 supplierRoutes.get("/sites", supplierController.getAllSites);
-
-// Get supplier sites by supplier
-supplierRoutes.get("/:supplierUid/sites", supplierController.getSitesBySupplier);
 
 // Get supplier site by ID
 supplierRoutes.get("/sites/:userUid", supplierController.getSiteById);
@@ -71,5 +54,26 @@ supplierRoutes.post("/invitations", supplierController.createInvitation);
 
 // Update invitation status
 supplierRoutes.put("/invitations/:uid/status", supplierController.updateInvitationStatus);
+
+// --- SUPPLIER ROUTES WITH PARAMETERS ---
+// These routes must come after the more specific routes above
+
+// Get supplier by ID 
+supplierRoutes.get("/:userUid", supplierController.getSupplierById);
+
+// Create a new supplier
+supplierRoutes.post("/", validateBody(ClientSupplierSchema), supplierController.createSupplier);
+
+// Update a supplier
+supplierRoutes.put("/:userUid", validateBody(ClientSupplierSchema.partial()), supplierController.updateSupplier);
+
+// Update supplier status
+supplierRoutes.put("/:userUid/status", supplierController.updateSupplierStatus);
+
+// Soft delete a supplier
+supplierRoutes.delete("/:userUid", supplierController.deleteSupplier);
+
+// Get supplier sites by supplier
+supplierRoutes.get("/:supplierUid/sites", supplierController.getSitesBySupplier);
 
 export default supplierRoutes; 
