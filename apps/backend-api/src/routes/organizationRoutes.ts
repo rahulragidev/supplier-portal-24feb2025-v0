@@ -3,6 +3,7 @@ import { organizationController } from "../controllers/organizationController.js
 import { validateBody } from "../middleware/validation.js";
 import { ClientOrganizationSchema } from "@workspace/database/zod-schema";
 import { z } from "zod";
+import { employeeController } from "../controllers/employeeController.js";
 
 // Create a router for organization endpoints
 const organizationRoutes = new Hono();
@@ -17,6 +18,9 @@ organizationRoutes.get("/", organizationController.getAllOrganizations);
 
 // Get organization by ID 
 organizationRoutes.get("/:uid", organizationController.getOrganizationById);
+
+// Get employees by organization
+organizationRoutes.get("/:uid/employees", employeeController.getEmployeesByOrganization);
 
 // Create a new organization
 organizationRoutes.post("/", validateBody(ClientOrganizationSchema), organizationController.createOrganization);

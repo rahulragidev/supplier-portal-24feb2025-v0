@@ -1,3 +1,21 @@
+/**
+ * Database Schema Definition
+ * 
+ * This file serves as the source of truth for the database schema.
+ * It defines all tables, columns, relationships, and constraints using Drizzle ORM.
+ * 
+ * The schema defined here is used to:
+ * 1. Generate SQL migrations
+ * 2. Create TypeScript types (via types.ts)
+ * 3. Generate Zod validation schemas (via zod-schema.ts)
+ * 
+ * Related files:
+ * - enums.ts: Contains enum constants used in this schema
+ * - types.ts: Contains TypeScript types derived from this schema
+ * - zod-schema.ts: Contains Zod validation schemas derived from this schema
+ * - examples.ts: Contains example values for documentation
+ */
+
 import {
   pgTable,
   text,
@@ -16,90 +34,36 @@ import {
 import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
+// Import from JavaScript file for DrizzleKit compatibility
+// @ts-ignore - Ignore TypeScript error for missing type definitions
+import * as enums from "./enums.js";
+
+// Use enum constants from enums.js
+const {
+  UserType,
+  AddressType,
+  TradeType,
+  SupplierStatus,
+  ApprovalStatus,
+  DocumentStatus,
+  TermType,
+  OrgUnitType,
+  ApproverType
+} = enums;
+
 // ===================
 // ENUMS DEFINITIONS
 // ===================
 
-export const userTypeEnum = pgEnum("user_type_enum", [
-  "EMPLOYEE",
-  "SUPPLIER",
-  "SUPPLIER_SITE",
-  "ADMIN"
-]);
-
-export const addressTypeEnum = pgEnum("address_type_enum", [
-  "BILLING",
-  "SHIPPING",
-  "REGISTERED",
-  "OPERATIONAL"
-]);
-
-export const tradeTypeEnum = pgEnum("trade_type_enum", [
-  "GOODS",
-  "SERVICES",
-  "BOTH"
-]);
-
-export const supplierStatusEnum = pgEnum("supplier_status_enum", [
-  "DRAFT",
-  "PENDING_APPROVAL",
-  "ACTIVE",
-  "INACTIVE",
-  "REJECTED"
-]);
-
-export const approvalStatusEnum = pgEnum("approval_status_enum", [
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-  "CANCELLED",
-  "ESCALATED",
-  "DELEGATED"
-]);
-
-export const invitationStatusEnum = pgEnum("invitation_status_enum", [
-  "SENT",
-  "ACCEPTED",
-  "REJECTED",
-  "EXPIRED",
-  "REVOKED"
-]);
-
-export const documentTypeEnum = pgEnum("document_type_enum", [
-  "PAN",
-  "GST",
-  "MSME",
-  "FSSAI",
-  "CANCELLED_CHEQUE",
-  "COMPANY_PROFILE",
-  "TAX_CERTIFICATE",
-  "INSURANCE_CERTIFICATE",
-  "TRADE_LICENSE",
-  "OTHER"
-]);
-
-export const orgUnitTypeEnum = pgEnum("org_unit_type_enum", [
-  "DIVISION",
-  "DEPARTMENT",
-  "TEAM",
-  "REGION",
-  "BUSINESS_UNIT",
-  "SUBSIDIARY"
-]);
-
-export const verificationStatusEnum = pgEnum("verification_status_enum", [
-  "PENDING",
-  "VERIFIED",
-  "REJECTED",
-  "EXPIRED",
-  "REQUIRES_UPDATE"
-]);
-
-export const termTypeEnum = pgEnum("term_type_enum", [
-  "FINANCIAL",
-  "TRADE",
-  "SUPPORT"
-]);
+export const userTypeEnum = pgEnum("user_type_enum", Object.values(UserType) as [string, ...string[]]);
+export const addressTypeEnum = pgEnum("address_type_enum", Object.values(AddressType) as [string, ...string[]]);
+export const tradeTypeEnum = pgEnum("trade_type_enum", Object.values(TradeType) as [string, ...string[]]);
+export const supplierStatusEnum = pgEnum("supplier_status_enum", Object.values(SupplierStatus) as [string, ...string[]]);
+export const approvalStatusEnum = pgEnum("approval_status_enum", Object.values(ApprovalStatus) as [string, ...string[]]);
+export const documentStatusEnum = pgEnum("document_status_enum", Object.values(DocumentStatus) as [string, ...string[]]);
+export const termTypeEnum = pgEnum("term_type_enum", Object.values(TermType) as [string, ...string[]]);
+export const orgUnitTypeEnum = pgEnum("org_unit_type_enum", Object.values(OrgUnitType) as [string, ...string[]]);
+export const approverTypeEnum = pgEnum("approver_type_enum", Object.values(ApproverType) as [string, ...string[]]);
 
 // ===================
 // CORE TABLES
@@ -308,7 +272,7 @@ export const supplierInvitation = pgTable("supplier_invitation", {
   organizationUid: uuid("organization_uid").notNull().references(() => organization.uid, { onDelete: "cascade" }),
   invitedByEmployeeUserUid: uuid("invited_by_employee_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   email: varchar("email", { length: 255 }).notNull(),
-  status: invitationStatusEnum("status").notNull(),
+  status: approvalStatusEnum("status").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -326,7 +290,7 @@ export const supplierSite = pgTable("supplier_site", {
   supplierUserUid: uuid("supplier_user_uid").notNull().references(() => supplier.userUid, { onDelete: "cascade" }),
   siteName: varchar("site_name", { length: 200 }).notNull(),
   siteCode: varchar("site_code", { length: 50 }),
-  status: verificationStatusEnum("status").notNull(),
+  status: approvalStatusEnum("status").notNull(),
   classification: varchar("classification", { length: 100 }),
   businessType: varchar("business_type", { length: 100 }),
   gstNumber: varchar("gst_number", { length: 15 }),
@@ -351,9 +315,9 @@ export const supplierSite = pgTable("supplier_site", {
 export const supplierSiteDocument = pgTable("supplier_site_document", {
   uid: uuid("uid").primaryKey().notNull(),
   supplierSiteUserUid: uuid("supplier_site_user_uid").notNull().references(() => supplierSite.userUid, { onDelete: "cascade" }),
-  documentType: documentTypeEnum("document_type").notNull(),
+  documentType: documentStatusEnum("document_type").notNull(),
   filePath: varchar("file_path", { length: 255 }).notNull().unique(),
-  verificationStatus: verificationStatusEnum("verification_status").notNull().default("PENDING"),
+  verificationStatus: approvalStatusEnum("verification_status").notNull().default("PENDING"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -370,8 +334,8 @@ export const documentVerification = pgTable("document_verification", {
   uid: uuid("uid").primaryKey().notNull(),
   supplierUserUid: uuid("supplier_user_uid").notNull().references(() => supplier.userUid, { onDelete: "cascade" }),
   supplierSiteUserUid: uuid("supplier_site_user_uid").notNull().references(() => supplierSite.userUid, { onDelete: "cascade" }),
-  documentType: documentTypeEnum("document_type").notNull(),
-  status: verificationStatusEnum("status").notNull(),
+  documentType: documentStatusEnum("document_type").notNull(),
+  status: approvalStatusEnum("status").notNull(),
   requestPayload: jsonb("request_payload"),
   responsePayload: jsonb("response_payload"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -1007,11 +971,6 @@ export const approvalCommentRelations = relations(approvalComment, ({ one }) => 
     relationName: "stepToComments",
     fields: [approvalComment.approvalStepUid],
     references: [approvalStep.uid]
-  }),
-  commentBy: one(appUser, {
-    relationName: "userToComments",
-    fields: [approvalComment.commentByUserUid],
-    references: [appUser.uid]
   })
 }));
 

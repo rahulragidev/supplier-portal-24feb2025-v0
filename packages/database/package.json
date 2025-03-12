@@ -6,7 +6,9 @@
   "exports": {
     "./types": "./types.ts",
     "./schema": "./schema.ts",
-    "./zod-schema": "./zod-schema.ts"
+    "./zod-schema": "./zod-schema.ts",
+    "./enums": "./enums.ts",
+    "./examples": "./examples.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -15,6 +17,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:prepare": "node -e \"const fs = require('fs'); const content = fs.readFileSync('./enums.ts', 'utf8').replace(/export const/g, 'exports.').replace(/ as const;/g, ';'); fs.writeFileSync('./enums.js', content);\"",
+    "db:generate:safe": "npm run db:prepare && npm run db:generate",
     "clean": "rm -rf .turbo node_modules dist"
   },
   "devDependencies": {

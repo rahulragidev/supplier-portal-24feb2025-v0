@@ -27,7 +27,4 @@ employeeRoutes.put("/:userUid", validateBody(ClientEmployeeSchema.partial()), em
 // Soft delete an employee
 employeeRoutes.delete("/:userUid", employeeController.deleteEmployee);
 
-// Get employees by organization
-employeeRoutes.get("/organization/:orgUid", employeeController.getEmployeesByOrganization);
-
 export default employeeRoutes; 

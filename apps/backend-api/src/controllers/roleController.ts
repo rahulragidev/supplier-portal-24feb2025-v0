@@ -76,7 +76,7 @@ export const roleController = {
         organizationUid: data.organizationUid,
         name: data.name,
         roleCode: data.roleCode,
-        extraData: data.extraData || {},
+        extraData: data.extraData,
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,

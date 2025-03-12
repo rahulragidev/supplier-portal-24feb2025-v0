@@ -1,5 +1,5 @@
 {
-  "id": "48c37ea9-30e9-4a6e-82ef-6fad76cf78c6",
+  "id": "5e37a3bf-0a7c-4b06-971a-d55406942448",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1502,14 +1502,14 @@
         },
         "document_type": {
           "name": "document_type",
-          "type": "document_type_enum",
+          "type": "document_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "verification_status_enum",
+          "type": "approval_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -3178,7 +3178,7 @@
         },
         "status": {
           "name": "status",
-          "type": "invitation_status_enum",
+          "type": "approval_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -3342,7 +3342,7 @@
         },
         "status": {
           "name": "status",
-          "type": "verification_status_enum",
+          "type": "approval_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -3577,7 +3577,7 @@
         },
         "document_type": {
           "name": "document_type",
-          "type": "document_type_enum",
+          "type": "document_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -3590,7 +3590,7 @@
         },
         "verification_status": {
           "name": "verification_status",
-          "type": "verification_status_enum",
+          "type": "approval_status_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -4284,31 +4284,23 @@
         "DELEGATED"
       ]
     },
-    "public.document_type_enum": {
-      "name": "document_type_enum",
+    "public.approver_type_enum": {
+      "name": "approver_type_enum",
       "schema": "public",
       "values": [
-        "PAN",
-        "GST",
-        "MSME",
-        "FSSAI",
-        "CANCELLED_CHEQUE",
-        "COMPANY_PROFILE",
-        "TAX_CERTIFICATE",
-        "INSURANCE_CERTIFICATE",
-        "TRADE_LICENSE",
-        "OTHER"
+        "USER",
+        "ROLE"
       ]
     },
-    "public.invitation_status_enum": {
-      "name": "invitation_status_enum",
+    "public.document_status_enum": {
+      "name": "document_status_enum",
       "schema": "public",
       "values": [
-        "SENT",
-        "ACCEPTED",
+        "PENDING",
+        "APPROVED",
         "REJECTED",
-        "EXPIRED",
-        "REVOKED"
+        "CANCELLED",
+        "EXPIRED"
       ]
     },
     "public.org_unit_type_enum": {
@@ -4360,17 +4352,6 @@
         "SUPPLIER",
         "SUPPLIER_SITE",
         "ADMIN"
-      ]
-    },
-    "public.verification_status_enum": {
-      "name": "verification_status_enum",
-      "schema": "public",
-      "values": [
-        "PENDING",
-        "VERIFIED",
-        "REJECTED",
-        "EXPIRED",
-        "REQUIRES_UPDATE"
       ]
     }
   },

@@ -1,13 +1,12 @@
 CREATE TYPE "public"."address_type_enum" AS ENUM('BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL');--> statement-breakpoint
 CREATE TYPE "public"."approval_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED');--> statement-breakpoint
-CREATE TYPE "public"."document_type_enum" AS ENUM('PAN', 'GST', 'MSME', 'FSSAI', 'CANCELLED_CHEQUE', 'COMPANY_PROFILE', 'TAX_CERTIFICATE', 'INSURANCE_CERTIFICATE', 'TRADE_LICENSE', 'OTHER');--> statement-breakpoint
-CREATE TYPE "public"."invitation_status_enum" AS ENUM('SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED');--> statement-breakpoint
+CREATE TYPE "public"."approver_type_enum" AS ENUM('USER', 'ROLE');--> statement-breakpoint
+CREATE TYPE "public"."document_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED');--> statement-breakpoint
 CREATE TYPE "public"."org_unit_type_enum" AS ENUM('DIVISION', 'DEPARTMENT', 'TEAM', 'REGION', 'BUSINESS_UNIT', 'SUBSIDIARY');--> statement-breakpoint
 CREATE TYPE "public"."supplier_status_enum" AS ENUM('DRAFT', 'PENDING_APPROVAL', 'ACTIVE', 'INACTIVE', 'REJECTED');--> statement-breakpoint
 CREATE TYPE "public"."term_type_enum" AS ENUM('FINANCIAL', 'TRADE', 'SUPPORT');--> statement-breakpoint
 CREATE TYPE "public"."trade_type_enum" AS ENUM('GOODS', 'SERVICES', 'BOTH');--> statement-breakpoint
 CREATE TYPE "public"."user_type_enum" AS ENUM('EMPLOYEE', 'SUPPLIER', 'SUPPLIER_SITE', 'ADMIN');--> statement-breakpoint
-CREATE TYPE "public"."verification_status_enum" AS ENUM('PENDING', 'VERIFIED', 'REJECTED', 'EXPIRED', 'REQUIRES_UPDATE');--> statement-breakpoint
 CREATE TABLE "address" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"line1" varchar(200) NOT NULL,
@@ -134,8 +133,8 @@ CREATE TABLE "document_verification" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_user_uid" uuid NOT NULL,
 	"supplier_site_user_uid" uuid NOT NULL,
-	"document_type" "document_type_enum" NOT NULL,
-	"status" "verification_status_enum" NOT NULL,
+	"document_type" "document_status_enum" NOT NULL,
+	"status" "approval_status_enum" NOT NULL,
 	"request_payload" jsonb,
 	"response_payload" jsonb,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -283,7 +282,7 @@ CREATE TABLE "supplier_invitation" (
 	"organization_uid" uuid NOT NULL,
 	"invited_by_employee_user_uid" uuid,
 	"email" varchar(255) NOT NULL,
-	"status" "invitation_status_enum" NOT NULL,
+	"status" "approval_status_enum" NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -297,7 +296,7 @@ CREATE TABLE "supplier_site" (
 	"supplier_user_uid" uuid NOT NULL,
 	"site_name" varchar(200) NOT NULL,
 	"site_code" varchar(50),
-	"status" "verification_status_enum" NOT NULL,
+	"status" "approval_status_enum" NOT NULL,
 	"classification" varchar(100),
 	"business_type" varchar(100),
 	"gst_number" varchar(15),
@@ -317,9 +316,9 @@ ALTER TABLE "supplier_site" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "supplier_site_document" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"supplier_site_user_uid" uuid NOT NULL,
-	"document_type" "document_type_enum" NOT NULL,
+	"document_type" "document_status_enum" NOT NULL,
 	"file_path" varchar(255) NOT NULL,
-	"verification_status" "verification_status_enum" DEFAULT 'PENDING' NOT NULL,
+	"verification_status" "approval_status_enum" DEFAULT 'PENDING' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"deleted_at" timestamp with time zone,

@@ -29,7 +29,7 @@ export const employeeController = {
   // Get employees by organization
   async getEmployeesByOrganization(c: Context) {
     try {
-      const orgUid = c.req.param("orgUid");
+      const orgUid = c.req.param("uid");
       const employeeData = await db
         .select()
         .from(employee)

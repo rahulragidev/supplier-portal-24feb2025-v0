@@ -1,0 +1,8 @@
+# Generated files
+enums.js
+
+# DrizzleKit
+.drizzle/
+
+# Environment variables
+.env 

@@ -8,6 +8,21 @@
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import * as schema from "./schema.js";
+import * as enums from "./enums.js";
+import { Examples } from "./examples.js";
+
+// Use enum constants from enums.js
+const {
+  UserType,
+  AddressType,
+  TradeType,
+  SupplierStatus,
+  ApprovalStatus,
+  DocumentStatus,
+  TermType,
+  OrgUnitType,
+  ApproverType
+} = enums;
 
 // ===================
 // BASIC SCHEMAS
@@ -36,6 +51,25 @@ export const PincodeSchema = z.string().regex(
   /^[0-9A-Z-]{4,10}$/,
   "Pincode must be 4-10 alphanumeric characters"
 );
+
+// Common field schemas
+export const NameSchema = z.string().min(1).max(100);
+export const CodeSchema = z.string().min(1).max(50);
+export const DescriptionSchema = z.string().max(500);
+
+// ===================
+// ENUM SCHEMAS
+// ===================
+
+export const UserTypeSchema = z.enum(Object.values(UserType) as [string, ...string[]]);
+export const AddressTypeSchema = z.enum(Object.values(AddressType) as [string, ...string[]]);
+export const TradeTypeSchema = z.enum(Object.values(TradeType) as [string, ...string[]]);
+export const SupplierStatusSchema = z.enum(Object.values(SupplierStatus) as [string, ...string[]]);
+export const ApprovalStatusSchema = z.enum(Object.values(ApprovalStatus) as [string, ...string[]]);
+export const DocumentStatusSchema = z.enum(Object.values(DocumentStatus) as [string, ...string[]]);
+export const TermTypeSchema = z.enum(Object.values(TermType) as [string, ...string[]]);
+export const OrgUnitTypeSchema = z.enum(Object.values(OrgUnitType) as [string, ...string[]]);
+export const ApproverTypeSchema = z.enum(Object.values(ApproverType) as [string, ...string[]]);
 
 // ===================
 // DATABASE SCHEMAS
