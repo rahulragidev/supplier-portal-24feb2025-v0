@@ -688,7 +688,7 @@ export const getSuppliersByOrganizationRoute = createRoute({
   path: '/suppliers/organization/{orgUid}',
   tags: ['Suppliers'],
   summary: 'Get suppliers by organization',
-  description: 'Retrieve a list of suppliers belonging to a specific organization',
+  description: 'Retrieve all suppliers for a specific organization',
   request: {
     params: schemas.OrgUidParam,
   },
@@ -701,10 +701,145 @@ export const getSuppliersByOrganizationRoute = createRoute({
         },
       },
     },
+    404: {
+      description: 'Organization not found',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
-// Supplier Sites routes
+// Supplier Invitation routes
+export const getSupplierInvitationsRoute = createRoute({
+  method: 'get',
+  path: '/suppliers/invitations',
+  tags: ['Invitations'],
+  summary: 'Get all supplier invitations',
+  description: 'Retrieve a list of all non-deleted supplier invitations',
+  responses: {
+    200: {
+      description: 'List of supplier invitations',
+      content: {
+        'application/json': {
+          schema: schemas.SupplierInvitationListSchema,
+        },
+      },
+    },
+  },
+});
+
+export const getSupplierInvitationsByOrganizationRoute = createRoute({
+  method: 'get',
+  path: '/suppliers/invitations/organization/{orgUid}',
+  tags: ['Invitations'],
+  summary: 'Get supplier invitations by organization',
+  description: 'Retrieve supplier invitations for a specific organization',
+  request: {
+    params: schemas.OrgUidParam,
+  },
+  responses: {
+    200: {
+      description: 'List of supplier invitations',
+      content: {
+        'application/json': {
+          schema: schemas.SupplierInvitationListSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Organization not found',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+  },
+});
+
+export const createSupplierInvitationRoute = createRoute({
+  method: 'post',
+  path: '/suppliers/invitations',
+  tags: ['Invitations'],
+  summary: 'Create a supplier invitation',
+  description: 'Create a new invitation for a supplier to join the platform',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: schemas.CreateSupplierInvitationSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Supplier invitation created successfully',
+      content: {
+        'application/json': {
+          schema: schemas.SupplierInvitationSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Invalid input',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+  },
+});
+
+export const updateSupplierInvitationStatusRoute = createRoute({
+  method: 'put',
+  path: '/suppliers/invitations/{uid}/status',
+  tags: ['Invitations'],
+  summary: 'Update invitation status',
+  description: 'Update the status of a supplier invitation',
+  request: {
+    params: schemas.UuidParam,
+    body: {
+      content: {
+        'application/json': {
+          schema: schemas.UpdateInvitationStatusSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Invitation status updated successfully',
+      content: {
+        'application/json': {
+          schema: schemas.SupplierInvitationSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Invitation not found',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Invalid input',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+  },
+});
+
+// Supplier Site routes
 export const getAllSitesRoute = createRoute({
   method: 'get',
   path: '/suppliers/sites',
@@ -2278,10 +2413,7 @@ export const updateRequestStepRoute = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: z.object({
-            stepUid: z.string().uuid(),
-            currentStep: z.number().int(),
-          }).openapi('UpdateRequestStep'),
+          schema: schemas.UpdateRequestStepSchema,
         },
       },
     },
@@ -2329,7 +2461,7 @@ export const getLogsByRequestRoute = createRoute({
       description: 'List of approval logs',
       content: {
         'application/json': {
-          schema: z.array(z.any()).openapi('ApprovalLogList'),
+          schema: schemas.ApprovalLogListSchema,
         },
       },
     },
@@ -2346,37 +2478,39 @@ export const getLogsByRequestRoute = createRoute({
 
 export const createLogRoute = createRoute({
   method: 'post',
-  path: '/approval-processes/logs',
+  path: '/approval-processes/requests/{requestUid}/logs',
   tags: ['Approvals'],
-  summary: 'Create a new approval log',
-  description: 'Create a new approval log entry with the provided data',
+  summary: 'Create approval log',
+  description: 'Create a new log entry for an approval request',
   request: {
+    params: schemas.RequestUidParam,
     body: {
       content: {
         'application/json': {
-          schema: z.object({
-            approvalRequestUid: z.string().uuid(),
-            approvalStepUid: z.string().uuid(),
-            actionByUserUid: z.string().uuid(),
-            status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELED', 'ESCALATED', 'DELEGATED']),
-            comments: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateApprovalLog'),
+          schema: schemas.CreateApprovalLogSchema,
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Approval log created successfully',
+      description: 'Log created successfully',
       content: {
         'application/json': {
-          schema: z.any().openapi('ApprovalLog'),
+          schema: schemas.ApprovalLogSchema,
         },
       },
     },
     400: {
       description: 'Invalid input',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Request not found',
       content: {
         'application/json': {
           schema: schemas.ErrorResponseSchema,
@@ -2401,7 +2535,7 @@ export const getCommentsByRequestRoute = createRoute({
       description: 'List of approval comments',
       content: {
         'application/json': {
-          schema: z.array(z.any()).openapi('ApprovalCommentList'),
+          schema: schemas.ApprovalCommentListSchema,
         },
       },
     },
@@ -2418,36 +2552,39 @@ export const getCommentsByRequestRoute = createRoute({
 
 export const createCommentRoute = createRoute({
   method: 'post',
-  path: '/approval-processes/comments',
+  path: '/approval-processes/requests/{requestUid}/comments',
   tags: ['Approvals'],
-  summary: 'Create a new approval comment',
+  summary: 'Create comment',
   description: 'Add a new comment to an approval request',
   request: {
+    params: schemas.RequestUidParam,
     body: {
       content: {
         'application/json': {
-          schema: z.object({
-            approvalRequestUid: z.string().uuid(),
-            approvalStepUid: z.string().uuid(),
-            commentByUserUid: z.string().uuid(),
-            commentText: z.string(),
-            extraData: z.any().optional(),
-          }).openapi('CreateApprovalComment'),
+          schema: schemas.CreateApprovalCommentSchema,
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Approval comment created successfully',
+      description: 'Comment created successfully',
       content: {
         'application/json': {
-          schema: z.any().openapi('ApprovalComment'),
+          schema: schemas.ApprovalCommentSchema,
         },
       },
     },
     400: {
       description: 'Invalid input',
+      content: {
+        'application/json': {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Request not found',
       content: {
         'application/json': {
           schema: schemas.ErrorResponseSchema,
@@ -2469,7 +2606,7 @@ export const getDocumentsRoute = createRoute({
       description: 'List of documents',
       content: {
         'application/json': {
-          schema: z.array(z.any()).openapi('DocumentList'),
+          schema: schemas.DocumentListSchema,
         },
       },
     },
@@ -2490,7 +2627,7 @@ export const getDocumentByIdRoute = createRoute({
       description: 'Document details',
       content: {
         'application/json': {
-          schema: z.any().openapi('Document'),
+          schema: schemas.DocumentSchema,
         },
       },
     },
@@ -2512,17 +2649,14 @@ export const getDocumentsByEntityRoute = createRoute({
   summary: 'Get documents by entity',
   description: 'Retrieve all documents for a specific entity',
   request: {
-    params: z.object({
-      entityType: z.string(),
-      entityUid: z.string().uuid(),
-    }),
+    params: schemas.EntityParams,
   },
   responses: {
     200: {
       description: 'List of documents',
       content: {
         'application/json': {
-          schema: z.array(z.any()).openapi('DocumentList'),
+          schema: schemas.DocumentListSchema,
         },
       },
     },
@@ -2539,15 +2673,7 @@ export const createDocumentRoute = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: z.object({
-            entityType: z.string(),
-            entityUid: z.string().uuid(),
-            documentType: z.string(),
-            fileName: z.string(),
-            fileUrl: z.string(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateDocument'),
+          schema: schemas.CreateDocumentSchema,
         },
       },
     },
@@ -2557,7 +2683,7 @@ export const createDocumentRoute = createRoute({
       description: 'Document created successfully',
       content: {
         'application/json': {
-          schema: z.any().openapi('Document'),
+          schema: schemas.DocumentSchema,
         },
       },
     },

@@ -48,6 +48,12 @@ openAPIApp.openapi(routes.updateSupplierStatusRoute, proxyToApp);
 openAPIApp.openapi(routes.deleteSupplierRoute, proxyToApp);
 openAPIApp.openapi(routes.getSuppliersByOrganizationRoute, proxyToApp);
 
+// Register supplier invitation routes
+openAPIApp.openapi(routes.getSupplierInvitationsRoute, proxyToApp);
+openAPIApp.openapi(routes.getSupplierInvitationsByOrganizationRoute, proxyToApp);
+openAPIApp.openapi(routes.createSupplierInvitationRoute, proxyToApp);
+openAPIApp.openapi(routes.updateSupplierInvitationStatusRoute, proxyToApp);
+
 // Register supplier site routes
 openAPIApp.openapi(routes.getAllSitesRoute, proxyToApp);
 openAPIApp.openapi(routes.getSitesBySupplierRoute, proxyToApp);
@@ -170,6 +176,7 @@ openAPIApp.doc('/api-doc', {
     { name: 'Organizations', description: 'Organization management operations' },
     { name: 'Employees', description: 'Employee management operations' },
     { name: 'Suppliers', description: 'Supplier management operations' },
+    { name: 'Invitations', description: 'Supplier invitation operations' },
     { name: 'Addresses', description: 'Address management operations' },
     { name: 'OrgUnits', description: 'Organizational units management operations' },
     { name: 'Roles', description: 'Role management operations' },

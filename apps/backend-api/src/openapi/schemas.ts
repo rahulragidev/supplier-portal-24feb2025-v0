@@ -533,15 +533,15 @@ export const StoreListSchema = z.array(StoreSchema).openapi('StoreList');
 
 // Approval process schemas
 export const ApprovalProcessSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(200).openapi({ example: 'Supplier Onboarding Approval' }),
   description: z.string().max(500).nullable().openapi({ example: 'Approval process for new suppliers' }),
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   steps: z.array(z.object({
     step: z.number().int().min(1).openapi({ example: 1 }),
     approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
-    approverId: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+    approverId: UuidSchema.openapi({ example: Examples.uuid }),
     isParallel: z.boolean().openapi({ example: false }),
     isOptional: z.boolean().openapi({ example: false }),
     timeoutHours: z.number().int().positive().nullable().openapi({ example: 48 })
@@ -549,7 +549,7 @@ export const ApprovalProcessSchema = z.object({
     example: [{
       step: 1,
       approverType: 'ROLE',
-      approverId: '123e4567-e89b-12d3-a456-426614174000',
+      approverId: Examples.uuid,
       isParallel: false,
       isOptional: false,
       timeoutHours: 48
@@ -560,19 +560,19 @@ export const ApprovalProcessSchema = z.object({
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('ApprovalProcess');
 
 export const CreateApprovalProcessSchema = z.object({
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(200).openapi({ example: 'Supplier Onboarding Approval' }),
   description: z.string().max(500).optional().openapi({ example: 'Approval process for new suppliers' }),
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   steps: z.array(z.object({
     step: z.number().int().min(1).openapi({ example: 1 }),
     approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
-    approverId: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+    approverId: UuidSchema.openapi({ example: Examples.uuid }),
     isParallel: z.boolean().openapi({ example: false }),
     isOptional: z.boolean().openapi({ example: false }),
     timeoutHours: z.number().int().positive().nullable().openapi({ example: 48 })
@@ -580,7 +580,7 @@ export const CreateApprovalProcessSchema = z.object({
     example: [{
       step: 1,
       approverType: 'ROLE',
-      approverId: '123e4567-e89b-12d3-a456-426614174000',
+      approverId: Examples.uuid,
       isParallel: false,
       isOptional: false,
       timeoutHours: 48
@@ -594,37 +594,92 @@ export const ApprovalListSchema = z.array(ApprovalProcessSchema).openapi('Approv
 
 // Approval request schemas
 export const ApprovalRequestSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  approvalProcessUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  requestorUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
+  requestorUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
     example: 'PENDING',
     description: 'Status of the approval request'
   }),
   currentStep: z.number().openapi({ example: 1 }),
-  steps: z.array(z.any()).openapi({ example: [
-    { step: 1, approverUid: '123e4567-e89b-12d3-a456-426614174000', status: 'PENDING' }
-  ] }),
+  steps: z.array(z.object({
+    step: z.number().int().openapi({ example: 1 }),
+    approverUid: UuidSchema.openapi({ example: Examples.uuid }),
+    approvalStatus: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+      example: 'PENDING'
+    })
+  })).openapi({ 
+    example: [
+      { step: 1, approverUid: Examples.uuid, approvalStatus: 'PENDING' }
+    ]
+  }),
   extraData: z.any().optional().openapi({ example: { priority: 'HIGH' } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('ApprovalRequest');
 
 export const CreateApprovalRequestSchema = ClientApprovalRequestSchema.openapi('CreateApprovalRequest');
 
+export const UpdateRequestStepSchema = z.object({
+  stepUid: UuidSchema.openapi({ example: Examples.uuid }),
+  currentStep: z.number().int().openapi({ example: 2 }),
+}).openapi('UpdateRequestStep');
+
 export const ApprovalRequestListSchema = z.array(ApprovalRequestSchema).openapi('ApprovalRequestList');
+
+// Approval Log schemas
+export const ApprovalLogSchema = z.object({
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  requestUid: UuidSchema.openapi({ example: Examples.uuid }),
+  userUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  actionType: z.string().openapi({ example: 'APPROVE' }),
+  description: z.string().max(500).openapi({ example: 'Request approved by manager' }),
+  timestamp: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
+  extraData: z.any().optional().openapi({ example: { previousStatus: 'PENDING' } }),
+  createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' })
+}).openapi('ApprovalLog');
+
+export const CreateApprovalLogSchema = z.object({
+  requestUid: UuidSchema.openapi({ example: Examples.uuid }),
+  userUid: UuidSchema.openapi({ example: Examples.uuid }),
+  actionType: z.string().openapi({ example: 'APPROVE' }),
+  description: z.string().max(500).openapi({ example: 'Request approved by manager' }),
+  extraData: z.any().optional().openapi({ example: { previousStatus: 'PENDING' } })
+}).openapi('CreateApprovalLog');
+
+export const ApprovalLogListSchema = z.array(ApprovalLogSchema).openapi('ApprovalLogList');
+
+// Approval Comment schemas
+export const ApprovalCommentSchema = z.object({
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  requestUid: UuidSchema.openapi({ example: Examples.uuid }),
+  userUid: UuidSchema.openapi({ example: Examples.uuid }),
+  comment: z.string().max(1000).openapi({ example: 'Please review the attached documents' }),
+  extraData: z.any().optional().openapi({ example: { important: true } }),
+  createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
+  updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' })
+}).openapi('ApprovalComment');
+
+export const CreateApprovalCommentSchema = z.object({
+  requestUid: UuidSchema.openapi({ example: Examples.uuid }),
+  userUid: UuidSchema.openapi({ example: Examples.uuid }),
+  comment: z.string().max(1000).openapi({ example: 'Please review the attached documents' }),
+  extraData: z.any().optional().openapi({ example: { important: true } })
+}).openapi('CreateApprovalComment');
+
+export const ApprovalCommentListSchema = z.array(ApprovalCommentSchema).openapi('ApprovalCommentList');
 
 // Document schemas
 export const DocumentSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   documentType: z.string().openapi({ example: 'TAX_CERTIFICATE' }),
   name: z.string().min(1).max(200).openapi({ example: 'Tax Certificate 2023' }),
   description: z.string().max(500).nullable().openapi({ example: 'Supplier annual tax certificate' }),
@@ -640,14 +695,14 @@ export const DocumentSchema = z.object({
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('Document');
 
 export const CreateDocumentSchema = z.object({
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   documentType: z.string().openapi({ example: 'TAX_CERTIFICATE' }),
   name: z.string().min(1).max(200).openapi({ example: 'Tax Certificate 2023' }),
   description: z.string().max(500).optional().openapi({ example: 'Supplier annual tax certificate' }),
@@ -666,10 +721,10 @@ export const DocumentListSchema = z.array(DocumentSchema).openapi('DocumentList'
 
 // Supplier Term schemas
 export const SupplierTermSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  supplierUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  siteUid: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  supplierUid: UuidSchema.openapi({ example: Examples.uuid }),
+  siteUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   termType: ClientSupplierSiteTermSchema.shape.termType.openapi({
     example: 'FINANCIAL',
     description: 'Type of supplier term'
@@ -685,8 +740,8 @@ export const SupplierTermSchema = z.object({
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('SupplierTerm');
 
 export const CreateFinancialTermSchema = ClientFinancialTermSchema.openapi('CreateFinancialTerm');
@@ -695,6 +750,47 @@ export const CreateSupportTermSchema = ClientSupportTermSchema.openapi('CreateSu
 export const CreateSupplierSiteTermSchema = ClientSupplierSiteTermSchema.openapi('CreateSupplierSiteTerm');
 
 export const SupplierTermListSchema = z.array(SupplierTermSchema).openapi('SupplierTermList');
+
+// Supplier Invitation schemas
+export const SupplierInvitationSchema = z.object({
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
+  invitedByEmployeeUserUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  email: EmailSchema.openapi({ example: 'supplier@example.com' }),
+  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).openapi({
+    example: 'SENT',
+    description: 'Status of the invitation (SENT, ACCEPTED, REJECTED, EXPIRED, REVOKED)'
+  }),
+  expiresAt: z.string().datetime().openapi({ example: '2023-01-08T00:00:00Z' }),
+  extraData: z.any().optional().openapi({ example: { message: 'Please join our supplier network' } }),
+  createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
+  updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
+  deletedAt: z.string().datetime().nullable().openapi({ example: null }),
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
+}).openapi('SupplierInvitation');
+
+export const CreateSupplierInvitationSchema = z.object({
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
+  invitedByEmployeeUserUid: UuidSchema.openapi({ example: Examples.uuid }),
+  email: EmailSchema.openapi({ example: 'supplier@example.com' }),
+  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).optional().openapi({
+    example: 'SENT',
+    description: 'Status of the invitation (SENT, ACCEPTED, REJECTED, EXPIRED, REVOKED)'
+  }),
+  expiresAt: z.string().datetime().optional().openapi({ example: '2023-01-08T00:00:00Z' }),
+  extraData: z.any().optional().openapi({ example: { message: 'Please join our supplier network' } })
+}).openapi('CreateSupplierInvitation');
+
+export const SupplierInvitationListSchema = z.array(SupplierInvitationSchema).openapi('SupplierInvitationList');
+
+export const UpdateInvitationStatusSchema = z.object({
+  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).openapi({
+    example: 'ACCEPTED',
+    description: 'New status for the invitation'
+  }),
+  lastUpdatedBy: UuidSchema.optional().openapi({ example: Examples.uuid })
+}).openapi('UpdateInvitationStatus');
 
 // Generic success response
 export const SuccessResponseSchema = z.object({
@@ -708,8 +804,8 @@ export const ErrorResponseSchema = z.object({
 
 // Term schemas
 export const TermSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Net 30' }),
   termCode: z.string().min(1).max(50).openapi({ example: 'TERM-001' }),
   termType: z.enum(['PAYMENT', 'DELIVERY', 'WARRANTY', 'SERVICE_LEVEL']).openapi({
@@ -727,12 +823,12 @@ export const TermSchema = z.object({
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('Term');
 
 export const CreateTermSchema = z.object({
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Net 30' }),
   termCode: z.string().min(1).max(50).openapi({ example: 'TERM-001' }),
   termType: z.enum(['PAYMENT', 'DELIVERY', 'WARRANTY', 'SERVICE_LEVEL']).openapi({
@@ -753,14 +849,14 @@ export const TermListSchema = z.array(TermSchema).openapi('TermList');
 
 // Approval schemas
 export const ApprovalSchema = z.object({
-  uid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  approvalProcessUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  uid: UuidSchema.openapi({ example: Examples.uuid }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
+  approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   step: z.number().int().min(1).openapi({ example: 1 }),
   approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
-  approverId: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  approverId: UuidSchema.openapi({ example: Examples.uuid }),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
     example: 'PENDING',
     description: 'Status of the approval'
@@ -770,18 +866,18 @@ export const ApprovalSchema = z.object({
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: '123e4567-e89b-12d3-a456-426614174000' })
+  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('Approval');
 
 export const CreateApprovalSchema = z.object({
-  organizationUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
-  approvalProcessUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
+  approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   step: z.number().int().min(1).openapi({ example: 1 }),
   approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
-  approverId: UuidSchema.openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+  approverId: UuidSchema.openapi({ example: Examples.uuid }),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
     example: 'PENDING',
     description: 'Status of the approval'
