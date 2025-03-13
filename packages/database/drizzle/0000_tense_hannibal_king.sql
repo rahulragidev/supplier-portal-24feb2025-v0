@@ -2,7 +2,9 @@ CREATE TYPE "public"."address_type_enum" AS ENUM('BILLING', 'SHIPPING', 'REGISTE
 CREATE TYPE "public"."approval_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED');--> statement-breakpoint
 CREATE TYPE "public"."approver_type_enum" AS ENUM('USER', 'ROLE');--> statement-breakpoint
 CREATE TYPE "public"."document_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED');--> statement-breakpoint
+CREATE TYPE "public"."invitation_status_enum" AS ENUM('SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED');--> statement-breakpoint
 CREATE TYPE "public"."org_unit_type_enum" AS ENUM('DIVISION', 'DEPARTMENT', 'TEAM', 'REGION', 'BUSINESS_UNIT', 'SUBSIDIARY');--> statement-breakpoint
+CREATE TYPE "public"."standard_term_type_enum" AS ENUM('PAYMENT', 'DELIVERY', 'WARRANTY', 'SERVICE_LEVEL');--> statement-breakpoint
 CREATE TYPE "public"."supplier_status_enum" AS ENUM('DRAFT', 'PENDING_APPROVAL', 'ACTIVE', 'INACTIVE', 'REJECTED');--> statement-breakpoint
 CREATE TYPE "public"."term_type_enum" AS ENUM('FINANCIAL', 'TRADE', 'SUPPORT');--> statement-breakpoint
 CREATE TYPE "public"."trade_type_enum" AS ENUM('GOODS', 'SERVICES', 'BOTH');--> statement-breakpoint
@@ -282,7 +284,7 @@ CREATE TABLE "supplier_invitation" (
 	"organization_uid" uuid NOT NULL,
 	"invited_by_employee_user_uid" uuid,
 	"email" varchar(255) NOT NULL,
-	"status" "approval_status_enum" NOT NULL,
+	"status" "invitation_status_enum" NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,

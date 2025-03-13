@@ -7,12 +7,61 @@ This package contains the database schema, types, and validation schemas for the
 - `schema.ts`: Source of truth for the database schema using Drizzle ORM
 - `types.ts`: TypeScript types derived from the schema
 - `zod-schema.ts`: Zod validation schemas derived from the schema
-- `enums.ts`: Enum constants used throughout the application
+- `enums.js`: JavaScript enum constants for use throughout the application
+- `enums.ts`: TypeScript enum constants with type safety
+- `enums.d.ts`: TypeScript declarations for enum constants
 - `examples.ts`: Example values for documentation and testing
+
+## Enum Management
+
+The application uses a centralized approach to manage enums across the codebase. This ensures consistency between the database, backend API, and frontend.
+
+### Enum Files Explained
+
+- **enums.js**: The source of truth for all enum values. This file is in JavaScript format because it needs to be imported by Drizzle ORM, which runs before TypeScript compilation.
+
+- **enums.ts**: TypeScript version with the same enum definitions but with TypeScript's `as const` for type safety.
+
+- **enums.d.ts**: TypeScript declarations for the enums defined in enums.js. This provides type safety when importing enums in TypeScript files.
+
+### Best Practices for Using Enums
+
+1. **Always import from the central enum files**:
+   ```typescript
+   import { UserType, ApprovalStatus } from "@workspace/database/enums";
+   ```
+
+2. **Never hardcode enum values**:
+   - ❌ `status: "PENDING"` 
+   - ✅ `status: ApprovalStatus.PENDING`
+
+3. **Use Zod enum schemas for validation**:
+   - ❌ `z.enum(["PENDING", "APPROVED"])`
+   - ✅ `z.enum(Object.values(ApprovalStatus))`
+   - ✅ `ApprovalStatusSchema` (imported from zod-schema.ts)
+
+4. **For OpenAPI schemas, use enum arrays derived from central enum objects**:
+   ```typescript
+   const ApprovalStatusValues = Object.values(dbEnums.ApprovalStatus) as [string, ...string[]];
+   ```
+
+### When Adding or Modifying Enums
+
+When adding or modifying enums, update these files:
+
+1. **enums.js**: Add/modify the enum object
+2. **enums.ts**: Add/modify the same enum with TypeScript's `as const`
+3. **enums.d.ts**: Add/modify the TypeScript declaration
+4. **schema.ts**: If needed, create a new PostgreSQL enum type
+5. **types.ts**: Update any related types
+6. **zod-schema.ts**: Update any related Zod schemas
 
 ## DrizzleKit Compatibility
 
-DrizzleKit requires JavaScript files for imports. To ensure compatibility, we've added a script that generates a JavaScript version of the enums file before running DrizzleKit commands.
+DrizzleKit requires JavaScript files for imports. To ensure compatibility, we've:
+
+1. Created `enums.js` for DrizzleKit to use
+2. Set up TypeScript declarations to provide type safety
 
 ### Usage
 
@@ -37,4 +86,8 @@ When making changes to the schema:
 
 ## Troubleshooting
 
-If you encounter the error `Cannot find module './enums.js'` when running DrizzleKit commands, make sure to use the `db:generate:safe` script instead of `db:generate` directly. 
+If you encounter TypeScript errors with enum imports, check:
+
+1. Make sure you're importing from "@workspace/database/enums"
+2. When using enums.js with schema.ts, use the `@ts-ignore` comment if needed
+3. For OpenAPI schemas, use the `as [string, ...string[]]` assertion for Zod enum compatibility 

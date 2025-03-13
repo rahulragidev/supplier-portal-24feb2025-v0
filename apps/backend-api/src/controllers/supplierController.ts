@@ -14,6 +14,7 @@ import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
 import { sql } from "drizzle-orm";
+import { InvitationStatus, SupplierStatus, ApprovalStatus } from "@workspace/database/enums";
 
 export const supplierController = {
   // Get all suppliers (non-deleted)
@@ -129,7 +130,7 @@ export const supplierController = {
           ...validated,
           userUid: userUid,
           addressUid: addressUid,
-          status: data.status || "DRAFT", // Default status
+          status: data.status || SupplierStatus.DRAFT, // Default status
           revisionNumber: 1,
           createdAt: formatDate(),
           updatedAt: formatDate(),
@@ -333,7 +334,7 @@ export const supplierController = {
         organizationUid: data.organizationUid,
         invitedByEmployeeUserUid: data.invitedByEmployeeUserUid,
         email: data.email,
-        status: data.status || "SENT",
+        status: data.status || InvitationStatus.SENT,
         expiresAt: data.expiresAt || expiresAt,
         createdAt: formatDate(),
         updatedAt: formatDate(),
@@ -496,7 +497,7 @@ export const supplierController = {
           ...validated,
           userUid: userUid,
           addressUid: addressUid,
-          status: data.status || "PENDING", // Default status
+          status: data.status || ApprovalStatus.PENDING, // Default status
           createdAt: formatDate(),
           updatedAt: formatDate(),
           createdBy: data.createdBy || null,

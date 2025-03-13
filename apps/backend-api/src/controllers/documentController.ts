@@ -9,6 +9,7 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 import { handleError } from "../middleware/errorHandler.js";
 import { generateUUID, formatDate } from "../utils/helpers.js";
+import { ApprovalStatus } from "@workspace/database/enums";
 
 export const documentController = {
   // --- SUPPLIER SITE DOCUMENTS ---
@@ -229,7 +230,7 @@ export const documentController = {
         supplierUserUid: data.supplierUserUid,
         supplierSiteUserUid: data.supplierSiteUserUid,
         documentType: data.documentType,
-        status: data.status || "PENDING",
+        status: data.status || ApprovalStatus.PENDING,
         requestPayload: data.requestPayload || {},
         responsePayload: data.responsePayload || {},
         createdAt: formatDate(),

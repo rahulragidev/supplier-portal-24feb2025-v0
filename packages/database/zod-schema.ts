@@ -21,7 +21,9 @@ const {
   DocumentStatus,
   TermType,
   OrgUnitType,
-  ApproverType
+  ApproverType,
+  InvitationStatus,
+  StandardTermType
 } = enums;
 
 // ===================
@@ -70,6 +72,8 @@ export const DocumentStatusSchema = z.enum(Object.values(DocumentStatus) as [str
 export const TermTypeSchema = z.enum(Object.values(TermType) as [string, ...string[]]);
 export const OrgUnitTypeSchema = z.enum(Object.values(OrgUnitType) as [string, ...string[]]);
 export const ApproverTypeSchema = z.enum(Object.values(ApproverType) as [string, ...string[]]);
+export const InvitationStatusSchema = z.enum(Object.values(InvitationStatus) as [string, ...string[]]);
+export const StandardTermTypeSchema = z.enum(Object.values(StandardTermType) as [string, ...string[]]);
 
 // ===================
 // DATABASE SCHEMAS
@@ -183,7 +187,7 @@ export const ClientAddressSchema = z.object({
   state: z.string().min(2, "State must be at least 2 characters"),
   country: z.string().min(2, "Country must be at least 2 characters"),
   pincode: PincodeSchema,
-  addressType: z.enum(["BILLING", "SHIPPING", "REGISTERED", "OPERATIONAL"]),
+  addressType: AddressTypeSchema,
   extraData: z.any().optional()
 });
 
@@ -191,13 +195,13 @@ export const ClientSupplierSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   pan: PanSchema,
   constitutionOfBusiness: z.string().min(2, "Constitution of business must be at least 2 characters"),
-  tradeType: z.enum(["GOODS", "SERVICES", "BOTH"]),
+  tradeType: TradeTypeSchema,
   contactName: z.string().min(2, "Contact name must be at least 2 characters").optional(),
   contactEmail: EmailSchema,
   contactPhone: PhoneSchema,
   organizationUid: UuidSchema,
   supplierCode: z.string().min(2, "Supplier code must be at least 2 characters").optional(),
-  status: z.enum(["DRAFT", "PENDING_APPROVAL", "ACTIVE", "INACTIVE", "REJECTED"]).default("DRAFT"),
+  status: SupplierStatusSchema.default(SupplierStatus.DRAFT),
   address: ClientAddressSchema
 });
 
@@ -210,18 +214,18 @@ export const ClientSupplierSiteSchema = z.object({
   fssaiNumber: z.string().regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits").optional(),
   msmeNumber: z.string().min(2, "MSME number must be at least 2 characters").optional(),
   supplierUserUid: UuidSchema,
-  status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]),
+  status: ApprovalStatusSchema,
   isActive: z.boolean().default(true),
   address: ClientAddressSchema
 });
 
 export const ClientSupplierSiteTermSchema = z.object({
   supplierSiteUserUid: UuidSchema,
-  termType: z.enum(["FINANCIAL", "TRADE", "SUPPORT"]),
+  termType: TermTypeSchema,
   effectiveDate: z.date().optional(),
   expirationDate: z.date().optional(),
   isActive: z.boolean().default(true),
-  approvalStatus: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]).optional(),
+  approvalStatus: ApprovalStatusSchema.optional(),
   versionNumber: z.number().int().positive().optional(),
 });
 
@@ -276,7 +280,7 @@ export const ClientApprovalRequestSchema = z.object({
   supplierSiteUserUid: UuidSchema.optional(),
   termUid: UuidSchema.optional(),
   stepUid: UuidSchema,
-  status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELLED", "ESCALATED", "DELEGATED"]),
+  status: ApprovalStatusSchema,
 });
 
 export const ClientStoreSchema = z.object({

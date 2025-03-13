@@ -73,4 +73,19 @@ export const OrgUnitType = {
 export const ApproverType = {
   USER: 'USER',
   ROLE: 'ROLE'
+} as const;
+
+export const InvitationStatus = {
+  SENT: 'SENT',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+} as const;
+
+export const StandardTermType = {
+  PAYMENT: 'PAYMENT',
+  DELIVERY: 'DELIVERY',
+  WARRANTY: 'WARRANTY',
+  SERVICE_LEVEL: 'SERVICE_LEVEL'
 } as const; 

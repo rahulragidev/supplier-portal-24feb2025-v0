@@ -1,6 +1,19 @@
 import { z } from '@hono/zod-openapi';
 import * as zodSchema from '@workspace/database/zod-schema';
 import * as examples from '@workspace/database/examples';
+import * as dbEnums from '@workspace/database/enums';
+import type { 
+  UserType, 
+  AddressType, 
+  TradeType, 
+  SupplierStatus, 
+  ApprovalStatus, 
+  DocumentStatusEnum as DocumentStatus, 
+  TermType, 
+  OrgUnitType, 
+  ApproverTypeEnum as ApproverType, 
+  InvitationStatus 
+} from '@workspace/database/types';
 
 // Destructure for easier access
 const {
@@ -19,6 +32,8 @@ const {
   TermTypeSchema,
   OrgUnitTypeSchema,
   ApproverTypeSchema,
+  InvitationStatusSchema,
+  StandardTermTypeSchema,
   ClientAppUserSchema,
   ClientOrganizationSchema,
   ClientEmployeeSchema,
@@ -33,6 +48,23 @@ const {
 } = zodSchema;
 
 const { Examples } = examples;
+
+/**
+ * Enum Values for OpenAPI Schemas
+ * 
+ * We're using the enum values directly from the database package.
+ * This ensures consistency across the entire application.
+ */
+const InvitationStatusValues = Object.values(dbEnums.InvitationStatus) as [string, ...string[]];
+const SupplierStatusValues = Object.values(dbEnums.SupplierStatus) as [string, ...string[]];
+const ApprovalStatusValues = Object.values(dbEnums.ApprovalStatus) as [string, ...string[]];
+const UserTypeValues = Object.values(dbEnums.UserType) as [string, ...string[]];
+const TermTypeValues = Object.values(dbEnums.TermType) as [string, ...string[]];
+const StandardTermTypeValues = Object.values(dbEnums.StandardTermType) as [string, ...string[]];
+const AddressTypeValues = Object.values(dbEnums.AddressType) as [string, ...string[]];
+const TradeTypeValues = Object.values(dbEnums.TradeType) as [string, ...string[]];
+const ApproverTypeValues = Object.values(dbEnums.ApproverType) as [string, ...string[]];
+const OrgUnitTypeValues = Object.values(dbEnums.OrgUnitType) as [string, ...string[]];
 
 /**
  * Helper function to add OpenAPI metadata to a Zod schema
@@ -194,7 +226,7 @@ export const AddressSchema = z.object({
   state: ClientAddressSchema.shape.state.openapi({ example: 'NY' }),
   country: ClientAddressSchema.shape.country.openapi({ example: 'USA' }),
   pincode: ClientAddressSchema.shape.pincode.openapi({ example: '10001' }),
-  addressType: ClientAddressSchema.shape.addressType.openapi({ 
+  addressType: z.enum(AddressTypeValues).openapi({ 
     example: 'BILLING',
     description: 'Type of address (BILLING, SHIPPING, REGISTERED, OPERATIONAL)'
   }),
@@ -215,7 +247,7 @@ export const CreateAddressSchema = z.object({
   state: ClientAddressSchema.shape.state.openapi({ example: 'NY' }),
   country: ClientAddressSchema.shape.country.openapi({ example: 'USA' }),
   pincode: ClientAddressSchema.shape.pincode.openapi({ example: '10001' }),
-  addressType: ClientAddressSchema.shape.addressType.openapi({ 
+  addressType: z.enum(AddressTypeValues).openapi({ 
     example: 'BILLING',
     description: 'Type of address (BILLING, SHIPPING, REGISTERED, OPERATIONAL)'
   }),
@@ -296,7 +328,7 @@ export const CreateSupplierSchema = z.object({
     state: z.string().openapi({ example: Examples.state }),
     country: z.string().openapi({ example: Examples.country }),
     pincode: z.string().openapi({ example: Examples.pincode }),
-    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).openapi({
+    addressType: z.enum(AddressTypeValues).openapi({
       example: 'REGISTERED',
       description: 'Type of address'
     }),
@@ -395,7 +427,7 @@ export const CreateSupplierSiteSchema = z.object({
     state: z.string().openapi({ example: Examples.state }),
     country: z.string().openapi({ example: Examples.country }),
     pincode: z.string().openapi({ example: Examples.pincode }),
-    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).openapi({
+    addressType: z.enum(AddressTypeValues).openapi({
       example: 'OPERATIONAL',
       description: 'Type of address'
     }),
@@ -442,7 +474,7 @@ export const OrgUnitSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Sales Department' }),
   orgUnitCode: z.string().min(1).max(50).openapi({ example: 'SALES-001' }),
-  unitType: z.enum(['DIVISION', 'DEPARTMENT', 'TEAM', 'REGION', 'BUSINESS_UNIT', 'SUBSIDIARY']).openapi({
+  unitType: z.enum(OrgUnitTypeValues).openapi({
     example: 'DEPARTMENT',
     description: 'Type of organizational unit'
   }),
@@ -459,7 +491,7 @@ export const CreateOrgUnitSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Sales Department' }),
   orgUnitCode: z.string().min(1).max(50).openapi({ example: 'SALES-001' }),
-  unitType: z.enum(['DIVISION', 'DEPARTMENT', 'TEAM', 'REGION', 'BUSINESS_UNIT', 'SUBSIDIARY']).openapi({
+  unitType: z.enum(OrgUnitTypeValues).openapi({
     example: 'DEPARTMENT',
     description: 'Type of organizational unit'
   }),
@@ -521,7 +553,7 @@ export const CreateStoreSchema = z.object({
     state: z.string().openapi({ example: 'NY' }),
     country: z.string().openapi({ example: 'USA' }),
     pincode: z.string().openapi({ example: '10001' }),
-    addressType: z.enum(['BILLING', 'SHIPPING', 'REGISTERED', 'OPERATIONAL']).optional().openapi({
+    addressType: z.enum(AddressTypeValues).optional().openapi({
       example: 'OPERATIONAL',
       description: 'Type of address'
     }),
@@ -540,7 +572,7 @@ export const ApprovalProcessSchema = z.object({
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   steps: z.array(z.object({
     step: z.number().int().min(1).openapi({ example: 1 }),
-    approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
+    approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
     approverId: UuidSchema.openapi({ example: Examples.uuid }),
     isParallel: z.boolean().openapi({ example: false }),
     isOptional: z.boolean().openapi({ example: false }),
@@ -571,7 +603,7 @@ export const CreateApprovalProcessSchema = z.object({
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   steps: z.array(z.object({
     step: z.number().int().min(1).openapi({ example: 1 }),
-    approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
+    approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
     approverId: UuidSchema.openapi({ example: Examples.uuid }),
     isParallel: z.boolean().openapi({ example: false }),
     isOptional: z.boolean().openapi({ example: false }),
@@ -599,7 +631,7 @@ export const ApprovalRequestSchema = z.object({
   requestorUid: UuidSchema.openapi({ example: Examples.uuid }),
   entityType: z.string().openapi({ example: 'SUPPLIER' }),
   entityUid: UuidSchema.openapi({ example: Examples.uuid }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the approval request'
   }),
@@ -607,7 +639,7 @@ export const ApprovalRequestSchema = z.object({
   steps: z.array(z.object({
     step: z.number().int().openapi({ example: 1 }),
     approverUid: UuidSchema.openapi({ example: Examples.uuid }),
-    approvalStatus: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+    approvalStatus: z.enum(ApprovalStatusValues).openapi({
       example: 'PENDING'
     })
   })).openapi({ 
@@ -687,7 +719,7 @@ export const DocumentSchema = z.object({
   fileSize: z.number().int().positive().openapi({ example: 1024567 }),
   mimeType: z.string().min(1).max(100).openapi({ example: 'application/pdf' }),
   expiryDate: z.string().datetime().nullable().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the document (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
@@ -710,7 +742,7 @@ export const CreateDocumentSchema = z.object({
   fileSize: z.number().int().positive().openapi({ example: 1024567 }),
   mimeType: z.string().min(1).max(100).openapi({ example: 'application/pdf' }),
   expiryDate: z.string().datetime().optional().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the document (PENDING, APPROVED, REJECTED, CANCELLED, ESCALATED, DELEGATED)'
   }),
@@ -757,8 +789,8 @@ export const SupplierInvitationSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   invitedByEmployeeUserUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
   email: EmailSchema.openapi({ example: 'supplier@example.com' }),
-  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).openapi({
-    example: 'SENT',
+  status: z.enum(InvitationStatusValues).openapi({
+    example: InvitationStatusValues[0],
     description: 'Status of the invitation (SENT, ACCEPTED, REJECTED, EXPIRED, REVOKED)'
   }),
   expiresAt: z.string().datetime().openapi({ example: '2023-01-08T00:00:00Z' }),
@@ -774,8 +806,8 @@ export const CreateSupplierInvitationSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   invitedByEmployeeUserUid: UuidSchema.openapi({ example: Examples.uuid }),
   email: EmailSchema.openapi({ example: 'supplier@example.com' }),
-  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).optional().openapi({
-    example: 'SENT',
+  status: z.enum(InvitationStatusValues).optional().openapi({
+    example: InvitationStatusValues[0],
     description: 'Status of the invitation (SENT, ACCEPTED, REJECTED, EXPIRED, REVOKED)'
   }),
   expiresAt: z.string().datetime().optional().openapi({ example: '2023-01-08T00:00:00Z' }),
@@ -785,8 +817,8 @@ export const CreateSupplierInvitationSchema = z.object({
 export const SupplierInvitationListSchema = z.array(SupplierInvitationSchema).openapi('SupplierInvitationList');
 
 export const UpdateInvitationStatusSchema = z.object({
-  status: z.enum(['SENT', 'ACCEPTED', 'REJECTED', 'EXPIRED', 'REVOKED']).openapi({
-    example: 'ACCEPTED',
+  status: z.enum(InvitationStatusValues).openapi({
+    example: InvitationStatusValues[1],
     description: 'New status for the invitation'
   }),
   lastUpdatedBy: UuidSchema.optional().openapi({ example: Examples.uuid })
@@ -808,14 +840,14 @@ export const TermSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Net 30' }),
   termCode: z.string().min(1).max(50).openapi({ example: 'TERM-001' }),
-  termType: z.enum(['PAYMENT', 'DELIVERY', 'WARRANTY', 'SERVICE_LEVEL']).openapi({
+  termType: z.enum(StandardTermTypeValues).openapi({
     example: 'PAYMENT',
     description: 'Type of term'
   }),
   description: z.string().max(500).nullable().openapi({ example: 'Payment due within 30 days' }),
   validFrom: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   validTo: z.string().datetime().nullable().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the term (PENDING, APPROVED, REJECTED, CANCELLED, EXPIRED)'
   }),
@@ -831,14 +863,14 @@ export const CreateTermSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(100).openapi({ example: 'Net 30' }),
   termCode: z.string().min(1).max(50).openapi({ example: 'TERM-001' }),
-  termType: z.enum(['PAYMENT', 'DELIVERY', 'WARRANTY', 'SERVICE_LEVEL']).openapi({
+  termType: z.enum(StandardTermTypeValues).openapi({
     example: 'PAYMENT',
     description: 'Type of term'
   }),
   description: z.string().max(500).optional().openapi({ example: 'Payment due within 30 days' }),
   validFrom: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   validTo: z.string().datetime().optional().openapi({ example: '2024-01-01T00:00:00Z' }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'EXPIRED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the term (PENDING, APPROVED, REJECTED, CANCELLED, EXPIRED)'
   }),
@@ -855,9 +887,9 @@ export const ApprovalSchema = z.object({
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   step: z.number().int().min(1).openapi({ example: 1 }),
-  approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
+  approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
   approverId: UuidSchema.openapi({ example: Examples.uuid }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the approval'
   }),
@@ -876,9 +908,9 @@ export const CreateApprovalSchema = z.object({
   entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
   entityUid: UuidSchema.openapi({ example: Examples.uuid }),
   step: z.number().int().min(1).openapi({ example: 1 }),
-  approverType: z.enum(['USER', 'ROLE']).openapi({ example: 'ROLE' }),
+  approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
   approverId: UuidSchema.openapi({ example: Examples.uuid }),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'ESCALATED', 'DELEGATED']).openapi({
+  status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the approval'
   }),

@@ -19,7 +19,7 @@
 
 import { z } from "zod";
 import * as zodSchema from "./zod-schema.js";
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import * as schema from "./schema.js";
 import * as enums from "./enums.js";
 
@@ -154,6 +154,8 @@ export type DocumentStatusEnum = typeof enums.DocumentStatus[keyof typeof enums.
 export type TermTypeEnum = typeof enums.TermType[keyof typeof enums.TermType];
 export type OrgUnitTypeEnum = typeof enums.OrgUnitType[keyof typeof enums.OrgUnitType];
 export type ApproverTypeEnum = typeof enums.ApproverType[keyof typeof enums.ApproverType];
+export type InvitationStatusEnum = typeof enums.InvitationStatus[keyof typeof enums.InvitationStatus];
+export type StandardTermTypeEnum = typeof enums.StandardTermType[keyof typeof enums.StandardTermType];
 
 // ===================
 // RELATION TYPES

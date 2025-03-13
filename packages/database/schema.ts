@@ -48,7 +48,9 @@ const {
   DocumentStatus,
   TermType,
   OrgUnitType,
-  ApproverType
+  ApproverType,
+  InvitationStatus,
+  StandardTermType
 } = enums;
 
 // ===================
@@ -64,6 +66,8 @@ export const documentStatusEnum = pgEnum("document_status_enum", Object.values(D
 export const termTypeEnum = pgEnum("term_type_enum", Object.values(TermType) as [string, ...string[]]);
 export const orgUnitTypeEnum = pgEnum("org_unit_type_enum", Object.values(OrgUnitType) as [string, ...string[]]);
 export const approverTypeEnum = pgEnum("approver_type_enum", Object.values(ApproverType) as [string, ...string[]]);
+export const invitationStatusEnum = pgEnum("invitation_status_enum", Object.values(InvitationStatus) as [string, ...string[]]);
+export const standardTermTypeEnum = pgEnum("standard_term_type_enum", Object.values(StandardTermType) as [string, ...string[]]);
 
 // ===================
 // CORE TABLES
@@ -272,7 +276,7 @@ export const supplierInvitation = pgTable("supplier_invitation", {
   organizationUid: uuid("organization_uid").notNull().references(() => organization.uid, { onDelete: "cascade" }),
   invitedByEmployeeUserUid: uuid("invited_by_employee_user_uid").references(() => appUser.uid, { onDelete: "set null" }),
   email: varchar("email", { length: 255 }).notNull(),
-  status: approvalStatusEnum("status").notNull(),
+  status: invitationStatusEnum("status").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
