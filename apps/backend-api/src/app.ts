@@ -17,10 +17,14 @@ import storeRoutes from "./routes/storeRoutes.js";
 import approvalRoutes from "./routes/approvalRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import termRoutes from "./routes/termRoutes.js";
+import dotenv from "dotenv";
 
 // Import OpenAPI setup
 import { setupOpenAPI } from "./openapi/index.js";
 import { authenticateToken } from "./middleware/auth.js";
+
+// dotenv load
+dotenv.config();
 
 const app = new Hono();
 

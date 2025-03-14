@@ -17,7 +17,7 @@ export const authenticateToken = async (c: Context, next: Next) => {
     const token = authHeader.split(' ')[1];
     
     // Replace these with your actual JWT secret and configuration
-    const secret = new TextEncoder().encode("5be6d556d83dd53176452f90aeb00ab03e550283748e57f52818386c87285231");
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jose.jwtVerify(token as string, secret);
     
     // Validate and type-cast the payload

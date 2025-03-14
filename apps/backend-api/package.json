@@ -15,8 +15,10 @@
     "@hono/zod-openapi": "^0.19.2",
     "@scalar/hono-api-reference": "^0.6.0",
     "@workspace/database": "workspace:*",
+    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
     "hono": "^4.7.2",
+    "jose": "^6.0.10",
     "zod": "^3.24.2"
   },
   "devDependencies": {
