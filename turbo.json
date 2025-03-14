@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["NEXT_PUBLIC_API_URL", "JWT_SECRET"],
+  "globalEnv": ["NEXT_PUBLIC_API_URL"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -17,10 +17,16 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["DATABASE_URL", "JWT_SECRET"]
+      "env": ["DATABASE_URL"]
     },
     "clean": {
       "cache": false
+    },
+    "backend-api#build": {
+      "env": ["JWT_SECRET"]
+    },
+    "backend-api#dev": {
+      "env": ["JWT_SECRET"]
     }
   }
 }
