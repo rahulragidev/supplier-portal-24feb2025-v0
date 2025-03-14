@@ -190,6 +190,7 @@ openAPIApp.doc('/api-doc', {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
+        description: 'JWT token with userId in payload'
       },
     },
   },

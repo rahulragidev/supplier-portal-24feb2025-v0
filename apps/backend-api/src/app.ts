@@ -20,6 +20,7 @@ import termRoutes from "./routes/termRoutes.js";
 
 // Import OpenAPI setup
 import { setupOpenAPI } from "./openapi/index.js";
+import { authenticateToken } from "./middleware/auth.js";
 
 const app = new Hono();
 
@@ -37,8 +38,27 @@ app.use(
     allowMethods: ["GET", "POST", "PUT", "DELETE"],
     allowHeaders: ["Content-Type", "Authorization"],
     exposeHeaders: ["Content-Length", "X-Requested-With"],
-  }),
+  })
 );
+
+// Public routes (no authentication required)
+app.use("/", (c, next) => next());
+app.use("/api", (c, next) => next());
+app.use("/api-doc", (c, next) => next());
+app.use("/reference", (c, next) => next());
+
+// Protected routes (require authentication)
+app.use("/users/*", authenticateToken);
+app.use("/organizations/*", authenticateToken);
+app.use("/employees/*", authenticateToken);
+app.use("/suppliers/*", authenticateToken);
+app.use("/addresses/*", authenticateToken);
+app.use("/org-units/*", authenticateToken);
+app.use("/roles/*", authenticateToken);
+app.use("/stores/*", authenticateToken);
+app.use("/approval-processes/*", authenticateToken);
+app.use("/documents/*", authenticateToken);
+app.use("/supplier-terms/*", authenticateToken);
 
 // Add Scalar API Reference
 app.get(
