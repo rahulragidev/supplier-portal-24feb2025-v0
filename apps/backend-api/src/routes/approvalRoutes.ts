@@ -15,22 +15,23 @@ const UidParamSchema = z.object({
 // --- APPROVAL PROCESSES ---
 
 // Get all approval processes
-approvalRoutes.get("/processes", approvalController.getAllProcesses);
+approvalRoutes.get("/", approvalController.getAllProcesses);
 
-// Get approval process by ID 
-approvalRoutes.get("/processes/:uid", approvalController.getProcessById);
+// Important: Place more specific routes BEFORE parameterized routes to prevent capturing
+// Get processes by organization (must be before the /:uid route)
+approvalRoutes.get("/processes/organization/:orgUid", approvalController.getProcessesByOrganization);
 
 // Create a new approval process
 approvalRoutes.post("/processes", approvalController.createProcess);
+
+// Get approval process by ID 
+approvalRoutes.get("/processes/:uid", approvalController.getProcessById);
 
 // Update an approval process
 approvalRoutes.put("/processes/:uid", approvalController.updateProcess);
 
 // Soft delete an approval process
 approvalRoutes.delete("/processes/:uid", approvalController.deleteProcess);
-
-// Get processes by organization
-approvalRoutes.get("/processes/organization/:orgUid", approvalController.getProcessesByOrganization);
 
 // --- APPROVAL STEPS ---
 
@@ -68,6 +69,10 @@ approvalRoutes.delete("/responsibilities/:uid", approvalController.deleteRespons
 // Get all approval requests
 approvalRoutes.get("/requests", approvalController.getAllRequests);
 
+// Important: Place specific routes before parameterized routes
+// Get approval requests by supplier (must be before the /:uid route)
+approvalRoutes.get("/requests/supplier/:supplierUid", approvalController.getRequestsBySupplier);
+
 // Get approval request by ID
 approvalRoutes.get("/requests/:uid", approvalController.getRequestById);
 
@@ -80,21 +85,18 @@ approvalRoutes.put("/requests/:uid/status", approvalController.updateRequestStat
 // Update approval request step
 approvalRoutes.put("/requests/:uid/step", approvalController.updateRequestStep);
 
-// Get approval requests by supplier
-approvalRoutes.get("/requests/supplier/:supplierUid", approvalController.getRequestsBySupplier);
-
-// --- APPROVAL LOGS ---
-
 // Get logs by request
 approvalRoutes.get("/requests/:requestUid/logs", approvalController.getLogsByRequest);
+
+// Get comments by request
+approvalRoutes.get("/requests/:requestUid/comments", approvalController.getCommentsByRequest);
+
+// --- APPROVAL LOGS ---
 
 // Create a new approval log
 approvalRoutes.post("/logs", approvalController.createLog);
 
 // --- APPROVAL COMMENTS ---
-
-// Get comments by request
-approvalRoutes.get("/requests/:requestUid/comments", approvalController.getCommentsByRequest);
 
 // Add a comment to a request
 approvalRoutes.post("/comments", approvalController.createComment);

@@ -1,6 +1,9 @@
 import { createRoute } from '@hono/zod-openapi';
 import * as schemas from './schemas.js';
 import { z } from 'zod';
+import { ApprovalStatus } from '@workspace/database/enums';
+import { UuidSchema } from '@workspace/database/zod-schema';
+import { Examples } from '@workspace/database/examples';
 
 // User routes
 export const getUsersRoute = createRoute({
@@ -1751,7 +1754,7 @@ export const getApprovalProcessesRoute = createRoute({
       description: 'List of approval processes',
       content: {
         'application/json': {
-          schema: schemas.ApprovalListSchema,
+          schema: schemas.ApprovalProcessListSchema,
         },
       },
     },
@@ -1760,7 +1763,7 @@ export const getApprovalProcessesRoute = createRoute({
 
 export const getApprovalProcessByIdRoute = createRoute({
   method: 'get',
-  path: '/approval-processes/{uid}',
+  path: '/approval-processes/processes/{uid}',
   tags: ['Approvals'],
   summary: 'Get approval process by ID',
   description: 'Retrieve a specific approval process by its unique identifier',
@@ -1772,7 +1775,7 @@ export const getApprovalProcessByIdRoute = createRoute({
       description: 'Approval process details',
       content: {
         'application/json': {
-          schema: schemas.ApprovalSchema,
+          schema: schemas.ApprovalProcessSchema,
         },
       },
     },
@@ -1789,7 +1792,7 @@ export const getApprovalProcessByIdRoute = createRoute({
 
 export const getApprovalProcessesByOrganizationRoute = createRoute({
   method: 'get',
-  path: '/approval-processes/organization/{orgUid}',
+  path: '/approval-processes/processes/organization/{orgUid}',
   tags: ['Approvals'],
   summary: 'Get approval processes by organization',
   description: 'Retrieve all approval processes for a specific organization',
@@ -1801,7 +1804,7 @@ export const getApprovalProcessesByOrganizationRoute = createRoute({
       description: 'List of approval processes',
       content: {
         'application/json': {
-          schema: schemas.ApprovalListSchema,
+          schema: schemas.ApprovalProcessListSchema,
         },
       },
     },
@@ -1810,7 +1813,7 @@ export const getApprovalProcessesByOrganizationRoute = createRoute({
 
 export const createApprovalProcessRoute = createRoute({
   method: 'post',
-  path: '/approval-processes',
+  path: '/approval-processes/processes',
   tags: ['Approvals'],
   summary: 'Create a new approval process',
   description: 'Create a new approval process with the provided data',
@@ -1818,7 +1821,7 @@ export const createApprovalProcessRoute = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: schemas.CreateApprovalSchema,
+          schema: schemas.CreateApprovalProcessSchema,
         },
       },
     },
@@ -1828,7 +1831,7 @@ export const createApprovalProcessRoute = createRoute({
       description: 'Approval process created successfully',
       content: {
         'application/json': {
-          schema: schemas.ApprovalSchema,
+          schema: schemas.ApprovalProcessSchema,
         },
       },
     },
@@ -1854,7 +1857,7 @@ export const updateApprovalProcessRoute = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: schemas.CreateApprovalSchema.partial(),
+          schema: schemas.CreateApprovalProcessSchema.partial(),
         },
       },
     },
@@ -1864,7 +1867,7 @@ export const updateApprovalProcessRoute = createRoute({
       description: 'Approval process updated successfully',
       content: {
         'application/json': {
-          schema: schemas.ApprovalSchema,
+          schema: schemas.ApprovalProcessSchema,
         },
       },
     },
@@ -2277,7 +2280,7 @@ export const getApprovalRequestByIdRoute = createRoute({
   summary: 'Get approval request by ID',
   description: 'Retrieve a specific approval request by its unique identifier',
   request: {
-    params: schemas.RequestUidParam,
+    params: schemas.UuidParam,
   },
   responses: {
     200: {
@@ -2299,11 +2302,11 @@ export const getApprovalRequestByIdRoute = createRoute({
   },
 });
 
-export const getRequestsBySupplierRoute = createRoute({
+export const getApprovalRequestsBySupplierRoute = createRoute({
   method: 'get',
-  path: '/approval-processes/requests/supplier/{supplierUserUid}',
+  path: '/approval-processes/requests/supplier/{supplierUid}',
   tags: ['Approvals'],
-  summary: 'Get requests by supplier',
+  summary: 'Get approval requests by supplier',
   description: 'Retrieve all approval requests for a specific supplier',
   request: {
     params: schemas.SupplierUserUidParam,
@@ -2362,7 +2365,7 @@ export const updateRequestStatusRoute = createRoute({
   summary: 'Update approval request status',
   description: 'Update the status of an existing approval request',
   request: {
-    params: schemas.RequestUidParam,
+    params: schemas.UuidParam,
     body: {
       content: {
         'application/json': {

@@ -569,93 +569,87 @@ export const ApprovalProcessSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(200).openapi({ example: 'Supplier Onboarding Approval' }),
   description: z.string().max(500).nullable().openapi({ example: 'Approval process for new suppliers' }),
-  entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  steps: z.array(z.object({
-    step: z.number().int().min(1).openapi({ example: 1 }),
-    approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
-    approverId: UuidSchema.openapi({ example: Examples.uuid }),
-    isParallel: z.boolean().openapi({ example: false }),
-    isOptional: z.boolean().openapi({ example: false }),
-    timeoutHours: z.number().int().positive().nullable().openapi({ example: 48 })
-  })).min(1).openapi({
-    example: [{
-      step: 1,
-      approverType: 'ROLE',
-      approverId: Examples.uuid,
-      isParallel: false,
-      isOptional: false,
-      timeoutHours: 48
-    }]
-  }),
   isActive: z.boolean().openapi({ example: true }),
-  extraData: z.any().optional().openapi({ example: { autoApprove: false } }),
+  extraData: z.any().optional().openapi({ example: { processType: 'SUPPLIER_ONBOARDING' } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
   createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
+  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  steps: z.array(z.object({
+    uid: UuidSchema.openapi({ example: Examples.uuid }),
+    stepName: z.string().openapi({ example: 'Manager Approval' }),
+    stepOrder: z.number().int().min(1).openapi({ example: 1 })
+  })).optional().openapi({
+    example: [{
+      uid: Examples.uuid,
+      stepName: 'Manager Approval',
+      stepOrder: 1
+    }]
+  })
 }).openapi('ApprovalProcess');
 
 export const CreateApprovalProcessSchema = z.object({
   organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
   name: z.string().min(1).max(200).openapi({ example: 'Supplier Onboarding Approval' }),
   description: z.string().max(500).optional().openapi({ example: 'Approval process for new suppliers' }),
-  entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  steps: z.array(z.object({
-    step: z.number().int().min(1).openapi({ example: 1 }),
-    approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
-    approverId: UuidSchema.openapi({ example: Examples.uuid }),
-    isParallel: z.boolean().openapi({ example: false }),
-    isOptional: z.boolean().openapi({ example: false }),
-    timeoutHours: z.number().int().positive().nullable().openapi({ example: 48 })
-  })).min(1).openapi({
-    example: [{
-      step: 1,
-      approverType: 'ROLE',
-      approverId: Examples.uuid,
-      isParallel: false,
-      isOptional: false,
-      timeoutHours: 48
-    }]
-  }),
   isActive: z.boolean().openapi({ example: true }),
-  extraData: z.any().optional().openapi({ example: { autoApprove: false } })
+  extraData: z.any().optional().openapi({ example: { processType: 'SUPPLIER_ONBOARDING' } })
 }).openapi('CreateApprovalProcess');
 
-export const ApprovalListSchema = z.array(ApprovalProcessSchema).openapi('ApprovalList');
+export const ApprovalProcessListSchema = z.array(ApprovalProcessSchema).openapi('ApprovalProcessList');
 
 // Approval request schemas
 export const ApprovalRequestSchema = z.object({
   uid: UuidSchema.openapi({ example: Examples.uuid }),
   approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
-  requestorUid: UuidSchema.openapi({ example: Examples.uuid }),
-  entityType: z.string().openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
+  supplierUserUid: UuidSchema.openapi({ example: Examples.uuid }),
+  supplierSiteUserUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  termUid: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+  stepUid: UuidSchema.openapi({ example: Examples.uuid }),
   status: z.enum(ApprovalStatusValues).openapi({
     example: 'PENDING',
     description: 'Status of the approval request'
   }),
-  currentStep: z.number().openapi({ example: 1 }),
-  steps: z.array(z.object({
-    step: z.number().int().openapi({ example: 1 }),
-    approverUid: UuidSchema.openapi({ example: Examples.uuid }),
-    approvalStatus: z.enum(ApprovalStatusValues).openapi({
-      example: 'PENDING'
-    })
-  })).openapi({ 
-    example: [
-      { step: 1, approverUid: Examples.uuid, approvalStatus: 'PENDING' }
-    ]
-  }),
   extraData: z.any().optional().openapi({ example: { priority: 'HIGH' } }),
   createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
+  completedAt: z.string().datetime().nullable().openapi({ example: null }),
   deletedAt: z.string().datetime().nullable().openapi({ example: null }),
   createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
   lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
 }).openapi('ApprovalRequest');
 
-export const CreateApprovalRequestSchema = ClientApprovalRequestSchema.openapi('CreateApprovalRequest');
+export const CreateApprovalRequestSchema = z.object({
+  approvalProcessUid: UuidSchema.openapi({ 
+    example: Examples.uuid,
+    description: 'The ID of the approval process template to use'
+  }),
+  supplierUserUid: UuidSchema.openapi({ 
+    example: Examples.uuid,
+    description: 'The supplier this approval request is for'
+  }),
+  supplierSiteUserUid: UuidSchema.optional().openapi({ 
+    example: Examples.uuid,
+    description: 'Optional: The supplier site this approval request is for'
+  }),
+  termUid: UuidSchema.optional().openapi({ 
+    example: Examples.uuid,
+    description: 'Optional: The term this approval request is for'
+  }),
+  stepUid: UuidSchema.openapi({ 
+    example: Examples.uuid,
+    description: 'The initial step of the approval process'
+  }),
+  status: z.enum(ApprovalStatusValues).openapi({
+    example: 'PENDING',
+    description: 'Initial status of the approval request, usually PENDING'
+  }),
+  extraData: z.any().optional().openapi({ 
+    example: { priority: 'HIGH' },
+    description: 'Any additional data associated with this approval request'
+  })
+}).openapi('CreateApprovalRequest');
 
 export const UpdateRequestStepSchema = z.object({
   stepUid: UuidSchema.openapi({ example: Examples.uuid }),
@@ -877,43 +871,4 @@ export const CreateTermSchema = z.object({
   extraData: z.any().optional().openapi({ example: { gracePeriod: 5, lateFee: 2.5 } })
 }).openapi('CreateTerm');
 
-export const TermListSchema = z.array(TermSchema).openapi('TermList');
-
-// Approval schemas
-export const ApprovalSchema = z.object({
-  uid: UuidSchema.openapi({ example: Examples.uuid }),
-  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
-  approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
-  entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
-  step: z.number().int().min(1).openapi({ example: 1 }),
-  approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
-  approverId: UuidSchema.openapi({ example: Examples.uuid }),
-  status: z.enum(ApprovalStatusValues).openapi({
-    example: 'PENDING',
-    description: 'Status of the approval'
-  }),
-  comments: z.string().max(500).nullable().openapi({ example: 'Approved as per policy' }),
-  extraData: z.any().optional().openapi({ example: { level: 1, threshold: 10000 } }),
-  createdAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
-  updatedAt: z.string().datetime().openapi({ example: '2023-01-01T00:00:00Z' }),
-  deletedAt: z.string().datetime().nullable().openapi({ example: null }),
-  createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
-  lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid })
-}).openapi('Approval');
-
-export const CreateApprovalSchema = z.object({
-  organizationUid: UuidSchema.openapi({ example: Examples.uuid }),
-  approvalProcessUid: UuidSchema.openapi({ example: Examples.uuid }),
-  entityType: z.string().min(1).max(50).openapi({ example: 'SUPPLIER' }),
-  entityUid: UuidSchema.openapi({ example: Examples.uuid }),
-  step: z.number().int().min(1).openapi({ example: 1 }),
-  approverType: z.enum(ApproverTypeValues).openapi({ example: 'ROLE' }),
-  approverId: UuidSchema.openapi({ example: Examples.uuid }),
-  status: z.enum(ApprovalStatusValues).openapi({
-    example: 'PENDING',
-    description: 'Status of the approval'
-  }),
-  comments: z.string().max(500).optional().openapi({ example: 'Approved as per policy' }),
-  extraData: z.any().optional().openapi({ example: { level: 1, threshold: 10000 } })
-}).openapi('CreateApproval'); 
+export const TermListSchema = z.array(TermSchema).openapi('TermList'); 

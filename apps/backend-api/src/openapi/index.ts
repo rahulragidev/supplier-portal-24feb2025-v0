@@ -118,7 +118,7 @@ openAPIApp.openapi(routes.deleteResponsibilityRoute, proxyToApp);
 // Register approval request routes
 openAPIApp.openapi(routes.getApprovalRequestsRoute, proxyToApp);
 openAPIApp.openapi(routes.getApprovalRequestByIdRoute, proxyToApp);
-openAPIApp.openapi(routes.getRequestsBySupplierRoute, proxyToApp);
+openAPIApp.openapi(routes.getApprovalRequestsBySupplierRoute, proxyToApp);
 openAPIApp.openapi(routes.createApprovalRequestRoute, proxyToApp);
 openAPIApp.openapi(routes.updateRequestStatusRoute, proxyToApp);
 openAPIApp.openapi(routes.updateRequestStepRoute, proxyToApp);
