@@ -1,19 +1,19 @@
 import { Hono } from "hono";
-import { roleController } from "../controllers/roleController.js";
 import { z } from "zod";
+import { roleController } from "../controllers/roleController.js";
 
 // Create a router for role endpoints
 const roleRoutes = new Hono();
 
 // Define schema for URL parameter validation
-const UidParamSchema = z.object({
-  uid: z.string().uuid()
+const _UidParamSchema = z.object({
+  uid: z.string().uuid(),
 });
 
 // Get all roles
 roleRoutes.get("/", roleController.getAllRoles);
 
-// Get role by ID 
+// Get role by ID
 roleRoutes.get("/:uid", roleController.getRoleById);
 
 // Create a new role
@@ -39,4 +39,4 @@ roleRoutes.post("/assignments", roleController.assignEmployeeRole);
 // Delete an employee org unit role assignment
 roleRoutes.delete("/assignments/:uid", roleController.removeEmployeeRole);
 
-export default roleRoutes; 
+export default roleRoutes;

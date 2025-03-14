@@ -1,15 +1,15 @@
+import { ClientApprovalRequestSchema } from "@workspace/database/zod-schema";
 import { Hono } from "hono";
+import { z } from "zod";
 import { approvalController } from "../controllers/approvalController.js";
 import { validateBody } from "../middleware/validation.js";
-import { ClientApprovalRequestSchema } from "@workspace/database/zod-schema";
-import { z } from "zod";
 
 // Create a router for approval endpoints
 const approvalRoutes = new Hono();
 
 // Define schema for URL parameter validation
-const UidParamSchema = z.object({
-  uid: z.string().uuid()
+const _UidParamSchema = z.object({
+  uid: z.string().uuid(),
 });
 
 // --- APPROVAL PROCESSES ---
@@ -19,12 +19,15 @@ approvalRoutes.get("/", approvalController.getAllProcesses);
 
 // Important: Place more specific routes BEFORE parameterized routes to prevent capturing
 // Get processes by organization (must be before the /:uid route)
-approvalRoutes.get("/processes/organization/:orgUid", approvalController.getProcessesByOrganization);
+approvalRoutes.get(
+  "/processes/organization/:orgUid",
+  approvalController.getProcessesByOrganization
+);
 
 // Create a new approval process
 approvalRoutes.post("/processes", approvalController.createProcess);
 
-// Get approval process by ID 
+// Get approval process by ID
 approvalRoutes.get("/processes/:uid", approvalController.getProcessById);
 
 // Update an approval process
@@ -53,7 +56,10 @@ approvalRoutes.delete("/steps/:uid", approvalController.deleteStep);
 // --- APPROVAL RESPONSIBILITIES ---
 
 // Get responsibilities by step
-approvalRoutes.get("/steps/:stepUid/responsibilities", approvalController.getResponsibilitiesByStep);
+approvalRoutes.get(
+  "/steps/:stepUid/responsibilities",
+  approvalController.getResponsibilitiesByStep
+);
 
 // Create a new approval responsibility
 approvalRoutes.post("/responsibilities", approvalController.createResponsibility);
@@ -77,7 +83,11 @@ approvalRoutes.get("/requests/supplier/:supplierUid", approvalController.getRequ
 approvalRoutes.get("/requests/:uid", approvalController.getRequestById);
 
 // Create a new approval request
-approvalRoutes.post("/requests", validateBody(ClientApprovalRequestSchema), approvalController.createRequest);
+approvalRoutes.post(
+  "/requests",
+  validateBody(ClientApprovalRequestSchema),
+  approvalController.createRequest
+);
 
 // Update approval request status
 approvalRoutes.put("/requests/:uid/status", approvalController.updateRequestStatus);
@@ -101,4 +111,4 @@ approvalRoutes.post("/logs", approvalController.createLog);
 // Add a comment to a request
 approvalRoutes.post("/comments", approvalController.createComment);
 
-export default approvalRoutes; 
+export default approvalRoutes;

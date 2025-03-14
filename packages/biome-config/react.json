@@ -1,0 +1,43 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "extends": ["./base.json"],
+  "linter": {
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noSelfCompare": "error"
+      },
+      "style": {
+        "useImportType": "warn",
+        "useShorthandAssign": "warn"
+      },
+      "a11y": {
+        "useAltText": "error",
+        "useAriaPropsForRole": "error",
+        "useButtonType": "error",
+        "useKeyWithClickEvents": "error",
+        "useKeyWithMouseEvents": "error",
+        "useValidAnchor": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
+      "react": {
+        "useJsxKeyInIterable": "error",
+        "noChildrenProp": "error",
+        "noDangerWithChildren": "error",
+        "noVoidElementsWithChildren": "error",
+        "noRedundantShouldComponentUpdate": "error",
+        "noUselessFragment": "warn",
+        "useFragmentSyntax": "warn",
+        "useButtonType": "error",
+        "noUnnecessaryReactSuspense": "warn"
+      }
+    }
+  }
+}

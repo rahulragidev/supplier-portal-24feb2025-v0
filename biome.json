@@ -1,0 +1,15 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "extends": ["./packages/biome-config/base.json"],
+  "files": {
+    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.md"],
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.turbo/**",
+      "**/pnpm-lock.yaml",
+      "**/drizzle/**",
+      "**/.next/**"
+    ]
+  }
+}

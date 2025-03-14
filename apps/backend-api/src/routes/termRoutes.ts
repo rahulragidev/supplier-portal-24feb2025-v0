@@ -1,20 +1,20 @@
+import {
+  ClientFinancialTermSchema,
+  ClientSupplierSiteTermSchema,
+  ClientSupportTermSchema,
+  ClientTradeTermSchema,
+} from "@workspace/database/zod-schema";
 import { Hono } from "hono";
+import { z } from "zod";
 import { termController } from "../controllers/termController.js";
 import { validateBody } from "../middleware/validation.js";
-import { 
-  ClientSupplierSiteTermSchema, 
-  ClientFinancialTermSchema,
-  ClientTradeTermSchema,
-  ClientSupportTermSchema
-} from "@workspace/database/zod-schema";
-import { z } from "zod";
 
 // Create a router for supplier term endpoints
 const termRoutes = new Hono();
 
 // Define schema for URL parameter validation
-const UidParamSchema = z.object({
-  uid: z.string().uuid()
+const _UidParamSchema = z.object({
+  uid: z.string().uuid(),
 });
 
 // --- SUPPLIER TERMS ---
@@ -22,14 +22,18 @@ const UidParamSchema = z.object({
 // Get all supplier terms
 termRoutes.get("/", termController.getAllTerms);
 
-// Get term by ID 
+// Get term by ID
 termRoutes.get("/:uid", termController.getTermById);
 
 // Create a new supplier term
 termRoutes.post("/", validateBody(ClientSupplierSiteTermSchema), termController.createTerm);
 
 // Update a supplier term
-termRoutes.put("/:uid", validateBody(ClientSupplierSiteTermSchema.partial()), termController.updateTerm);
+termRoutes.put(
+  "/:uid",
+  validateBody(ClientSupplierSiteTermSchema.partial()),
+  termController.updateTerm
+);
 
 // Soft delete a supplier term
 termRoutes.delete("/:uid", termController.deleteTerm);
@@ -43,10 +47,18 @@ termRoutes.get("/site/:siteUid", termController.getTermsBySite);
 termRoutes.get("/:termUid/financial", termController.getFinancialTerm);
 
 // Create a new financial term
-termRoutes.post("/financial", validateBody(ClientFinancialTermSchema), termController.createFinancialTerm);
+termRoutes.post(
+  "/financial",
+  validateBody(ClientFinancialTermSchema),
+  termController.createFinancialTerm
+);
 
 // Update a financial term
-termRoutes.put("/financial/:termUid", validateBody(ClientFinancialTermSchema.partial()), termController.updateFinancialTerm);
+termRoutes.put(
+  "/financial/:termUid",
+  validateBody(ClientFinancialTermSchema.partial()),
+  termController.updateFinancialTerm
+);
 
 // --- TRADE TERMS ---
 
@@ -57,7 +69,11 @@ termRoutes.get("/:termUid/trade", termController.getTradeTerm);
 termRoutes.post("/trade", validateBody(ClientTradeTermSchema), termController.createTradeTerm);
 
 // Update a trade term
-termRoutes.put("/trade/:termUid", validateBody(ClientTradeTermSchema.partial()), termController.updateTradeTerm);
+termRoutes.put(
+  "/trade/:termUid",
+  validateBody(ClientTradeTermSchema.partial()),
+  termController.updateTradeTerm
+);
 
 // --- SUPPORT TERMS ---
 
@@ -65,10 +81,18 @@ termRoutes.put("/trade/:termUid", validateBody(ClientTradeTermSchema.partial()),
 termRoutes.get("/:termUid/support", termController.getSupportTerm);
 
 // Create a new support term
-termRoutes.post("/support", validateBody(ClientSupportTermSchema), termController.createSupportTerm);
+termRoutes.post(
+  "/support",
+  validateBody(ClientSupportTermSchema),
+  termController.createSupportTerm
+);
 
 // Update a support term
-termRoutes.put("/support/:termUid", validateBody(ClientSupportTermSchema.partial()), termController.updateSupportTerm);
+termRoutes.put(
+  "/support/:termUid",
+  validateBody(ClientSupportTermSchema.partial()),
+  termController.updateSupportTerm
+);
 
 // --- TERM NOTES ---
 
@@ -81,4 +105,4 @@ termRoutes.post("/notes", termController.createNote);
 // Delete a term note
 termRoutes.delete("/notes/:uid", termController.deleteNote);
 
-export default termRoutes; 
+export default termRoutes;

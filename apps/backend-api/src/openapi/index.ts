@@ -1,10 +1,10 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
-import * as routes from './routes.js';
-import type { Context } from 'hono';
-import { Hono } from 'hono';
+import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Hono } from "hono";
+import type { Context } from "hono";
+import * as routes from "./routes.js";
 
 // Define environment interfaces
-declare module 'hono' {
+declare module "hono" {
   interface Bindings {
     origApp: Hono;
   }
@@ -14,7 +14,8 @@ declare module 'hono' {
 export const openAPIApp = new OpenAPIHono();
 
 // Register user routes using proxy to original app
-const proxyToApp = (c: Context) => c.env?.origApp?.fetch(c.req.raw) || new Response('Missing original app', { status: 500 });
+const proxyToApp = (c: Context) =>
+  c.env?.origApp?.fetch(c.req.raw) || new Response("Missing original app", { status: 500 });
 
 // Register user routes
 openAPIApp.openapi(routes.getUsersRoute, proxyToApp);
@@ -149,48 +150,48 @@ openAPIApp.openapi(routes.updateTermRoute, proxyToApp);
 openAPIApp.openapi(routes.deleteTermRoute, proxyToApp);
 
 // Generate the OpenAPI documentation
-openAPIApp.doc('/api-doc', {
-  openapi: '3.0.0',
+openAPIApp.doc("/api-doc", {
+  openapi: "3.0.0",
   info: {
-    title: 'Supplier Management System API',
-    version: '1.0.0',
-    description: 'REST API for the Supplier Management System',
+    title: "Supplier Management System API",
+    version: "1.0.0",
+    description: "REST API for the Supplier Management System",
     contact: {
-      name: 'API Support',
-      email: 'support@example.com',
+      name: "API Support",
+      email: "support@example.com",
     },
   },
   servers: [
     {
-      url: 'http://localhost:3030',
-      description: 'Development server',
+      url: "http://localhost:3030",
+      description: "Development server",
     },
     {
-      url: 'https://api.suppliermgmt.example.com',
-      description: 'Production server',
+      url: "https://api.suppliermgmt.example.com",
+      description: "Production server",
     },
   ],
   tags: [
-    { name: 'Users', description: 'User management operations' },
-    { name: 'Organizations', description: 'Organization management operations' },
-    { name: 'Employees', description: 'Employee management operations' },
-    { name: 'Suppliers', description: 'Supplier management operations' },
-    { name: 'Invitations', description: 'Supplier invitation operations' },
-    { name: 'Addresses', description: 'Address management operations' },
-    { name: 'OrgUnits', description: 'Organizational units management operations' },
-    { name: 'Roles', description: 'Role management operations' },
-    { name: 'Stores', description: 'Store management operations' },
-    { name: 'Approvals', description: 'Approval process operations' },
-    { name: 'Documents', description: 'Document management operations' },
-    { name: 'Terms', description: 'Supplier terms management operations' },
+    { name: "Users", description: "User management operations" },
+    { name: "Organizations", description: "Organization management operations" },
+    { name: "Employees", description: "Employee management operations" },
+    { name: "Suppliers", description: "Supplier management operations" },
+    { name: "Invitations", description: "Supplier invitation operations" },
+    { name: "Addresses", description: "Address management operations" },
+    { name: "OrgUnits", description: "Organizational units management operations" },
+    { name: "Roles", description: "Role management operations" },
+    { name: "Stores", description: "Store management operations" },
+    { name: "Approvals", description: "Approval process operations" },
+    { name: "Documents", description: "Document management operations" },
+    { name: "Terms", description: "Supplier terms management operations" },
   ],
   components: {
     securitySchemes: {
       bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'JWT token with userId in payload'
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "JWT token with userId in payload",
       },
     },
   },
@@ -204,9 +205,9 @@ openAPIApp.doc('/api-doc', {
 // This middleware integrates the OpenAPI app with the main app
 export const setupOpenAPI = (app: Hono) => {
   // Mount the OpenAPI app on the main app
-  app.get('/api-doc', (c: Context) => {
+  app.get("/api-doc", (c: Context) => {
     return openAPIApp.fetch(c.req.raw, { origApp: app });
   });
-  
+
   return app;
-}; 
+};

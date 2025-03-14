@@ -1,7 +1,7 @@
-import useSWR, { useSWRConfig } from "swr";
 import { api } from "@workspace/api-client";
 import type { User } from "@workspace/database/types";
 import { useStore } from "@workspace/store";
+import useSWR, { useSWRConfig } from "swr";
 
 const USERS_KEY = "users";
 

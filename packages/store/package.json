@@ -12,7 +12,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "biome check .",
+    "format": "biome format --write .",
     "clean": "rm -rf .turbo node_modules dist"
   },
   "keywords": [],
@@ -24,7 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.5",
-    "@workspace/eslint-config": "workspace:*",
+    "@workspace/biome-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5.7.3"
   }

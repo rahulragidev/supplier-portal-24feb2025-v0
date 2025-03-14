@@ -1,18 +1,18 @@
 import { Hono } from "hono";
-import { documentController } from "../controllers/documentController.js";
 import { z } from "zod";
+import { documentController } from "../controllers/documentController.js";
 
 // Create a router for document endpoints
 const documentRoutes = new Hono();
 
 // Define schema for URL parameter validation
-const UidParamSchema = z.object({
-  uid: z.string().uuid()
+const _UidParamSchema = z.object({
+  uid: z.string().uuid(),
 });
 
 // --- DOCUMENTS ---
 
-// Get document by ID 
+// Get document by ID
 documentRoutes.get("/:uid", documentController.getDocumentById);
 
 // Create a new document
@@ -33,7 +33,10 @@ documentRoutes.get("/site/:siteUid", documentController.getDocumentsBySite);
 documentRoutes.get("/verifications", documentController.getAllVerifications);
 
 // Get verifications by supplier
-documentRoutes.get("/verifications/supplier/:supplierUid", documentController.getVerificationsBySupplier);
+documentRoutes.get(
+  "/verifications/supplier/:supplierUid",
+  documentController.getVerificationsBySupplier
+);
 
 // Create new document verification
 documentRoutes.post("/verifications", documentController.createVerification);
@@ -41,4 +44,4 @@ documentRoutes.post("/verifications", documentController.createVerification);
 // Update verification status
 documentRoutes.put("/verifications/:uid/status", documentController.updateVerificationStatus);
 
-export default documentRoutes; 
+export default documentRoutes;

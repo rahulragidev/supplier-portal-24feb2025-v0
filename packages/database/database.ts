@@ -1,10 +1,10 @@
 import pg from "pg";
 const { Pool } = pg;
 
-import { drizzle } from "drizzle-orm/node-postgres";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema.js";
 
 // Get the directory path of the current module
@@ -19,7 +19,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL + "?sslmode=require",
+  connectionString: `${process.env.DATABASE_URL}?sslmode=require`,
   // Add some reasonable defaults for better error handling
   connectionTimeoutMillis: 5000, // 5 seconds
   max: 20, // Maximum number of clients in the pool

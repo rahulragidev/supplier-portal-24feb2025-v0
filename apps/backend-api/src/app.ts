@@ -1,27 +1,27 @@
+import { apiReference } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { timing } from "hono/timing";
-import { apiReference } from '@scalar/hono-api-reference';
 
-// Import routes
-import userRoutes from "./routes/userRoutes.js";
-import organizationRoutes from "./routes/organizationRoutes.js";
-import employeeRoutes from "./routes/employeeRoutes.js";
-import supplierRoutes from "./routes/supplierRoutes.js";
+import dotenv from "dotenv";
 import addressRoutes from "./routes/addressRoutes.js";
-import orgUnitRoutes from "./routes/orgUnitRoutes.js";
-import roleRoutes from "./routes/roleRoutes.js";
-import storeRoutes from "./routes/storeRoutes.js";
 import approvalRoutes from "./routes/approvalRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
+import orgUnitRoutes from "./routes/orgUnitRoutes.js";
+import organizationRoutes from "./routes/organizationRoutes.js";
+import roleRoutes from "./routes/roleRoutes.js";
+import storeRoutes from "./routes/storeRoutes.js";
+import supplierRoutes from "./routes/supplierRoutes.js";
 import termRoutes from "./routes/termRoutes.js";
-import dotenv from "dotenv";
+// Import routes
+import userRoutes from "./routes/userRoutes.js";
 
+import { authenticateToken } from "./middleware/auth.js";
 // Import OpenAPI setup
 import { setupOpenAPI } from "./openapi/index.js";
-import { authenticateToken } from "./middleware/auth.js";
 
 // dotenv load
 dotenv.config();
@@ -46,10 +46,10 @@ app.use(
 );
 
 // Public routes (no authentication required)
-app.use("/", (c, next) => next());
-app.use("/api", (c, next) => next());
-app.use("/api-doc", (c, next) => next());
-app.use("/reference", (c, next) => next());
+app.use("/", (_c, next) => next());
+app.use("/api", (_c, next) => next());
+app.use("/api-doc", (_c, next) => next());
+app.use("/reference", (_c, next) => next());
 
 // Protected routes (require authentication)
 app.use("/users/*", authenticateToken);
@@ -66,9 +66,9 @@ app.use("/supplier-terms/*", authenticateToken);
 
 // Add Scalar API Reference
 app.get(
-  '/reference',
+  "/reference",
   apiReference({
-    url: '/api-doc',
+    url: "/api-doc",
   })
 );
 

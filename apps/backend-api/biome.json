@@ -1,0 +1,15 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "extends": ["../../packages/biome-config/base.json"],
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    },
+    "ignore": ["./src/openapi/schemas.ts"]
+  },
+  "files": {
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/.turbo/**"]
+  }
+}

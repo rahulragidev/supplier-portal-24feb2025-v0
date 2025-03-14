@@ -36,4 +36,4 @@ export const validateParams = (schema: z.ZodType) => {
       return handleError(c, error);
     }
   };
-}; 
+};

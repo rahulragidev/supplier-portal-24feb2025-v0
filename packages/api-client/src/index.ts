@@ -1,56 +1,13 @@
-import { 
-  AppUser, 
-  Organization, 
-  Employee, 
-  Supplier, 
-  SupplierSite, 
-  Address,
-  OrgUnit,
-  Role,
-  EmployeeOrgUnitRole,
-  Store,
-  SupplierInvitation,
-  SupplierSiteDocument,
-  DocumentVerification,
-  SupplierSiteTerm,
-  SupplierFinancialTerm,
-  SupplierTradeTerm,
-  SupplierSupportTerm,
-  SupplierTermNote,
-  ApprovalProcess,
-  ApprovalStep,
-  ApprovalResponsibility,
-  ApprovalRequest,
-  ApprovalLog,
-  ApprovalComment,
+import type {
+  AppUser,
+  Employee,
   NewAppUser,
-  NewOrganization,
   NewEmployee,
+  NewOrganization,
   NewSupplier,
-  NewSupplierSite,
-  NewAddress,
-  NewOrgUnit,
-  NewRole,
-  NewEmployeeOrgUnitRole,
-  NewStore,
-  NewSupplierInvitation,
-  NewSupplierSiteDocument,
-  NewDocumentVerification,
-  NewSupplierSiteTerm,
-  NewSupplierFinancialTerm,
-  NewSupplierTradeTerm,
-  NewSupplierSupportTerm,
-  NewSupplierTermNote,
-  NewApprovalProcess,
-  NewApprovalStep,
-  NewApprovalResponsibility,
-  NewApprovalRequest,
-  NewApprovalLog,
-  NewApprovalComment,
+  Organization,
+  Supplier,
   SupplierStatus,
-  ApprovalStatus,
-  InvitationStatus,
-  VerificationStatus
 } from "@workspace/database/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
@@ -102,10 +59,7 @@ export const api = {
     }
   },
 
-  async updateUser(
-    uid: string,
-    data: Partial<NewAppUser>,
-  ): Promise<AppUser> {
+  async updateUser(uid: string, data: Partial<NewAppUser>): Promise<AppUser> {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${uid}`, {
         method: "PUT",
@@ -178,10 +132,7 @@ export const api = {
     }
   },
 
-  async updateOrganization(
-    uid: string,
-    data: Partial<NewOrganization>,
-  ): Promise<Organization> {
+  async updateOrganization(uid: string, data: Partial<NewOrganization>): Promise<Organization> {
     try {
       const response = await fetch(`${API_BASE_URL}/organizations/${uid}`, {
         method: "PUT",
@@ -269,10 +220,7 @@ export const api = {
     }
   },
 
-  async updateEmployee(
-    userUid: string,
-    data: Partial<NewEmployee>,
-  ): Promise<Employee> {
+  async updateEmployee(userUid: string, data: Partial<NewEmployee>): Promise<Employee> {
     try {
       const response = await fetch(`${API_BASE_URL}/employees/${userUid}`, {
         method: "PUT",
@@ -360,10 +308,7 @@ export const api = {
     }
   },
 
-  async updateSupplier(
-    userUid: string,
-    data: Partial<NewSupplier>,
-  ): Promise<Supplier> {
+  async updateSupplier(userUid: string, data: Partial<NewSupplier>): Promise<Supplier> {
     try {
       const response = await fetch(`${API_BASE_URL}/suppliers/${userUid}`, {
         method: "PUT",
@@ -378,10 +323,7 @@ export const api = {
     }
   },
 
-  async updateSupplierStatus(
-    userUid: string,
-    status: SupplierStatus,
-  ): Promise<Supplier> {
+  async updateSupplierStatus(userUid: string, status: SupplierStatus): Promise<Supplier> {
     try {
       const response = await fetch(`${API_BASE_URL}/suppliers/${userUid}/status`, {
         method: "PUT",

@@ -1,22 +1,19 @@
-import { createRoute } from '@hono/zod-openapi';
-import * as schemas from './schemas.js';
-import { z } from 'zod';
-import { ApprovalStatus } from '@workspace/database/enums';
-import { UuidSchema } from '@workspace/database/zod-schema';
-import { Examples } from '@workspace/database/examples';
+import { createRoute } from "@hono/zod-openapi";
+import { z } from "zod";
+import * as schemas from "./schemas.js";
 
 // User routes
 export const getUsersRoute = createRoute({
-  method: 'get',
-  path: '/users',
-  tags: ['Users'],
-  summary: 'Get all users',
-  description: 'Retrieve a list of all non-deleted users',
+  method: "get",
+  path: "/users",
+  tags: ["Users"],
+  summary: "Get all users",
+  description: "Retrieve a list of all non-deleted users",
   responses: {
     200: {
-      description: 'List of users',
+      description: "List of users",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UserListSchema,
         },
       },
@@ -25,27 +22,27 @@ export const getUsersRoute = createRoute({
 });
 
 export const getUserByIdRoute = createRoute({
-  method: 'get',
-  path: '/users/{uid}',
-  tags: ['Users'],
-  summary: 'Get user by ID',
-  description: 'Retrieve a specific user by their unique identifier',
+  method: "get",
+  path: "/users/{uid}",
+  tags: ["Users"],
+  summary: "Get user by ID",
+  description: "Retrieve a specific user by their unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'User details',
+      description: "User details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UserSchema,
         },
       },
     },
     404: {
-      description: 'User not found',
+      description: "User not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -54,15 +51,15 @@ export const getUserByIdRoute = createRoute({
 });
 
 export const createUserRoute = createRoute({
-  method: 'post',
-  path: '/users',
-  tags: ['Users'],
-  summary: 'Create a new user',
-  description: 'Create a new user with the provided data',
+  method: "post",
+  path: "/users",
+  tags: ["Users"],
+  summary: "Create a new user",
+  description: "Create a new user with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateUserSchema,
         },
       },
@@ -70,17 +67,17 @@ export const createUserRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'User created successfully',
+      description: "User created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UserSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -89,16 +86,16 @@ export const createUserRoute = createRoute({
 });
 
 export const updateUserRoute = createRoute({
-  method: 'put',
-  path: '/users/{uid}',
-  tags: ['Users'],
-  summary: 'Update a user',
-  description: 'Update an existing user with the provided data',
+  method: "put",
+  path: "/users/{uid}",
+  tags: ["Users"],
+  summary: "Update a user",
+  description: "Update an existing user with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateUserSchema.partial(),
         },
       },
@@ -106,25 +103,25 @@ export const updateUserRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'User updated successfully',
+      description: "User updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UserSchema,
         },
       },
     },
     404: {
-      description: 'User not found',
+      description: "User not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -133,27 +130,27 @@ export const updateUserRoute = createRoute({
 });
 
 export const deleteUserRoute = createRoute({
-  method: 'delete',
-  path: '/users/{uid}',
-  tags: ['Users'],
-  summary: 'Delete a user',
-  description: 'Soft delete a user by their unique identifier',
+  method: "delete",
+  path: "/users/{uid}",
+  tags: ["Users"],
+  summary: "Delete a user",
+  description: "Soft delete a user by their unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'User deleted successfully',
+      description: "User deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'User not found',
+      description: "User not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -163,16 +160,16 @@ export const deleteUserRoute = createRoute({
 
 // Organization routes
 export const getOrganizationsRoute = createRoute({
-  method: 'get',
-  path: '/organizations',
-  tags: ['Organizations'],
-  summary: 'Get all organizations',
-  description: 'Retrieve a list of all non-deleted organizations',
+  method: "get",
+  path: "/organizations",
+  tags: ["Organizations"],
+  summary: "Get all organizations",
+  description: "Retrieve a list of all non-deleted organizations",
   responses: {
     200: {
-      description: 'List of organizations',
+      description: "List of organizations",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrganizationListSchema,
         },
       },
@@ -181,27 +178,27 @@ export const getOrganizationsRoute = createRoute({
 });
 
 export const getOrganizationByIdRoute = createRoute({
-  method: 'get',
-  path: '/organizations/{uid}',
-  tags: ['Organizations'],
-  summary: 'Get organization by ID',
-  description: 'Retrieve a specific organization by its unique identifier',
+  method: "get",
+  path: "/organizations/{uid}",
+  tags: ["Organizations"],
+  summary: "Get organization by ID",
+  description: "Retrieve a specific organization by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Organization details',
+      description: "Organization details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrganizationSchema,
         },
       },
     },
     404: {
-      description: 'Organization not found',
+      description: "Organization not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -210,15 +207,15 @@ export const getOrganizationByIdRoute = createRoute({
 });
 
 export const createOrganizationRoute = createRoute({
-  method: 'post',
-  path: '/organizations',
-  tags: ['Organizations'],
-  summary: 'Create a new organization',
-  description: 'Create a new organization with the provided data',
+  method: "post",
+  path: "/organizations",
+  tags: ["Organizations"],
+  summary: "Create a new organization",
+  description: "Create a new organization with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateOrganizationSchema,
         },
       },
@@ -226,17 +223,17 @@ export const createOrganizationRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Organization created successfully',
+      description: "Organization created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrganizationSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -245,16 +242,16 @@ export const createOrganizationRoute = createRoute({
 });
 
 export const updateOrganizationRoute = createRoute({
-  method: 'put',
-  path: '/organizations/{uid}',
-  tags: ['Organizations'],
-  summary: 'Update an organization',
-  description: 'Update an existing organization with the provided data',
+  method: "put",
+  path: "/organizations/{uid}",
+  tags: ["Organizations"],
+  summary: "Update an organization",
+  description: "Update an existing organization with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateOrganizationSchema.partial(),
         },
       },
@@ -262,25 +259,25 @@ export const updateOrganizationRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Organization updated successfully',
+      description: "Organization updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrganizationSchema,
         },
       },
     },
     404: {
-      description: 'Organization not found',
+      description: "Organization not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -289,27 +286,27 @@ export const updateOrganizationRoute = createRoute({
 });
 
 export const deleteOrganizationRoute = createRoute({
-  method: 'delete',
-  path: '/organizations/{uid}',
-  tags: ['Organizations'],
-  summary: 'Delete an organization',
-  description: 'Soft delete an organization by its unique identifier',
+  method: "delete",
+  path: "/organizations/{uid}",
+  tags: ["Organizations"],
+  summary: "Delete an organization",
+  description: "Soft delete an organization by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Organization deleted successfully',
+      description: "Organization deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Organization not found',
+      description: "Organization not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -319,16 +316,16 @@ export const deleteOrganizationRoute = createRoute({
 
 // Employee routes
 export const getEmployeesRoute = createRoute({
-  method: 'get',
-  path: '/employees',
-  tags: ['Employees'],
-  summary: 'Get all employees',
-  description: 'Retrieve a list of all non-deleted employees',
+  method: "get",
+  path: "/employees",
+  tags: ["Employees"],
+  summary: "Get all employees",
+  description: "Retrieve a list of all non-deleted employees",
   responses: {
     200: {
-      description: 'List of employees',
+      description: "List of employees",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.EmployeeListSchema,
         },
       },
@@ -337,27 +334,27 @@ export const getEmployeesRoute = createRoute({
 });
 
 export const getEmployeeByIdRoute = createRoute({
-  method: 'get',
-  path: '/employees/{userUid}',
-  tags: ['Employees'],
-  summary: 'Get employee by ID',
-  description: 'Retrieve a specific employee by their unique identifier',
+  method: "get",
+  path: "/employees/{userUid}",
+  tags: ["Employees"],
+  summary: "Get employee by ID",
+  description: "Retrieve a specific employee by their unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Employee details',
+      description: "Employee details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.EmployeeSchema,
         },
       },
     },
     404: {
-      description: 'Employee not found',
+      description: "Employee not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -366,19 +363,19 @@ export const getEmployeeByIdRoute = createRoute({
 });
 
 export const getEmployeesByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/organizations/{orgUid}/employees',
-  tags: ['Employees'],
-  summary: 'Get employees by organization',
-  description: 'Retrieve all employees belonging to a specific organization',
+  method: "get",
+  path: "/organizations/{orgUid}/employees",
+  tags: ["Employees"],
+  summary: "Get employees by organization",
+  description: "Retrieve all employees belonging to a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of employees in the organization',
+      description: "List of employees in the organization",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.EmployeeListSchema,
         },
       },
@@ -387,15 +384,15 @@ export const getEmployeesByOrganizationRoute = createRoute({
 });
 
 export const createEmployeeRoute = createRoute({
-  method: 'post',
-  path: '/employees',
-  tags: ['Employees'],
-  summary: 'Create a new employee',
-  description: 'Create a new employee with the provided data',
+  method: "post",
+  path: "/employees",
+  tags: ["Employees"],
+  summary: "Create a new employee",
+  description: "Create a new employee with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateEmployeeSchema,
         },
       },
@@ -403,17 +400,17 @@ export const createEmployeeRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Employee created successfully',
+      description: "Employee created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.EmployeeSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -422,16 +419,16 @@ export const createEmployeeRoute = createRoute({
 });
 
 export const updateEmployeeRoute = createRoute({
-  method: 'put',
-  path: '/employees/{userUid}',
-  tags: ['Employees'],
-  summary: 'Update an employee',
-  description: 'Update an existing employee with the provided data',
+  method: "put",
+  path: "/employees/{userUid}",
+  tags: ["Employees"],
+  summary: "Update an employee",
+  description: "Update an existing employee with the provided data",
   request: {
     params: schemas.UserUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateEmployeeSchema.partial(),
         },
       },
@@ -439,25 +436,25 @@ export const updateEmployeeRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Employee updated successfully',
+      description: "Employee updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.EmployeeSchema,
         },
       },
     },
     404: {
-      description: 'Employee not found',
+      description: "Employee not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -466,27 +463,27 @@ export const updateEmployeeRoute = createRoute({
 });
 
 export const deleteEmployeeRoute = createRoute({
-  method: 'delete',
-  path: '/employees/{userUid}',
-  tags: ['Employees'],
-  summary: 'Delete an employee',
-  description: 'Soft delete an employee by their unique identifier',
+  method: "delete",
+  path: "/employees/{userUid}",
+  tags: ["Employees"],
+  summary: "Delete an employee",
+  description: "Soft delete an employee by their unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Employee deleted successfully',
+      description: "Employee deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Employee not found',
+      description: "Employee not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -496,16 +493,16 @@ export const deleteEmployeeRoute = createRoute({
 
 // Supplier routes
 export const getSuppliersRoute = createRoute({
-  method: 'get',
-  path: '/suppliers',
-  tags: ['Suppliers'],
-  summary: 'Get all suppliers',
-  description: 'Retrieve a list of all suppliers',
+  method: "get",
+  path: "/suppliers",
+  tags: ["Suppliers"],
+  summary: "Get all suppliers",
+  description: "Retrieve a list of all suppliers",
   responses: {
     200: {
-      description: 'List of suppliers',
+      description: "List of suppliers",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierListSchema,
         },
       },
@@ -514,27 +511,27 @@ export const getSuppliersRoute = createRoute({
 });
 
 export const getSupplierByIdRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Get supplier by ID',
-  description: 'Retrieve a specific supplier by their unique identifier',
+  method: "get",
+  path: "/suppliers/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Get supplier by ID",
+  description: "Retrieve a specific supplier by their unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Supplier details',
+      description: "Supplier details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSchema,
         },
       },
     },
     404: {
-      description: 'Supplier not found',
+      description: "Supplier not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -543,15 +540,15 @@ export const getSupplierByIdRoute = createRoute({
 });
 
 export const createSupplierRoute = createRoute({
-  method: 'post',
-  path: '/suppliers',
-  tags: ['Suppliers'],
-  summary: 'Create a new supplier',
-  description: 'Create a new supplier with the provided data',
+  method: "post",
+  path: "/suppliers",
+  tags: ["Suppliers"],
+  summary: "Create a new supplier",
+  description: "Create a new supplier with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateSupplierSchema,
         },
       },
@@ -559,17 +556,17 @@ export const createSupplierRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Supplier created successfully',
+      description: "Supplier created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -578,16 +575,16 @@ export const createSupplierRoute = createRoute({
 });
 
 export const updateSupplierRoute = createRoute({
-  method: 'put',
-  path: '/suppliers/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Update a supplier',
-  description: 'Update an existing supplier with the provided data',
+  method: "put",
+  path: "/suppliers/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Update a supplier",
+  description: "Update an existing supplier with the provided data",
   request: {
     params: schemas.UserUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateSupplierSchema.partial(),
         },
       },
@@ -595,25 +592,25 @@ export const updateSupplierRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Supplier updated successfully',
+      description: "Supplier updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSchema,
         },
       },
     },
     404: {
-      description: 'Supplier not found',
+      description: "Supplier not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -622,16 +619,16 @@ export const updateSupplierRoute = createRoute({
 });
 
 export const updateSupplierStatusRoute = createRoute({
-  method: 'put',
-  path: '/suppliers/{userUid}/status',
-  tags: ['Suppliers'],
-  summary: 'Update supplier status',
-  description: 'Update the status of an existing supplier',
+  method: "put",
+  path: "/suppliers/{userUid}/status",
+  tags: ["Suppliers"],
+  summary: "Update supplier status",
+  description: "Update the status of an existing supplier",
   request: {
     params: schemas.UserUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StatusUpdateSchema,
         },
       },
@@ -639,17 +636,17 @@ export const updateSupplierStatusRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Supplier status updated successfully',
+      description: "Supplier status updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSchema,
         },
       },
     },
     404: {
-      description: 'Supplier not found',
+      description: "Supplier not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -658,27 +655,27 @@ export const updateSupplierStatusRoute = createRoute({
 });
 
 export const deleteSupplierRoute = createRoute({
-  method: 'delete',
-  path: '/suppliers/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Delete a supplier',
-  description: 'Soft delete a supplier by their unique identifier',
+  method: "delete",
+  path: "/suppliers/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Delete a supplier",
+  description: "Soft delete a supplier by their unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Supplier deleted successfully',
+      description: "Supplier deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Supplier not found',
+      description: "Supplier not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -687,27 +684,27 @@ export const deleteSupplierRoute = createRoute({
 });
 
 export const getSuppliersByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/organization/{orgUid}',
-  tags: ['Suppliers'],
-  summary: 'Get suppliers by organization',
-  description: 'Retrieve all suppliers for a specific organization',
+  method: "get",
+  path: "/suppliers/organization/{orgUid}",
+  tags: ["Suppliers"],
+  summary: "Get suppliers by organization",
+  description: "Retrieve all suppliers for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of suppliers',
+      description: "List of suppliers",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierListSchema,
         },
       },
     },
     404: {
-      description: 'Organization not found',
+      description: "Organization not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -717,16 +714,16 @@ export const getSuppliersByOrganizationRoute = createRoute({
 
 // Supplier Invitation routes
 export const getSupplierInvitationsRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/invitations',
-  tags: ['Invitations'],
-  summary: 'Get all supplier invitations',
-  description: 'Retrieve a list of all non-deleted supplier invitations',
+  method: "get",
+  path: "/suppliers/invitations",
+  tags: ["Invitations"],
+  summary: "Get all supplier invitations",
+  description: "Retrieve a list of all non-deleted supplier invitations",
   responses: {
     200: {
-      description: 'List of supplier invitations',
+      description: "List of supplier invitations",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierInvitationListSchema,
         },
       },
@@ -735,27 +732,27 @@ export const getSupplierInvitationsRoute = createRoute({
 });
 
 export const getSupplierInvitationsByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/invitations/organization/{orgUid}',
-  tags: ['Invitations'],
-  summary: 'Get supplier invitations by organization',
-  description: 'Retrieve supplier invitations for a specific organization',
+  method: "get",
+  path: "/suppliers/invitations/organization/{orgUid}",
+  tags: ["Invitations"],
+  summary: "Get supplier invitations by organization",
+  description: "Retrieve supplier invitations for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of supplier invitations',
+      description: "List of supplier invitations",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierInvitationListSchema,
         },
       },
     },
     404: {
-      description: 'Organization not found',
+      description: "Organization not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -764,15 +761,15 @@ export const getSupplierInvitationsByOrganizationRoute = createRoute({
 });
 
 export const createSupplierInvitationRoute = createRoute({
-  method: 'post',
-  path: '/suppliers/invitations',
-  tags: ['Invitations'],
-  summary: 'Create a supplier invitation',
-  description: 'Create a new invitation for a supplier to join the platform',
+  method: "post",
+  path: "/suppliers/invitations",
+  tags: ["Invitations"],
+  summary: "Create a supplier invitation",
+  description: "Create a new invitation for a supplier to join the platform",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateSupplierInvitationSchema,
         },
       },
@@ -780,17 +777,17 @@ export const createSupplierInvitationRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Supplier invitation created successfully',
+      description: "Supplier invitation created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierInvitationSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -799,16 +796,16 @@ export const createSupplierInvitationRoute = createRoute({
 });
 
 export const updateSupplierInvitationStatusRoute = createRoute({
-  method: 'put',
-  path: '/suppliers/invitations/{uid}/status',
-  tags: ['Invitations'],
-  summary: 'Update invitation status',
-  description: 'Update the status of a supplier invitation',
+  method: "put",
+  path: "/suppliers/invitations/{uid}/status",
+  tags: ["Invitations"],
+  summary: "Update invitation status",
+  description: "Update the status of a supplier invitation",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UpdateInvitationStatusSchema,
         },
       },
@@ -816,25 +813,25 @@ export const updateSupplierInvitationStatusRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Invitation status updated successfully',
+      description: "Invitation status updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierInvitationSchema,
         },
       },
     },
     404: {
-      description: 'Invitation not found',
+      description: "Invitation not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -844,16 +841,16 @@ export const updateSupplierInvitationStatusRoute = createRoute({
 
 // Supplier Site routes
 export const getAllSitesRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/sites',
-  tags: ['Suppliers'],
-  summary: 'Get all supplier sites',
-  description: 'Retrieve a list of all supplier sites',
+  method: "get",
+  path: "/suppliers/sites",
+  tags: ["Suppliers"],
+  summary: "Get all supplier sites",
+  description: "Retrieve a list of all supplier sites",
   responses: {
     200: {
-      description: 'List of supplier sites',
+      description: "List of supplier sites",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteListSchema,
         },
       },
@@ -862,19 +859,19 @@ export const getAllSitesRoute = createRoute({
 });
 
 export const getSitesBySupplierRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/{supplierUserUid}/sites',
-  tags: ['Suppliers'],
-  summary: 'Get sites by supplier',
-  description: 'Retrieve all sites for a specific supplier',
+  method: "get",
+  path: "/suppliers/{supplierUserUid}/sites",
+  tags: ["Suppliers"],
+  summary: "Get sites by supplier",
+  description: "Retrieve all sites for a specific supplier",
   request: {
     params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {
-      description: 'List of supplier sites',
+      description: "List of supplier sites",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteListSchema,
         },
       },
@@ -883,27 +880,27 @@ export const getSitesBySupplierRoute = createRoute({
 });
 
 export const getSiteByIdRoute = createRoute({
-  method: 'get',
-  path: '/suppliers/sites/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Get supplier site by ID',
-  description: 'Retrieve a specific supplier site by its unique identifier',
+  method: "get",
+  path: "/suppliers/sites/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Get supplier site by ID",
+  description: "Retrieve a specific supplier site by its unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Supplier site details',
+      description: "Supplier site details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteSchema,
         },
       },
     },
     404: {
-      description: 'Supplier site not found',
+      description: "Supplier site not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -912,15 +909,15 @@ export const getSiteByIdRoute = createRoute({
 });
 
 export const createSiteRoute = createRoute({
-  method: 'post',
-  path: '/suppliers/sites',
-  tags: ['Suppliers'],
-  summary: 'Create a new supplier site',
-  description: 'Create a new supplier site with the provided data',
+  method: "post",
+  path: "/suppliers/sites",
+  tags: ["Suppliers"],
+  summary: "Create a new supplier site",
+  description: "Create a new supplier site with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateSupplierSiteSchema,
         },
       },
@@ -928,17 +925,17 @@ export const createSiteRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Supplier site created successfully',
+      description: "Supplier site created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -947,16 +944,16 @@ export const createSiteRoute = createRoute({
 });
 
 export const updateSiteRoute = createRoute({
-  method: 'put',
-  path: '/suppliers/sites/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Update a supplier site',
-  description: 'Update an existing supplier site with the provided data',
+  method: "put",
+  path: "/suppliers/sites/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Update a supplier site",
+  description: "Update an existing supplier site with the provided data",
   request: {
     params: schemas.UserUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateSupplierSiteSchema.partial(),
         },
       },
@@ -964,25 +961,25 @@ export const updateSiteRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Supplier site updated successfully',
+      description: "Supplier site updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteSchema,
         },
       },
     },
     404: {
-      description: 'Supplier site not found',
+      description: "Supplier site not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -991,16 +988,16 @@ export const updateSiteRoute = createRoute({
 });
 
 export const updateSiteStatusRoute = createRoute({
-  method: 'put',
-  path: '/suppliers/sites/{userUid}/status',
-  tags: ['Suppliers'],
-  summary: 'Update supplier site status',
-  description: 'Update the status of an existing supplier site',
+  method: "put",
+  path: "/suppliers/sites/{userUid}/status",
+  tags: ["Suppliers"],
+  summary: "Update supplier site status",
+  description: "Update the status of an existing supplier site",
   request: {
     params: schemas.UserUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StatusUpdateSchema,
         },
       },
@@ -1008,17 +1005,17 @@ export const updateSiteStatusRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Supplier site status updated successfully',
+      description: "Supplier site status updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SupplierSiteSchema,
         },
       },
     },
     404: {
-      description: 'Supplier site not found',
+      description: "Supplier site not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1027,27 +1024,27 @@ export const updateSiteStatusRoute = createRoute({
 });
 
 export const deleteSiteRoute = createRoute({
-  method: 'delete',
-  path: '/suppliers/sites/{userUid}',
-  tags: ['Suppliers'],
-  summary: 'Delete a supplier site',
-  description: 'Soft delete a supplier site by its unique identifier',
+  method: "delete",
+  path: "/suppliers/sites/{userUid}",
+  tags: ["Suppliers"],
+  summary: "Delete a supplier site",
+  description: "Soft delete a supplier site by its unique identifier",
   request: {
     params: schemas.UserUidParam,
   },
   responses: {
     200: {
-      description: 'Supplier site deleted successfully',
+      description: "Supplier site deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Supplier site not found',
+      description: "Supplier site not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1057,16 +1054,16 @@ export const deleteSiteRoute = createRoute({
 
 // Address routes
 export const getAddressesRoute = createRoute({
-  method: 'get',
-  path: '/addresses',
-  tags: ['Addresses'],
-  summary: 'Get all addresses',
-  description: 'Retrieve a list of all addresses',
+  method: "get",
+  path: "/addresses",
+  tags: ["Addresses"],
+  summary: "Get all addresses",
+  description: "Retrieve a list of all addresses",
   responses: {
     200: {
-      description: 'List of addresses',
+      description: "List of addresses",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.AddressListSchema,
         },
       },
@@ -1075,27 +1072,27 @@ export const getAddressesRoute = createRoute({
 });
 
 export const getAddressByIdRoute = createRoute({
-  method: 'get',
-  path: '/addresses/{uid}',
-  tags: ['Addresses'],
-  summary: 'Get address by ID',
-  description: 'Retrieve a specific address by its unique identifier',
+  method: "get",
+  path: "/addresses/{uid}",
+  tags: ["Addresses"],
+  summary: "Get address by ID",
+  description: "Retrieve a specific address by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Address details',
+      description: "Address details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.AddressSchema,
         },
       },
     },
     404: {
-      description: 'Address not found',
+      description: "Address not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1104,15 +1101,15 @@ export const getAddressByIdRoute = createRoute({
 });
 
 export const createAddressRoute = createRoute({
-  method: 'post',
-  path: '/addresses',
-  tags: ['Addresses'],
-  summary: 'Create a new address',
-  description: 'Create a new address with the provided data',
+  method: "post",
+  path: "/addresses",
+  tags: ["Addresses"],
+  summary: "Create a new address",
+  description: "Create a new address with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateAddressSchema,
         },
       },
@@ -1120,17 +1117,17 @@ export const createAddressRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Address created successfully',
+      description: "Address created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.AddressSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1139,16 +1136,16 @@ export const createAddressRoute = createRoute({
 });
 
 export const updateAddressRoute = createRoute({
-  method: 'put',
-  path: '/addresses/{uid}',
-  tags: ['Addresses'],
-  summary: 'Update an address',
-  description: 'Update an existing address with the provided data',
+  method: "put",
+  path: "/addresses/{uid}",
+  tags: ["Addresses"],
+  summary: "Update an address",
+  description: "Update an existing address with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateAddressSchema.partial(),
         },
       },
@@ -1156,25 +1153,25 @@ export const updateAddressRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Address updated successfully',
+      description: "Address updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.AddressSchema,
         },
       },
     },
     404: {
-      description: 'Address not found',
+      description: "Address not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1183,27 +1180,27 @@ export const updateAddressRoute = createRoute({
 });
 
 export const deleteAddressRoute = createRoute({
-  method: 'delete',
-  path: '/addresses/{uid}',
-  tags: ['Addresses'],
-  summary: 'Delete an address',
-  description: 'Soft delete an address by its unique identifier',
+  method: "delete",
+  path: "/addresses/{uid}",
+  tags: ["Addresses"],
+  summary: "Delete an address",
+  description: "Soft delete an address by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Address deleted successfully',
+      description: "Address deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Address not found',
+      description: "Address not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1213,16 +1210,16 @@ export const deleteAddressRoute = createRoute({
 
 // Org Unit routes
 export const getOrgUnitsRoute = createRoute({
-  method: 'get',
-  path: '/org-units',
-  tags: ['OrgUnits'],
-  summary: 'Get all org units',
-  description: 'Retrieve a list of all organizational units',
+  method: "get",
+  path: "/org-units",
+  tags: ["OrgUnits"],
+  summary: "Get all org units",
+  description: "Retrieve a list of all organizational units",
   responses: {
     200: {
-      description: 'List of org units',
+      description: "List of org units",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrgUnitListSchema,
         },
       },
@@ -1231,27 +1228,27 @@ export const getOrgUnitsRoute = createRoute({
 });
 
 export const getOrgUnitByIdRoute = createRoute({
-  method: 'get',
-  path: '/org-units/{uid}',
-  tags: ['OrgUnits'],
-  summary: 'Get org unit by ID',
-  description: 'Retrieve a specific organizational unit by its unique identifier',
+  method: "get",
+  path: "/org-units/{uid}",
+  tags: ["OrgUnits"],
+  summary: "Get org unit by ID",
+  description: "Retrieve a specific organizational unit by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Org unit details',
+      description: "Org unit details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrgUnitSchema,
         },
       },
     },
     404: {
-      description: 'Org unit not found',
+      description: "Org unit not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1260,19 +1257,19 @@ export const getOrgUnitByIdRoute = createRoute({
 });
 
 export const getOrgUnitsByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/org-units/organization/{orgUid}',
-  tags: ['OrgUnits'],
-  summary: 'Get org units by organization',
-  description: 'Retrieve all organizational units for a specific organization',
+  method: "get",
+  path: "/org-units/organization/{orgUid}",
+  tags: ["OrgUnits"],
+  summary: "Get org units by organization",
+  description: "Retrieve all organizational units for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of org units',
+      description: "List of org units",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrgUnitListSchema,
         },
       },
@@ -1281,15 +1278,15 @@ export const getOrgUnitsByOrganizationRoute = createRoute({
 });
 
 export const createOrgUnitRoute = createRoute({
-  method: 'post',
-  path: '/org-units',
-  tags: ['OrgUnits'],
-  summary: 'Create a new org unit',
-  description: 'Create a new organizational unit with the provided data',
+  method: "post",
+  path: "/org-units",
+  tags: ["OrgUnits"],
+  summary: "Create a new org unit",
+  description: "Create a new organizational unit with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateOrgUnitSchema,
         },
       },
@@ -1297,17 +1294,17 @@ export const createOrgUnitRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Org unit created successfully',
+      description: "Org unit created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrgUnitSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1316,16 +1313,16 @@ export const createOrgUnitRoute = createRoute({
 });
 
 export const updateOrgUnitRoute = createRoute({
-  method: 'put',
-  path: '/org-units/{uid}',
-  tags: ['OrgUnits'],
-  summary: 'Update an org unit',
-  description: 'Update an existing organizational unit with the provided data',
+  method: "put",
+  path: "/org-units/{uid}",
+  tags: ["OrgUnits"],
+  summary: "Update an org unit",
+  description: "Update an existing organizational unit with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateOrgUnitSchema.partial(),
         },
       },
@@ -1333,25 +1330,25 @@ export const updateOrgUnitRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Org unit updated successfully',
+      description: "Org unit updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.OrgUnitSchema,
         },
       },
     },
     404: {
-      description: 'Org unit not found',
+      description: "Org unit not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1360,27 +1357,27 @@ export const updateOrgUnitRoute = createRoute({
 });
 
 export const deleteOrgUnitRoute = createRoute({
-  method: 'delete',
-  path: '/org-units/{uid}',
-  tags: ['OrgUnits'],
-  summary: 'Delete an org unit',
-  description: 'Soft delete an organizational unit by its unique identifier',
+  method: "delete",
+  path: "/org-units/{uid}",
+  tags: ["OrgUnits"],
+  summary: "Delete an org unit",
+  description: "Soft delete an organizational unit by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Org unit deleted successfully',
+      description: "Org unit deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Org unit not found',
+      description: "Org unit not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1390,16 +1387,16 @@ export const deleteOrgUnitRoute = createRoute({
 
 // Role routes
 export const getRolesRoute = createRoute({
-  method: 'get',
-  path: '/roles',
-  tags: ['Roles'],
-  summary: 'Get all roles',
-  description: 'Retrieve a list of all roles',
+  method: "get",
+  path: "/roles",
+  tags: ["Roles"],
+  summary: "Get all roles",
+  description: "Retrieve a list of all roles",
   responses: {
     200: {
-      description: 'List of roles',
+      description: "List of roles",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.RoleListSchema,
         },
       },
@@ -1408,27 +1405,27 @@ export const getRolesRoute = createRoute({
 });
 
 export const getRoleByIdRoute = createRoute({
-  method: 'get',
-  path: '/roles/{uid}',
-  tags: ['Roles'],
-  summary: 'Get role by ID',
-  description: 'Retrieve a specific role by its unique identifier',
+  method: "get",
+  path: "/roles/{uid}",
+  tags: ["Roles"],
+  summary: "Get role by ID",
+  description: "Retrieve a specific role by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Role details',
+      description: "Role details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.RoleSchema,
         },
       },
     },
     404: {
-      description: 'Role not found',
+      description: "Role not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1437,19 +1434,19 @@ export const getRoleByIdRoute = createRoute({
 });
 
 export const getRolesByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/roles/organization/{orgUid}',
-  tags: ['Roles'],
-  summary: 'Get roles by organization',
-  description: 'Retrieve all roles for a specific organization',
+  method: "get",
+  path: "/roles/organization/{orgUid}",
+  tags: ["Roles"],
+  summary: "Get roles by organization",
+  description: "Retrieve all roles for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of roles',
+      description: "List of roles",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.RoleListSchema,
         },
       },
@@ -1458,15 +1455,15 @@ export const getRolesByOrganizationRoute = createRoute({
 });
 
 export const createRoleRoute = createRoute({
-  method: 'post',
-  path: '/roles',
-  tags: ['Roles'],
-  summary: 'Create a new role',
-  description: 'Create a new role with the provided data',
+  method: "post",
+  path: "/roles",
+  tags: ["Roles"],
+  summary: "Create a new role",
+  description: "Create a new role with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateRoleSchema,
         },
       },
@@ -1474,17 +1471,17 @@ export const createRoleRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Role created successfully',
+      description: "Role created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.RoleSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1493,16 +1490,16 @@ export const createRoleRoute = createRoute({
 });
 
 export const updateRoleRoute = createRoute({
-  method: 'put',
-  path: '/roles/{uid}',
-  tags: ['Roles'],
-  summary: 'Update a role',
-  description: 'Update an existing role with the provided data',
+  method: "put",
+  path: "/roles/{uid}",
+  tags: ["Roles"],
+  summary: "Update a role",
+  description: "Update an existing role with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateRoleSchema.partial(),
         },
       },
@@ -1510,25 +1507,25 @@ export const updateRoleRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Role updated successfully',
+      description: "Role updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.RoleSchema,
         },
       },
     },
     404: {
-      description: 'Role not found',
+      description: "Role not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1537,27 +1534,27 @@ export const updateRoleRoute = createRoute({
 });
 
 export const deleteRoleRoute = createRoute({
-  method: 'delete',
-  path: '/roles/{uid}',
-  tags: ['Roles'],
-  summary: 'Delete a role',
-  description: 'Soft delete a role by its unique identifier',
+  method: "delete",
+  path: "/roles/{uid}",
+  tags: ["Roles"],
+  summary: "Delete a role",
+  description: "Soft delete a role by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Role deleted successfully',
+      description: "Role deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Role not found',
+      description: "Role not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1567,16 +1564,16 @@ export const deleteRoleRoute = createRoute({
 
 // Store routes
 export const getStoresRoute = createRoute({
-  method: 'get',
-  path: '/stores',
-  tags: ['Stores'],
-  summary: 'Get all stores',
-  description: 'Retrieve a list of all stores',
+  method: "get",
+  path: "/stores",
+  tags: ["Stores"],
+  summary: "Get all stores",
+  description: "Retrieve a list of all stores",
   responses: {
     200: {
-      description: 'List of stores',
+      description: "List of stores",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StoreListSchema,
         },
       },
@@ -1585,27 +1582,27 @@ export const getStoresRoute = createRoute({
 });
 
 export const getStoreByIdRoute = createRoute({
-  method: 'get',
-  path: '/stores/{uid}',
-  tags: ['Stores'],
-  summary: 'Get store by ID',
-  description: 'Retrieve a specific store by its unique identifier',
+  method: "get",
+  path: "/stores/{uid}",
+  tags: ["Stores"],
+  summary: "Get store by ID",
+  description: "Retrieve a specific store by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Store details',
+      description: "Store details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StoreSchema,
         },
       },
     },
     404: {
-      description: 'Store not found',
+      description: "Store not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1614,19 +1611,19 @@ export const getStoreByIdRoute = createRoute({
 });
 
 export const getStoresByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/stores/organization/{orgUid}',
-  tags: ['Stores'],
-  summary: 'Get stores by organization',
-  description: 'Retrieve all stores for a specific organization',
+  method: "get",
+  path: "/stores/organization/{orgUid}",
+  tags: ["Stores"],
+  summary: "Get stores by organization",
+  description: "Retrieve all stores for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of stores',
+      description: "List of stores",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StoreListSchema,
         },
       },
@@ -1635,15 +1632,15 @@ export const getStoresByOrganizationRoute = createRoute({
 });
 
 export const createStoreRoute = createRoute({
-  method: 'post',
-  path: '/stores',
-  tags: ['Stores'],
-  summary: 'Create a new store',
-  description: 'Create a new store with the provided data',
+  method: "post",
+  path: "/stores",
+  tags: ["Stores"],
+  summary: "Create a new store",
+  description: "Create a new store with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateStoreSchema,
         },
       },
@@ -1651,17 +1648,17 @@ export const createStoreRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Store created successfully',
+      description: "Store created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StoreSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1670,16 +1667,16 @@ export const createStoreRoute = createRoute({
 });
 
 export const updateStoreRoute = createRoute({
-  method: 'put',
-  path: '/stores/{uid}',
-  tags: ['Stores'],
-  summary: 'Update a store',
-  description: 'Update an existing store with the provided data',
+  method: "put",
+  path: "/stores/{uid}",
+  tags: ["Stores"],
+  summary: "Update a store",
+  description: "Update an existing store with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateStoreSchema.partial(),
         },
       },
@@ -1687,25 +1684,25 @@ export const updateStoreRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Store updated successfully',
+      description: "Store updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.StoreSchema,
         },
       },
     },
     404: {
-      description: 'Store not found',
+      description: "Store not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1714,27 +1711,27 @@ export const updateStoreRoute = createRoute({
 });
 
 export const deleteStoreRoute = createRoute({
-  method: 'delete',
-  path: '/stores/{uid}',
-  tags: ['Stores'],
-  summary: 'Delete a store',
-  description: 'Soft delete a store by its unique identifier',
+  method: "delete",
+  path: "/stores/{uid}",
+  tags: ["Stores"],
+  summary: "Delete a store",
+  description: "Soft delete a store by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Store deleted successfully',
+      description: "Store deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Store not found',
+      description: "Store not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1744,16 +1741,16 @@ export const deleteStoreRoute = createRoute({
 
 // Approval process routes
 export const getApprovalProcessesRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes',
-  tags: ['Approvals'],
-  summary: 'Get all approval processes',
-  description: 'Retrieve a list of all approval process definitions',
+  method: "get",
+  path: "/approval-processes",
+  tags: ["Approvals"],
+  summary: "Get all approval processes",
+  description: "Retrieve a list of all approval process definitions",
   responses: {
     200: {
-      description: 'List of approval processes',
+      description: "List of approval processes",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalProcessListSchema,
         },
       },
@@ -1762,27 +1759,27 @@ export const getApprovalProcessesRoute = createRoute({
 });
 
 export const getApprovalProcessByIdRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/processes/{uid}',
-  tags: ['Approvals'],
-  summary: 'Get approval process by ID',
-  description: 'Retrieve a specific approval process by its unique identifier',
+  method: "get",
+  path: "/approval-processes/processes/{uid}",
+  tags: ["Approvals"],
+  summary: "Get approval process by ID",
+  description: "Retrieve a specific approval process by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval process details',
+      description: "Approval process details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalProcessSchema,
         },
       },
     },
     404: {
-      description: 'Approval process not found',
+      description: "Approval process not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1791,19 +1788,19 @@ export const getApprovalProcessByIdRoute = createRoute({
 });
 
 export const getApprovalProcessesByOrganizationRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/processes/organization/{orgUid}',
-  tags: ['Approvals'],
-  summary: 'Get approval processes by organization',
-  description: 'Retrieve all approval processes for a specific organization',
+  method: "get",
+  path: "/approval-processes/processes/organization/{orgUid}",
+  tags: ["Approvals"],
+  summary: "Get approval processes by organization",
+  description: "Retrieve all approval processes for a specific organization",
   request: {
     params: schemas.OrgUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval processes',
+      description: "List of approval processes",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalProcessListSchema,
         },
       },
@@ -1812,15 +1809,15 @@ export const getApprovalProcessesByOrganizationRoute = createRoute({
 });
 
 export const createApprovalProcessRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/processes',
-  tags: ['Approvals'],
-  summary: 'Create a new approval process',
-  description: 'Create a new approval process with the provided data',
+  method: "post",
+  path: "/approval-processes/processes",
+  tags: ["Approvals"],
+  summary: "Create a new approval process",
+  description: "Create a new approval process with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateApprovalProcessSchema,
         },
       },
@@ -1828,17 +1825,17 @@ export const createApprovalProcessRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Approval process created successfully',
+      description: "Approval process created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalProcessSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1847,16 +1844,16 @@ export const createApprovalProcessRoute = createRoute({
 });
 
 export const updateApprovalProcessRoute = createRoute({
-  method: 'put',
-  path: '/approval-processes/{uid}',
-  tags: ['Approvals'],
-  summary: 'Update an approval process',
-  description: 'Update an existing approval process with the provided data',
+  method: "put",
+  path: "/approval-processes/{uid}",
+  tags: ["Approvals"],
+  summary: "Update an approval process",
+  description: "Update an existing approval process with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateApprovalProcessSchema.partial(),
         },
       },
@@ -1864,25 +1861,25 @@ export const updateApprovalProcessRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Approval process updated successfully',
+      description: "Approval process updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalProcessSchema,
         },
       },
     },
     404: {
-      description: 'Approval process not found',
+      description: "Approval process not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1891,27 +1888,27 @@ export const updateApprovalProcessRoute = createRoute({
 });
 
 export const deleteApprovalProcessRoute = createRoute({
-  method: 'delete',
-  path: '/approval-processes/{uid}',
-  tags: ['Approvals'],
-  summary: 'Delete an approval process',
-  description: 'Soft delete an approval process by its unique identifier',
+  method: "delete",
+  path: "/approval-processes/{uid}",
+  tags: ["Approvals"],
+  summary: "Delete an approval process",
+  description: "Soft delete an approval process by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval process deleted successfully',
+      description: "Approval process deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Approval process not found',
+      description: "Approval process not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1921,27 +1918,27 @@ export const deleteApprovalProcessRoute = createRoute({
 
 // Approval Step routes
 export const getStepsByProcessRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/processes/{processUid}/steps',
-  tags: ['Approvals'],
-  summary: 'Get steps by process',
-  description: 'Retrieve all approval steps for a specific process',
+  method: "get",
+  path: "/approval-processes/processes/{processUid}/steps",
+  tags: ["Approvals"],
+  summary: "Get steps by process",
+  description: "Retrieve all approval steps for a specific process",
   request: {
     params: schemas.ProcessUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval steps',
+      description: "List of approval steps",
       content: {
-        'application/json': {
-          schema: z.array(z.any()).openapi('ApprovalStepList'),
+        "application/json": {
+          schema: z.array(z.any()).openapi("ApprovalStepList"),
         },
       },
     },
     404: {
-      description: 'Process not found',
+      description: "Process not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1950,27 +1947,27 @@ export const getStepsByProcessRoute = createRoute({
 });
 
 export const getStepByIdRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/steps/{uid}',
-  tags: ['Approvals'],
-  summary: 'Get step by ID',
-  description: 'Retrieve a specific approval step by its unique identifier',
+  method: "get",
+  path: "/approval-processes/steps/{uid}",
+  tags: ["Approvals"],
+  summary: "Get step by ID",
+  description: "Retrieve a specific approval step by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval step details',
+      description: "Approval step details",
       content: {
-        'application/json': {
-          schema: z.any().openapi('ApprovalStep'),
+        "application/json": {
+          schema: z.any().openapi("ApprovalStep"),
         },
       },
     },
     404: {
-      description: 'Step not found',
+      description: "Step not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -1979,39 +1976,41 @@ export const getStepByIdRoute = createRoute({
 });
 
 export const createStepRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/steps',
-  tags: ['Approvals'],
-  summary: 'Create a new approval step',
-  description: 'Create a new approval step with the provided data',
+  method: "post",
+  path: "/approval-processes/steps",
+  tags: ["Approvals"],
+  summary: "Create a new approval step",
+  description: "Create a new approval step with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            approvalProcessUid: z.string().uuid(),
-            stepOrder: z.number().int(),
-            stepType: z.string(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateApprovalStep'),
+        "application/json": {
+          schema: z
+            .object({
+              approvalProcessUid: z.string().uuid(),
+              stepOrder: z.number().int(),
+              stepType: z.string(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("CreateApprovalStep"),
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Approval step created successfully',
+      description: "Approval step created successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('ApprovalStep'),
+        "application/json": {
+          schema: z.any().openapi("ApprovalStep"),
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2020,47 +2019,49 @@ export const createStepRoute = createRoute({
 });
 
 export const updateStepRoute = createRoute({
-  method: 'put',
-  path: '/approval-processes/steps/{uid}',
-  tags: ['Approvals'],
-  summary: 'Update an approval step',
-  description: 'Update an existing approval step with the provided data',
+  method: "put",
+  path: "/approval-processes/steps/{uid}",
+  tags: ["Approvals"],
+  summary: "Update an approval step",
+  description: "Update an existing approval step with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            stepOrder: z.number().int().optional(),
-            stepType: z.string().optional(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('UpdateApprovalStep'),
+        "application/json": {
+          schema: z
+            .object({
+              stepOrder: z.number().int().optional(),
+              stepType: z.string().optional(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("UpdateApprovalStep"),
         },
       },
     },
   },
   responses: {
     200: {
-      description: 'Approval step updated successfully',
+      description: "Approval step updated successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('ApprovalStep'),
+        "application/json": {
+          schema: z.any().openapi("ApprovalStep"),
         },
       },
     },
     404: {
-      description: 'Step not found',
+      description: "Step not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2069,27 +2070,27 @@ export const updateStepRoute = createRoute({
 });
 
 export const deleteStepRoute = createRoute({
-  method: 'delete',
-  path: '/approval-processes/steps/{uid}',
-  tags: ['Approvals'],
-  summary: 'Delete an approval step',
-  description: 'Soft delete an approval step by its unique identifier',
+  method: "delete",
+  path: "/approval-processes/steps/{uid}",
+  tags: ["Approvals"],
+  summary: "Delete an approval step",
+  description: "Soft delete an approval step by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval step deleted successfully',
+      description: "Approval step deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Step not found',
+      description: "Step not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2099,27 +2100,27 @@ export const deleteStepRoute = createRoute({
 
 // Approval Responsibility routes
 export const getResponsibilitiesByStepRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/steps/{stepUid}/responsibilities',
-  tags: ['Approvals'],
-  summary: 'Get responsibilities by step',
-  description: 'Retrieve all responsibilities for a specific approval step',
+  method: "get",
+  path: "/approval-processes/steps/{stepUid}/responsibilities",
+  tags: ["Approvals"],
+  summary: "Get responsibilities by step",
+  description: "Retrieve all responsibilities for a specific approval step",
   request: {
     params: schemas.StepUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval responsibilities',
+      description: "List of approval responsibilities",
       content: {
-        'application/json': {
-          schema: z.array(z.any()).openapi('ApprovalResponsibilityList'),
+        "application/json": {
+          schema: z.array(z.any()).openapi("ApprovalResponsibilityList"),
         },
       },
     },
     404: {
-      description: 'Step not found',
+      description: "Step not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2128,43 +2129,45 @@ export const getResponsibilitiesByStepRoute = createRoute({
 });
 
 export const createResponsibilityRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/responsibilities',
-  tags: ['Approvals'],
-  summary: 'Create a new approval responsibility',
-  description: 'Create a new approval responsibility with the provided data',
+  method: "post",
+  path: "/approval-processes/responsibilities",
+  tags: ["Approvals"],
+  summary: "Create a new approval responsibility",
+  description: "Create a new approval responsibility with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            approvalStepUid: z.string().uuid(),
-            roleUid: z.string().uuid().optional(),
-            orgUnitUid: z.string().uuid().optional(),
-            employeeUserUid: z.string().uuid().optional(),
-            action: z.string(),
-            fallbackRoleUid: z.string().uuid().optional(),
-            fallbackOrgUnitUid: z.string().uuid().optional(),
-            fallbackEmployeeUserUid: z.string().uuid().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateApprovalResponsibility'),
+        "application/json": {
+          schema: z
+            .object({
+              approvalStepUid: z.string().uuid(),
+              roleUid: z.string().uuid().optional(),
+              orgUnitUid: z.string().uuid().optional(),
+              employeeUserUid: z.string().uuid().optional(),
+              action: z.string(),
+              fallbackRoleUid: z.string().uuid().optional(),
+              fallbackOrgUnitUid: z.string().uuid().optional(),
+              fallbackEmployeeUserUid: z.string().uuid().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("CreateApprovalResponsibility"),
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Approval responsibility created successfully',
+      description: "Approval responsibility created successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('ApprovalResponsibility'),
+        "application/json": {
+          schema: z.any().openapi("ApprovalResponsibility"),
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2173,51 +2176,53 @@ export const createResponsibilityRoute = createRoute({
 });
 
 export const updateResponsibilityRoute = createRoute({
-  method: 'put',
-  path: '/approval-processes/responsibilities/{uid}',
-  tags: ['Approvals'],
-  summary: 'Update an approval responsibility',
-  description: 'Update an existing approval responsibility with the provided data',
+  method: "put",
+  path: "/approval-processes/responsibilities/{uid}",
+  tags: ["Approvals"],
+  summary: "Update an approval responsibility",
+  description: "Update an existing approval responsibility with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            roleUid: z.string().uuid().optional(),
-            orgUnitUid: z.string().uuid().optional(),
-            employeeUserUid: z.string().uuid().optional(),
-            action: z.string().optional(),
-            fallbackRoleUid: z.string().uuid().optional(),
-            fallbackOrgUnitUid: z.string().uuid().optional(),
-            fallbackEmployeeUserUid: z.string().uuid().optional(),
-            extraData: z.any().optional(),
-          }).openapi('UpdateApprovalResponsibility'),
+        "application/json": {
+          schema: z
+            .object({
+              roleUid: z.string().uuid().optional(),
+              orgUnitUid: z.string().uuid().optional(),
+              employeeUserUid: z.string().uuid().optional(),
+              action: z.string().optional(),
+              fallbackRoleUid: z.string().uuid().optional(),
+              fallbackOrgUnitUid: z.string().uuid().optional(),
+              fallbackEmployeeUserUid: z.string().uuid().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("UpdateApprovalResponsibility"),
         },
       },
     },
   },
   responses: {
     200: {
-      description: 'Approval responsibility updated successfully',
+      description: "Approval responsibility updated successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('ApprovalResponsibility'),
+        "application/json": {
+          schema: z.any().openapi("ApprovalResponsibility"),
         },
       },
     },
     404: {
-      description: 'Responsibility not found',
+      description: "Responsibility not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2226,27 +2231,27 @@ export const updateResponsibilityRoute = createRoute({
 });
 
 export const deleteResponsibilityRoute = createRoute({
-  method: 'delete',
-  path: '/approval-processes/responsibilities/{uid}',
-  tags: ['Approvals'],
-  summary: 'Delete an approval responsibility',
-  description: 'Soft delete an approval responsibility by its unique identifier',
+  method: "delete",
+  path: "/approval-processes/responsibilities/{uid}",
+  tags: ["Approvals"],
+  summary: "Delete an approval responsibility",
+  description: "Soft delete an approval responsibility by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval responsibility deleted successfully',
+      description: "Approval responsibility deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Responsibility not found',
+      description: "Responsibility not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2256,16 +2261,16 @@ export const deleteResponsibilityRoute = createRoute({
 
 // Approval Request routes
 export const getApprovalRequestsRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/requests',
-  tags: ['Approvals'],
-  summary: 'Get all approval requests',
-  description: 'Retrieve a list of all approval requests',
+  method: "get",
+  path: "/approval-processes/requests",
+  tags: ["Approvals"],
+  summary: "Get all approval requests",
+  description: "Retrieve a list of all approval requests",
   responses: {
     200: {
-      description: 'List of approval requests',
+      description: "List of approval requests",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestListSchema,
         },
       },
@@ -2274,27 +2279,27 @@ export const getApprovalRequestsRoute = createRoute({
 });
 
 export const getApprovalRequestByIdRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/requests/{uid}',
-  tags: ['Approvals'],
-  summary: 'Get approval request by ID',
-  description: 'Retrieve a specific approval request by its unique identifier',
+  method: "get",
+  path: "/approval-processes/requests/{uid}",
+  tags: ["Approvals"],
+  summary: "Get approval request by ID",
+  description: "Retrieve a specific approval request by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Approval request details',
+      description: "Approval request details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestSchema,
         },
       },
     },
     404: {
-      description: 'Approval request not found',
+      description: "Approval request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2303,19 +2308,19 @@ export const getApprovalRequestByIdRoute = createRoute({
 });
 
 export const getApprovalRequestsBySupplierRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/requests/supplier/{supplierUid}',
-  tags: ['Approvals'],
-  summary: 'Get approval requests by supplier',
-  description: 'Retrieve all approval requests for a specific supplier',
+  method: "get",
+  path: "/approval-processes/requests/supplier/{supplierUid}",
+  tags: ["Approvals"],
+  summary: "Get approval requests by supplier",
+  description: "Retrieve all approval requests for a specific supplier",
   request: {
     params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval requests',
+      description: "List of approval requests",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestListSchema,
         },
       },
@@ -2324,15 +2329,15 @@ export const getApprovalRequestsBySupplierRoute = createRoute({
 });
 
 export const createApprovalRequestRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/requests',
-  tags: ['Approvals'],
-  summary: 'Create a new approval request',
-  description: 'Create a new approval request with the provided data',
+  method: "post",
+  path: "/approval-processes/requests",
+  tags: ["Approvals"],
+  summary: "Create a new approval request",
+  description: "Create a new approval request with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateApprovalRequestSchema,
         },
       },
@@ -2340,17 +2345,17 @@ export const createApprovalRequestRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Approval request created successfully',
+      description: "Approval request created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2359,45 +2364,47 @@ export const createApprovalRequestRoute = createRoute({
 });
 
 export const updateRequestStatusRoute = createRoute({
-  method: 'put',
-  path: '/approval-processes/requests/{uid}/status',
-  tags: ['Approvals'],
-  summary: 'Update approval request status',
-  description: 'Update the status of an existing approval request',
+  method: "put",
+  path: "/approval-processes/requests/{uid}/status",
+  tags: ["Approvals"],
+  summary: "Update approval request status",
+  description: "Update the status of an existing approval request",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELED']),
-            comments: z.string().optional(),
-          }).openapi('UpdateRequestStatus'),
+        "application/json": {
+          schema: z
+            .object({
+              status: z.enum(["PENDING", "APPROVED", "REJECTED", "CANCELED"]),
+              comments: z.string().optional(),
+            })
+            .openapi("UpdateRequestStatus"),
         },
       },
     },
   },
   responses: {
     200: {
-      description: 'Approval request status updated successfully',
+      description: "Approval request status updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestSchema,
         },
       },
     },
     404: {
-      description: 'Approval request not found',
+      description: "Approval request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2406,16 +2413,16 @@ export const updateRequestStatusRoute = createRoute({
 });
 
 export const updateRequestStepRoute = createRoute({
-  method: 'put',
-  path: '/approval-processes/requests/{uid}/step',
-  tags: ['Approvals'],
-  summary: 'Update approval request step',
-  description: 'Update the current step of an existing approval request',
+  method: "put",
+  path: "/approval-processes/requests/{uid}/step",
+  tags: ["Approvals"],
+  summary: "Update approval request step",
+  description: "Update the current step of an existing approval request",
   request: {
     params: schemas.RequestUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.UpdateRequestStepSchema,
         },
       },
@@ -2423,25 +2430,25 @@ export const updateRequestStepRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Approval request step updated successfully',
+      description: "Approval request step updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalRequestSchema,
         },
       },
     },
     404: {
-      description: 'Approval request not found',
+      description: "Approval request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2451,27 +2458,27 @@ export const updateRequestStepRoute = createRoute({
 
 // Approval Log routes
 export const getLogsByRequestRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/requests/{requestUid}/logs',
-  tags: ['Approvals'],
-  summary: 'Get logs by request',
-  description: 'Retrieve all logs for a specific approval request',
+  method: "get",
+  path: "/approval-processes/requests/{requestUid}/logs",
+  tags: ["Approvals"],
+  summary: "Get logs by request",
+  description: "Retrieve all logs for a specific approval request",
   request: {
     params: schemas.RequestUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval logs',
+      description: "List of approval logs",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalLogListSchema,
         },
       },
     },
     404: {
-      description: 'Request not found',
+      description: "Request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2480,16 +2487,16 @@ export const getLogsByRequestRoute = createRoute({
 });
 
 export const createLogRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/requests/{requestUid}/logs',
-  tags: ['Approvals'],
-  summary: 'Create approval log',
-  description: 'Create a new log entry for an approval request',
+  method: "post",
+  path: "/approval-processes/requests/{requestUid}/logs",
+  tags: ["Approvals"],
+  summary: "Create approval log",
+  description: "Create a new log entry for an approval request",
   request: {
     params: schemas.RequestUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateApprovalLogSchema,
         },
       },
@@ -2497,25 +2504,25 @@ export const createLogRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Log created successfully',
+      description: "Log created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalLogSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     404: {
-      description: 'Request not found',
+      description: "Request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2525,27 +2532,27 @@ export const createLogRoute = createRoute({
 
 // Approval Comment routes
 export const getCommentsByRequestRoute = createRoute({
-  method: 'get',
-  path: '/approval-processes/requests/{requestUid}/comments',
-  tags: ['Approvals'],
-  summary: 'Get comments by request',
-  description: 'Retrieve all comments for a specific approval request',
+  method: "get",
+  path: "/approval-processes/requests/{requestUid}/comments",
+  tags: ["Approvals"],
+  summary: "Get comments by request",
+  description: "Retrieve all comments for a specific approval request",
   request: {
     params: schemas.RequestUidParam,
   },
   responses: {
     200: {
-      description: 'List of approval comments',
+      description: "List of approval comments",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalCommentListSchema,
         },
       },
     },
     404: {
-      description: 'Request not found',
+      description: "Request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2554,16 +2561,16 @@ export const getCommentsByRequestRoute = createRoute({
 });
 
 export const createCommentRoute = createRoute({
-  method: 'post',
-  path: '/approval-processes/requests/{requestUid}/comments',
-  tags: ['Approvals'],
-  summary: 'Create comment',
-  description: 'Add a new comment to an approval request',
+  method: "post",
+  path: "/approval-processes/requests/{requestUid}/comments",
+  tags: ["Approvals"],
+  summary: "Create comment",
+  description: "Add a new comment to an approval request",
   request: {
     params: schemas.RequestUidParam,
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateApprovalCommentSchema,
         },
       },
@@ -2571,25 +2578,25 @@ export const createCommentRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Comment created successfully',
+      description: "Comment created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ApprovalCommentSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     404: {
-      description: 'Request not found',
+      description: "Request not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2599,16 +2606,16 @@ export const createCommentRoute = createRoute({
 
 // Document routes
 export const getDocumentsRoute = createRoute({
-  method: 'get',
-  path: '/documents',
-  tags: ['Documents'],
-  summary: 'Get all documents',
-  description: 'Retrieve a list of all documents',
+  method: "get",
+  path: "/documents",
+  tags: ["Documents"],
+  summary: "Get all documents",
+  description: "Retrieve a list of all documents",
   responses: {
     200: {
-      description: 'List of documents',
+      description: "List of documents",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.DocumentListSchema,
         },
       },
@@ -2617,27 +2624,27 @@ export const getDocumentsRoute = createRoute({
 });
 
 export const getDocumentByIdRoute = createRoute({
-  method: 'get',
-  path: '/documents/{uid}',
-  tags: ['Documents'],
-  summary: 'Get document by ID',
-  description: 'Retrieve a specific document by its unique identifier',
+  method: "get",
+  path: "/documents/{uid}",
+  tags: ["Documents"],
+  summary: "Get document by ID",
+  description: "Retrieve a specific document by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Document details',
+      description: "Document details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.DocumentSchema,
         },
       },
     },
     404: {
-      description: 'Document not found',
+      description: "Document not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2646,19 +2653,19 @@ export const getDocumentByIdRoute = createRoute({
 });
 
 export const getDocumentsByEntityRoute = createRoute({
-  method: 'get',
-  path: '/documents/entity/{entityType}/{entityUid}',
-  tags: ['Documents'],
-  summary: 'Get documents by entity',
-  description: 'Retrieve all documents for a specific entity',
+  method: "get",
+  path: "/documents/entity/{entityType}/{entityUid}",
+  tags: ["Documents"],
+  summary: "Get documents by entity",
+  description: "Retrieve all documents for a specific entity",
   request: {
     params: schemas.EntityParams,
   },
   responses: {
     200: {
-      description: 'List of documents',
+      description: "List of documents",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.DocumentListSchema,
         },
       },
@@ -2667,15 +2674,15 @@ export const getDocumentsByEntityRoute = createRoute({
 });
 
 export const createDocumentRoute = createRoute({
-  method: 'post',
-  path: '/documents',
-  tags: ['Documents'],
-  summary: 'Create a new document',
-  description: 'Create a new document with the provided data',
+  method: "post",
+  path: "/documents",
+  tags: ["Documents"],
+  summary: "Create a new document",
+  description: "Create a new document with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.CreateDocumentSchema,
         },
       },
@@ -2683,17 +2690,17 @@ export const createDocumentRoute = createRoute({
   },
   responses: {
     201: {
-      description: 'Document created successfully',
+      description: "Document created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.DocumentSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2702,48 +2709,50 @@ export const createDocumentRoute = createRoute({
 });
 
 export const updateDocumentRoute = createRoute({
-  method: 'put',
-  path: '/documents/{uid}',
-  tags: ['Documents'],
-  summary: 'Update a document',
-  description: 'Update an existing document with the provided data',
+  method: "put",
+  path: "/documents/{uid}",
+  tags: ["Documents"],
+  summary: "Update a document",
+  description: "Update an existing document with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            documentType: z.string().optional(),
-            fileName: z.string().optional(),
-            fileUrl: z.string().optional(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('UpdateDocument'),
+        "application/json": {
+          schema: z
+            .object({
+              documentType: z.string().optional(),
+              fileName: z.string().optional(),
+              fileUrl: z.string().optional(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("UpdateDocument"),
         },
       },
     },
   },
   responses: {
     200: {
-      description: 'Document updated successfully',
+      description: "Document updated successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('Document'),
+        "application/json": {
+          schema: z.any().openapi("Document"),
         },
       },
     },
     404: {
-      description: 'Document not found',
+      description: "Document not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2752,27 +2761,27 @@ export const updateDocumentRoute = createRoute({
 });
 
 export const deleteDocumentRoute = createRoute({
-  method: 'delete',
-  path: '/documents/{uid}',
-  tags: ['Documents'],
-  summary: 'Delete a document',
-  description: 'Soft delete a document by its unique identifier',
+  method: "delete",
+  path: "/documents/{uid}",
+  tags: ["Documents"],
+  summary: "Delete a document",
+  description: "Soft delete a document by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Document deleted successfully',
+      description: "Document deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Document not found',
+      description: "Document not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2782,17 +2791,17 @@ export const deleteDocumentRoute = createRoute({
 
 // Supplier Term routes
 export const getSupplierTermsRoute = createRoute({
-  method: 'get',
-  path: '/supplier-terms',
-  tags: ['Terms'],
-  summary: 'Get all supplier terms',
-  description: 'Retrieve a list of all supplier terms',
+  method: "get",
+  path: "/supplier-terms",
+  tags: ["Terms"],
+  summary: "Get all supplier terms",
+  description: "Retrieve a list of all supplier terms",
   responses: {
     200: {
-      description: 'List of supplier terms',
+      description: "List of supplier terms",
       content: {
-        'application/json': {
-          schema: z.array(z.any()).openapi('SupplierTermList'),
+        "application/json": {
+          schema: z.array(z.any()).openapi("SupplierTermList"),
         },
       },
     },
@@ -2800,27 +2809,27 @@ export const getSupplierTermsRoute = createRoute({
 });
 
 export const getSupplierTermByIdRoute = createRoute({
-  method: 'get',
-  path: '/supplier-terms/{uid}',
-  tags: ['Terms'],
-  summary: 'Get supplier term by ID',
-  description: 'Retrieve a specific supplier term by its unique identifier',
+  method: "get",
+  path: "/supplier-terms/{uid}",
+  tags: ["Terms"],
+  summary: "Get supplier term by ID",
+  description: "Retrieve a specific supplier term by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Supplier term details',
+      description: "Supplier term details",
       content: {
-        'application/json': {
-          schema: z.any().openapi('SupplierTerm'),
+        "application/json": {
+          schema: z.any().openapi("SupplierTerm"),
         },
       },
     },
     404: {
-      description: 'Supplier term not found',
+      description: "Supplier term not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2829,20 +2838,20 @@ export const getSupplierTermByIdRoute = createRoute({
 });
 
 export const getSupplierTermsBySupplierRoute = createRoute({
-  method: 'get',
-  path: '/supplier-terms/supplier/{supplierUid}',
-  tags: ['Terms'],
-  summary: 'Get supplier terms by supplier',
-  description: 'Retrieve all terms for a specific supplier',
+  method: "get",
+  path: "/supplier-terms/supplier/{supplierUid}",
+  tags: ["Terms"],
+  summary: "Get supplier terms by supplier",
+  description: "Retrieve all terms for a specific supplier",
   request: {
     params: schemas.SupplierUserUidParam,
   },
   responses: {
     200: {
-      description: 'List of supplier terms',
+      description: "List of supplier terms",
       content: {
-        'application/json': {
-          schema: z.array(z.any()).openapi('SupplierTermList'),
+        "application/json": {
+          schema: z.array(z.any()).openapi("SupplierTermList"),
         },
       },
     },
@@ -2850,40 +2859,42 @@ export const getSupplierTermsBySupplierRoute = createRoute({
 });
 
 export const createFinancialTermRoute = createRoute({
-  method: 'post',
-  path: '/supplier-terms/financial',
-  tags: ['Terms'],
-  summary: 'Create a new financial term',
-  description: 'Create a new financial term with the provided data',
+  method: "post",
+  path: "/supplier-terms/financial",
+  tags: ["Terms"],
+  summary: "Create a new financial term",
+  description: "Create a new financial term with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            supplierUid: z.string().uuid(),
-            termType: z.string(),
-            value: z.number(),
-            currency: z.string(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateFinancialTerm'),
+        "application/json": {
+          schema: z
+            .object({
+              supplierUid: z.string().uuid(),
+              termType: z.string(),
+              value: z.number(),
+              currency: z.string(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("CreateFinancialTerm"),
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Financial term created successfully',
+      description: "Financial term created successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('SupplierTerm'),
+        "application/json": {
+          schema: z.any().openapi("SupplierTerm"),
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2892,39 +2903,41 @@ export const createFinancialTermRoute = createRoute({
 });
 
 export const createTradeTermRoute = createRoute({
-  method: 'post',
-  path: '/supplier-terms/trade',
-  tags: ['Terms'],
-  summary: 'Create a new trade term',
-  description: 'Create a new trade term with the provided data',
+  method: "post",
+  path: "/supplier-terms/trade",
+  tags: ["Terms"],
+  summary: "Create a new trade term",
+  description: "Create a new trade term with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            supplierUid: z.string().uuid(),
-            termType: z.string(),
-            value: z.string(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateTradeTerm'),
+        "application/json": {
+          schema: z
+            .object({
+              supplierUid: z.string().uuid(),
+              termType: z.string(),
+              value: z.string(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("CreateTradeTerm"),
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Trade term created successfully',
+      description: "Trade term created successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('SupplierTerm'),
+        "application/json": {
+          schema: z.any().openapi("SupplierTerm"),
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2933,39 +2946,41 @@ export const createTradeTermRoute = createRoute({
 });
 
 export const createSupportTermRoute = createRoute({
-  method: 'post',
-  path: '/supplier-terms/support',
-  tags: ['Terms'],
-  summary: 'Create a new support term',
-  description: 'Create a new support term with the provided data',
+  method: "post",
+  path: "/supplier-terms/support",
+  tags: ["Terms"],
+  summary: "Create a new support term",
+  description: "Create a new support term with the provided data",
   request: {
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            supplierUid: z.string().uuid(),
-            termType: z.string(),
-            value: z.string(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('CreateSupportTerm'),
+        "application/json": {
+          schema: z
+            .object({
+              supplierUid: z.string().uuid(),
+              termType: z.string(),
+              value: z.string(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("CreateSupportTerm"),
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Support term created successfully',
+      description: "Support term created successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('SupplierTerm'),
+        "application/json": {
+          schema: z.any().openapi("SupplierTerm"),
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -2974,48 +2989,50 @@ export const createSupportTermRoute = createRoute({
 });
 
 export const updateTermRoute = createRoute({
-  method: 'put',
-  path: '/supplier-terms/{uid}',
-  tags: ['Terms'],
-  summary: 'Update a supplier term',
-  description: 'Update an existing supplier term with the provided data',
+  method: "put",
+  path: "/supplier-terms/{uid}",
+  tags: ["Terms"],
+  summary: "Update a supplier term",
+  description: "Update an existing supplier term with the provided data",
   request: {
     params: schemas.UuidParam,
     body: {
       content: {
-        'application/json': {
-          schema: z.object({
-            termType: z.string().optional(),
-            value: z.union([z.number(), z.string()]).optional(),
-            currency: z.string().optional(),
-            description: z.string().optional(),
-            extraData: z.any().optional(),
-          }).openapi('UpdateSupplierTerm'),
+        "application/json": {
+          schema: z
+            .object({
+              termType: z.string().optional(),
+              value: z.union([z.number(), z.string()]).optional(),
+              currency: z.string().optional(),
+              description: z.string().optional(),
+              extraData: z.any().optional(),
+            })
+            .openapi("UpdateSupplierTerm"),
         },
       },
     },
   },
   responses: {
     200: {
-      description: 'Supplier term updated successfully',
+      description: "Supplier term updated successfully",
       content: {
-        'application/json': {
-          schema: z.any().openapi('SupplierTerm'),
+        "application/json": {
+          schema: z.any().openapi("SupplierTerm"),
         },
       },
     },
     404: {
-      description: 'Supplier term not found',
+      description: "Supplier term not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
     400: {
-      description: 'Invalid input',
+      description: "Invalid input",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
@@ -3024,30 +3041,30 @@ export const updateTermRoute = createRoute({
 });
 
 export const deleteTermRoute = createRoute({
-  method: 'delete',
-  path: '/supplier-terms/{uid}',
-  tags: ['Terms'],
-  summary: 'Delete a supplier term',
-  description: 'Soft delete a supplier term by its unique identifier',
+  method: "delete",
+  path: "/supplier-terms/{uid}",
+  tags: ["Terms"],
+  summary: "Delete a supplier term",
+  description: "Soft delete a supplier term by its unique identifier",
   request: {
     params: schemas.UuidParam,
   },
   responses: {
     200: {
-      description: 'Supplier term deleted successfully',
+      description: "Supplier term deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.SuccessResponseSchema,
         },
       },
     },
     404: {
-      description: 'Supplier term not found',
+      description: "Supplier term not found",
       content: {
-        'application/json': {
+        "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
   },
-}); 
+});

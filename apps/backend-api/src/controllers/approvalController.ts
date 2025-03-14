@@ -1,30 +1,28 @@
-import type { Context } from "hono";
-import { z } from "zod";
-import { db } from "../../../../packages/database/database.js";
-import { 
-  approvalProcess, 
-  approvalStep, 
-  approvalResponsibility, 
-  approvalRequest,
-  approvalLog,
-  approvalComment,
+import {
   appUser,
+  approvalComment,
+  approvalLog,
+  approvalProcess,
+  approvalRequest,
+  approvalResponsibility,
+  approvalStep,
   supplier,
   supplierSite,
-  supplierSiteTerm
+  supplierSiteTerm,
 } from "@workspace/database/schema";
-import { 
-  NewApprovalProcessSchema,
-  NewApprovalStepSchema,
-  NewApprovalResponsibilitySchema,
-  NewApprovalRequestSchema,
-  NewApprovalLogSchema,
+import {
   NewApprovalCommentSchema,
-  ClientApprovalRequestSchema
+  NewApprovalLogSchema,
+  NewApprovalProcessSchema,
+  NewApprovalRequestSchema,
+  NewApprovalResponsibilitySchema,
+  NewApprovalStepSchema,
 } from "@workspace/database/zod-schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
+import type { Context } from "hono";
+import { db } from "../../../../packages/database/database.js";
 import { handleError } from "../middleware/errorHandler.js";
-import { generateUUID, formatDate } from "../utils/helpers.js";
+import { formatDate, generateUUID } from "../utils/helpers.js";
 
 export const approvalController = {
   // --- APPROVAL PROCESSES ---
@@ -36,7 +34,7 @@ export const approvalController = {
         .select()
         .from(approvalProcess)
         .where(isNull(approvalProcess.deletedAt));
-      
+
       return c.json(allProcesses);
     } catch (error) {
       return handleError(c, error);
@@ -50,11 +48,8 @@ export const approvalController = {
       const processData = await db
         .select()
         .from(approvalProcess)
-        .where(and(
-          eq(approvalProcess.organizationUid, orgUid),
-          isNull(approvalProcess.deletedAt)
-        ));
-      
+        .where(and(eq(approvalProcess.organizationUid, orgUid), isNull(approvalProcess.deletedAt)));
+
       return c.json(processData);
     } catch (error) {
       return handleError(c, error);
@@ -68,15 +63,12 @@ export const approvalController = {
       const processData = await db
         .select()
         .from(approvalProcess)
-        .where(and(
-          eq(approvalProcess.uid, uid),
-          isNull(approvalProcess.deletedAt)
-        ));
-      
+        .where(and(eq(approvalProcess.uid, uid), isNull(approvalProcess.deletedAt)));
+
       if (processData.length === 0) {
         return c.json({ error: "Approval process not found" }, 404);
       }
-      
+
       return c.json(processData[0]);
     } catch (error) {
       return handleError(c, error);
@@ -87,7 +79,7 @@ export const approvalController = {
   async createProcess(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Prepare the data for the database
       const newProcess = NewApprovalProcessSchema.parse({
         uid: data.uid || generateUUID(),
@@ -97,9 +89,9 @@ export const approvalController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(approvalProcess).values(newProcess).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -112,7 +104,7 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       // Update with the data
       const updated = await db
         .update(approvalProcess)
@@ -120,18 +112,15 @@ export const approvalController = {
           name: data.name,
           extraData: data.extraData,
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalProcess.uid, uid),
-          isNull(approvalProcess.deletedAt)
-        ))
+        .where(and(eq(approvalProcess.uid, uid), isNull(approvalProcess.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval process not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -143,23 +132,20 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       const updated = await db
         .update(approvalProcess)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalProcess.uid, uid),
-          isNull(approvalProcess.deletedAt)
-        ))
+        .where(and(eq(approvalProcess.uid, uid), isNull(approvalProcess.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval process not found" }, 404);
       }
-      
+
       return c.json({ success: true });
     } catch (error) {
       return handleError(c, error);
@@ -175,12 +161,9 @@ export const approvalController = {
       const stepData = await db
         .select()
         .from(approvalStep)
-        .where(and(
-          eq(approvalStep.approvalProcessUid, processUid),
-          isNull(approvalStep.deletedAt)
-        ))
+        .where(and(eq(approvalStep.approvalProcessUid, processUid), isNull(approvalStep.deletedAt)))
         .orderBy(approvalStep.stepOrder);
-      
+
       return c.json(stepData);
     } catch (error) {
       return handleError(c, error);
@@ -194,15 +177,12 @@ export const approvalController = {
       const stepData = await db
         .select()
         .from(approvalStep)
-        .where(and(
-          eq(approvalStep.uid, uid),
-          isNull(approvalStep.deletedAt)
-        ));
-      
+        .where(and(eq(approvalStep.uid, uid), isNull(approvalStep.deletedAt)));
+
       if (stepData.length === 0) {
         return c.json({ error: "Approval step not found" }, 404);
       }
-      
+
       return c.json(stepData[0]);
     } catch (error) {
       return handleError(c, error);
@@ -213,7 +193,7 @@ export const approvalController = {
   async createStep(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Prepare the data for the database
       const newStep = NewApprovalStepSchema.parse({
         uid: data.uid || generateUUID(),
@@ -223,9 +203,9 @@ export const approvalController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(approvalStep).values(newStep).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -238,7 +218,7 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       // Update with the data
       const updated = await db
         .update(approvalStep)
@@ -246,18 +226,15 @@ export const approvalController = {
           stepName: data.stepName,
           stepOrder: data.stepOrder,
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalStep.uid, uid),
-          isNull(approvalStep.deletedAt)
-        ))
+        .where(and(eq(approvalStep.uid, uid), isNull(approvalStep.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval step not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -269,23 +246,20 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       const updated = await db
         .update(approvalStep)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalStep.uid, uid),
-          isNull(approvalStep.deletedAt)
-        ))
+        .where(and(eq(approvalStep.uid, uid), isNull(approvalStep.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval step not found" }, 404);
       }
-      
+
       return c.json({ success: true });
     } catch (error) {
       return handleError(c, error);
@@ -301,11 +275,13 @@ export const approvalController = {
       const responsibilityData = await db
         .select()
         .from(approvalResponsibility)
-        .where(and(
-          eq(approvalResponsibility.approvalStepUid, stepUid),
-          isNull(approvalResponsibility.deletedAt)
-        ));
-      
+        .where(
+          and(
+            eq(approvalResponsibility.approvalStepUid, stepUid),
+            isNull(approvalResponsibility.deletedAt)
+          )
+        );
+
       return c.json(responsibilityData);
     } catch (error) {
       return handleError(c, error);
@@ -316,35 +292,41 @@ export const approvalController = {
   async createResponsibility(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Check if employee users exist in app_user table
       if (data.employeeUserUid) {
         const existingEmployee = await db
           .select()
           .from(appUser)
           .where(eq(appUser.uid, data.employeeUserUid));
-        
+
         if (existingEmployee.length === 0) {
-          return c.json({ 
-            error: "Employee user does not exist. Please create the employee first." 
-          }, 400);
+          return c.json(
+            {
+              error: "Employee user does not exist. Please create the employee first.",
+            },
+            400
+          );
         }
       }
-      
+
       // Check if fallback employee user exists
       if (data.fallbackEmployeeUserUid) {
         const existingFallbackEmployee = await db
           .select()
           .from(appUser)
           .where(eq(appUser.uid, data.fallbackEmployeeUserUid));
-        
+
         if (existingFallbackEmployee.length === 0) {
-          return c.json({ 
-            error: "Fallback employee user does not exist. Please create the employee first." 
-          }, 400);
+          return c.json(
+            {
+              error: "Fallback employee user does not exist. Please create the employee first.",
+            },
+            400
+          );
         }
       }
-      
+
       // Prepare the data for the database
       const newResponsibility = NewApprovalResponsibilitySchema.parse({
         uid: data.uid || generateUUID(),
@@ -359,10 +341,13 @@ export const approvalController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
-      const inserted = await db.insert(approvalResponsibility).values(newResponsibility).returning();
+
+      const inserted = await db
+        .insert(approvalResponsibility)
+        .values(newResponsibility)
+        .returning();
       return c.json(inserted[0], 201);
     } catch (error) {
       return handleError(c, error);
@@ -374,7 +359,7 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       // Update with the data
       const updated = await db
         .update(approvalResponsibility)
@@ -387,18 +372,15 @@ export const approvalController = {
           fallbackOrgUnitUid: data.fallbackOrgUnitUid || null,
           fallbackEmployeeUserUid: data.fallbackEmployeeUserUid || null,
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalResponsibility.uid, uid),
-          isNull(approvalResponsibility.deletedAt)
-        ))
+        .where(and(eq(approvalResponsibility.uid, uid), isNull(approvalResponsibility.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval responsibility not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -410,23 +392,20 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       const updated = await db
         .update(approvalResponsibility)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalResponsibility.uid, uid),
-          isNull(approvalResponsibility.deletedAt)
-        ))
+        .where(and(eq(approvalResponsibility.uid, uid), isNull(approvalResponsibility.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval responsibility not found" }, 404);
       }
-      
+
       return c.json({ success: true });
     } catch (error) {
       return handleError(c, error);
@@ -442,7 +421,7 @@ export const approvalController = {
         .select()
         .from(approvalRequest)
         .where(isNull(approvalRequest.deletedAt));
-      
+
       return c.json(allRequests);
     } catch (error) {
       return handleError(c, error);
@@ -456,11 +435,10 @@ export const approvalController = {
       const requestData = await db
         .select()
         .from(approvalRequest)
-        .where(and(
-          eq(approvalRequest.supplierUserUid, supplierUid),
-          isNull(approvalRequest.deletedAt)
-        ));
-      
+        .where(
+          and(eq(approvalRequest.supplierUserUid, supplierUid), isNull(approvalRequest.deletedAt))
+        );
+
       return c.json(requestData);
     } catch (error) {
       return handleError(c, error);
@@ -474,15 +452,12 @@ export const approvalController = {
       const requestData = await db
         .select()
         .from(approvalRequest)
-        .where(and(
-          eq(approvalRequest.uid, uid),
-          isNull(approvalRequest.deletedAt)
-        ));
-      
+        .where(and(eq(approvalRequest.uid, uid), isNull(approvalRequest.deletedAt)));
+
       if (requestData.length === 0) {
         return c.json({ error: "Approval request not found" }, 404);
       }
-      
+
       return c.json(requestData[0]);
     } catch (error) {
       return handleError(c, error);
@@ -493,36 +468,41 @@ export const approvalController = {
   async createRequest(c: Context) {
     try {
       const data = await c.req.json();
-      const validated = ClientApprovalRequestSchema.parse(data);
-      
+      const validated = NewApprovalRequestSchema.parse(data);
+
       // Check if approval process exists
       const existingProcess = await db
         .select()
         .from(approvalProcess)
-        .where(and(
-          eq(approvalProcess.uid, validated.approvalProcessUid),
-          isNull(approvalProcess.deletedAt)
-        ));
-      
+        .where(
+          and(
+            eq(approvalProcess.uid, validated.approvalProcessUid),
+            isNull(approvalProcess.deletedAt)
+          )
+        );
+
       if (existingProcess.length === 0) {
-        return c.json({ 
-          error: "Approval process does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Approval process does not exist",
+          },
+          400
+        );
       }
 
       // Check if supplier exists
       const existingSupplier = await db
         .select()
         .from(supplier)
-        .where(and(
-          eq(supplier.userUid, validated.supplierUserUid),
-          isNull(supplier.deletedAt)
-        ));
-      
+        .where(and(eq(supplier.userUid, validated.supplierUserUid), isNull(supplier.deletedAt)));
+
       if (existingSupplier.length === 0) {
-        return c.json({ 
-          error: "Supplier does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Supplier does not exist",
+          },
+          400
+        );
       }
 
       // Check if supplier site exists (if provided)
@@ -530,15 +510,20 @@ export const approvalController = {
         const existingSite = await db
           .select()
           .from(supplierSite)
-          .where(and(
-            eq(supplierSite.userUid, validated.supplierSiteUserUid),
-            isNull(supplierSite.deletedAt)
-          ));
-        
+          .where(
+            and(
+              eq(supplierSite.userUid, validated.supplierSiteUserUid),
+              isNull(supplierSite.deletedAt)
+            )
+          );
+
         if (existingSite.length === 0) {
-          return c.json({ 
-            error: "Supplier site does not exist" 
-          }, 400);
+          return c.json(
+            {
+              error: "Supplier site does not exist",
+            },
+            400
+          );
         }
       }
 
@@ -547,15 +532,17 @@ export const approvalController = {
         const existingTerm = await db
           .select()
           .from(supplierSiteTerm)
-          .where(and(
-            eq(supplierSiteTerm.uid, validated.termUid),
-            isNull(supplierSiteTerm.deletedAt)
-          ));
-        
+          .where(
+            and(eq(supplierSiteTerm.uid, validated.termUid), isNull(supplierSiteTerm.deletedAt))
+          );
+
         if (existingTerm.length === 0) {
-          return c.json({ 
-            error: "Term does not exist" 
-          }, 400);
+          return c.json(
+            {
+              error: "Term does not exist",
+            },
+            400
+          );
         }
       }
 
@@ -563,26 +550,25 @@ export const approvalController = {
       const existingStep = await db
         .select()
         .from(approvalStep)
-        .where(and(
-          eq(approvalStep.uid, validated.stepUid),
-          isNull(approvalStep.deletedAt)
-        ));
-      
+        .where(and(eq(approvalStep.uid, validated.stepUid), isNull(approvalStep.deletedAt)));
+
       if (existingStep.length === 0) {
-        return c.json({ 
-          error: "Approval step does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Approval step does not exist",
+          },
+          400
+        );
       }
-      
+
       // Prepare the data for the database
       const newRequest = NewApprovalRequestSchema.parse({
-        uid: data.uid || generateUUID(),
         ...validated,
         createdAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(approvalRequest).values(newRequest).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -595,36 +581,33 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       if (!data.status) {
         return c.json({ error: "Status is required" }, 400);
       }
-      
+
       // Prepare update data based on status
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         status: data.status,
-        lastUpdatedBy: data.lastUpdatedBy || null
+        lastUpdatedBy: data.lastUpdatedBy || null,
       };
-      
+
       // If status is final (approved or rejected), set the completion date
       if (data.status === "APPROVED" || data.status === "REJECTED") {
         updateData.completedAt = formatDate();
       }
-      
+
       // Update the status
       const updated = await db
         .update(approvalRequest)
         .set(updateData)
-        .where(and(
-          eq(approvalRequest.uid, uid),
-          isNull(approvalRequest.deletedAt)
-        ))
+        .where(and(eq(approvalRequest.uid, uid), isNull(approvalRequest.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval request not found" }, 404);
       }
-      
+
       // Create an approval log for this action
       if (data.actionByUserUid) {
         await db.insert(approvalLog).values({
@@ -637,10 +620,10 @@ export const approvalController = {
           createdAt: formatDate(),
           updatedAt: formatDate(),
           createdBy: data.actionByUserUid,
-          lastUpdatedBy: data.actionByUserUid
+          lastUpdatedBy: data.actionByUserUid,
         });
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -652,28 +635,25 @@ export const approvalController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       if (!data.stepUid) {
         return c.json({ error: "Step UID is required" }, 400);
       }
-      
+
       // Update the step
       const updated = await db
         .update(approvalRequest)
         .set({
           stepUid: data.stepUid,
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(approvalRequest.uid, uid),
-          isNull(approvalRequest.deletedAt)
-        ))
+        .where(and(eq(approvalRequest.uid, uid), isNull(approvalRequest.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Approval request not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -689,12 +669,9 @@ export const approvalController = {
       const logData = await db
         .select()
         .from(approvalLog)
-        .where(and(
-          eq(approvalLog.approvalRequestUid, requestUid),
-          isNull(approvalLog.deletedAt)
-        ))
+        .where(and(eq(approvalLog.approvalRequestUid, requestUid), isNull(approvalLog.deletedAt)))
         .orderBy(approvalLog.actionDate);
-      
+
       return c.json(logData);
     } catch (error) {
       return handleError(c, error);
@@ -705,7 +682,7 @@ export const approvalController = {
   async createLog(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Prepare the data for the database
       const newLog = NewApprovalLogSchema.parse({
         uid: data.uid || generateUUID(),
@@ -717,9 +694,9 @@ export const approvalController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(approvalLog).values(newLog).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -738,7 +715,7 @@ export const approvalController = {
         .from(approvalComment)
         .where(eq(approvalComment.approvalRequestUid, requestUid))
         .orderBy(approvalComment.createdAt);
-      
+
       return c.json(commentData);
     } catch (error) {
       return handleError(c, error);
@@ -749,11 +726,19 @@ export const approvalController = {
   async createComment(c: Context) {
     try {
       const data = await c.req.json();
-      
-      if (!data.commentText || !data.commentByUserUid || !data.approvalRequestUid || !data.approvalStepUid) {
-        return c.json({ error: "Comment text, user ID, request ID, and step ID are required" }, 400);
+
+      if (
+        !data.commentText ||
+        !data.commentByUserUid ||
+        !data.approvalRequestUid ||
+        !data.approvalStepUid
+      ) {
+        return c.json(
+          { error: "Comment text, user ID, request ID, and step ID are required" },
+          400
+        );
       }
-      
+
       // Create the comment
       const newComment = NewApprovalCommentSchema.parse({
         uid: data.uid || generateUUID(),
@@ -762,13 +747,13 @@ export const approvalController = {
         commentText: data.commentText,
         commentByUserUid: data.commentByUserUid,
         createdAt: formatDate(),
-        createdBy: data.commentByUserUid
+        createdBy: data.commentByUserUid,
       });
-      
+
       const inserted = await db.insert(approvalComment).values(newComment).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
       return handleError(c, error);
     }
-  }
-}; 
+  },
+};

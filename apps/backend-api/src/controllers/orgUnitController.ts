@@ -1,21 +1,17 @@
-import type { Context } from "hono";
-import { z } from "zod";
-import { db } from "../../../../packages/database/database.js";
 import { orgUnit } from "@workspace/database/schema";
 import { NewOrgUnitSchema } from "@workspace/database/zod-schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
+import type { Context } from "hono";
+import { db } from "../../../../packages/database/database.js";
 import { handleError } from "../middleware/errorHandler.js";
-import { generateUUID, formatDate } from "../utils/helpers.js";
+import { formatDate, generateUUID } from "../utils/helpers.js";
 
 export const orgUnitController = {
   // Get all org units (non-deleted)
   async getAllOrgUnits(c: Context) {
     try {
-      const allOrgUnits = await db
-        .select()
-        .from(orgUnit)
-        .where(isNull(orgUnit.deletedAt));
-      
+      const allOrgUnits = await db.select().from(orgUnit).where(isNull(orgUnit.deletedAt));
+
       return c.json(allOrgUnits);
     } catch (error) {
       return handleError(c, error);
@@ -29,11 +25,8 @@ export const orgUnitController = {
       const orgUnitData = await db
         .select()
         .from(orgUnit)
-        .where(and(
-          eq(orgUnit.organizationUid, orgUid),
-          isNull(orgUnit.deletedAt)
-        ));
-      
+        .where(and(eq(orgUnit.organizationUid, orgUid), isNull(orgUnit.deletedAt)));
+
       return c.json(orgUnitData);
     } catch (error) {
       return handleError(c, error);
@@ -47,15 +40,12 @@ export const orgUnitController = {
       const orgUnitData = await db
         .select()
         .from(orgUnit)
-        .where(and(
-          eq(orgUnit.uid, uid),
-          isNull(orgUnit.deletedAt)
-        ));
-      
+        .where(and(eq(orgUnit.uid, uid), isNull(orgUnit.deletedAt)));
+
       if (orgUnitData.length === 0) {
         return c.json({ error: "Org unit not found" }, 404);
       }
-      
+
       return c.json(orgUnitData[0]);
     } catch (error) {
       return handleError(c, error);
@@ -66,7 +56,7 @@ export const orgUnitController = {
   async createOrgUnit(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Prepare the data for the database
       const newOrgUnit = NewOrgUnitSchema.parse({
         uid: data.uid || generateUUID(),
@@ -79,9 +69,9 @@ export const orgUnitController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(orgUnit).values(newOrgUnit).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -94,7 +84,7 @@ export const orgUnitController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       // Update with the data
       const updated = await db
         .update(orgUnit)
@@ -105,18 +95,15 @@ export const orgUnitController = {
           parentUid: data.parentUid,
           extraData: data.extraData,
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(orgUnit.uid, uid),
-          isNull(orgUnit.deletedAt)
-        ))
+        .where(and(eq(orgUnit.uid, uid), isNull(orgUnit.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Org unit not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -128,26 +115,23 @@ export const orgUnitController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       const updated = await db
         .update(orgUnit)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(orgUnit.uid, uid),
-          isNull(orgUnit.deletedAt)
-        ))
+        .where(and(eq(orgUnit.uid, uid), isNull(orgUnit.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Org unit not found" }, 404);
       }
-      
+
       return c.json({ success: true });
     } catch (error) {
       return handleError(c, error);
     }
-  }
-}; 
+  },
+};

@@ -9,10 +9,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold">Welcome</h1>
 
         <div className="flex gap-4">
-          <Link
-            href="/users"
-            className={cn(buttonVariants({ variant: "default" }))}
-          >
+          <Link href="/users" className={cn(buttonVariants({ variant: "default" }))}>
             View Users
           </Link>
         </div>

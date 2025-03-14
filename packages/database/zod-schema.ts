@@ -1,15 +1,14 @@
 /**
  * Zod validation schemas for database entities
- * 
+ *
  * These schemas are used for input validation and type inference
  * with client-side forms and API endpoints.
  */
 
-import { createSelectSchema, createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import * as schema from "./schema.js";
 import * as enums from "./enums.js";
-import { Examples } from "./examples.js";
+import * as schema from "./schema.js";
 
 // Use enum constants from enums.js
 const {
@@ -23,7 +22,7 @@ const {
   OrgUnitType,
   ApproverType,
   InvitationStatus,
-  StandardTermType
+  StandardTermType,
 } = enums;
 
 // ===================
@@ -34,25 +33,27 @@ export const UuidSchema = z.string().uuid();
 
 export const EmailSchema = z.string().email("Invalid email address");
 
-export const PhoneSchema = z.string().regex(
-  /^[0-9+\- ]{8,20}$/,
-  "Phone number must be 8-20 characters containing only digits, +, - or spaces"
-);
+export const PhoneSchema = z
+  .string()
+  .regex(
+    /^[0-9+\- ]{8,20}$/,
+    "Phone number must be 8-20 characters containing only digits, +, - or spaces"
+  );
 
-export const PanSchema = z.string().regex(
-  /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-  "PAN must be 10 characters in format AAAAA9999A"
-);
+export const PanSchema = z
+  .string()
+  .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "PAN must be 10 characters in format AAAAA9999A");
 
-export const GstSchema = z.string().regex(
-  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{1}Z[0-9A-Z]{1}$/,
-  "GST number must be in the correct format"
-);
+export const GstSchema = z
+  .string()
+  .regex(
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{1}Z[0-9A-Z]{1}$/,
+    "GST number must be in the correct format"
+  );
 
-export const PincodeSchema = z.string().regex(
-  /^[0-9A-Z-]{4,10}$/,
-  "Pincode must be 4-10 alphanumeric characters"
-);
+export const PincodeSchema = z
+  .string()
+  .regex(/^[0-9A-Z-]{4,10}$/, "Pincode must be 4-10 alphanumeric characters");
 
 // Common field schemas
 export const NameSchema = z.string().min(1).max(100);
@@ -72,8 +73,12 @@ export const DocumentStatusSchema = z.enum(Object.values(DocumentStatus) as [str
 export const TermTypeSchema = z.enum(Object.values(TermType) as [string, ...string[]]);
 export const OrgUnitTypeSchema = z.enum(Object.values(OrgUnitType) as [string, ...string[]]);
 export const ApproverTypeSchema = z.enum(Object.values(ApproverType) as [string, ...string[]]);
-export const InvitationStatusSchema = z.enum(Object.values(InvitationStatus) as [string, ...string[]]);
-export const StandardTermTypeSchema = z.enum(Object.values(StandardTermType) as [string, ...string[]]);
+export const InvitationStatusSchema = z.enum(
+  Object.values(InvitationStatus) as [string, ...string[]]
+);
+export const StandardTermTypeSchema = z.enum(
+  Object.values(StandardTermType) as [string, ...string[]]
+);
 
 // ===================
 // DATABASE SCHEMAS
@@ -188,13 +193,15 @@ export const ClientAddressSchema = z.object({
   country: z.string().min(2, "Country must be at least 2 characters"),
   pincode: PincodeSchema,
   addressType: AddressTypeSchema,
-  extraData: z.any().optional()
+  extraData: z.any().optional(),
 });
 
 export const ClientSupplierSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   pan: PanSchema,
-  constitutionOfBusiness: z.string().min(2, "Constitution of business must be at least 2 characters"),
+  constitutionOfBusiness: z
+    .string()
+    .min(2, "Constitution of business must be at least 2 characters"),
   tradeType: TradeTypeSchema,
   contactName: z.string().min(2, "Contact name must be at least 2 characters").optional(),
   contactEmail: EmailSchema,
@@ -202,7 +209,7 @@ export const ClientSupplierSchema = z.object({
   organizationUid: UuidSchema,
   supplierCode: z.string().min(2, "Supplier code must be at least 2 characters").optional(),
   status: SupplierStatusSchema.default(SupplierStatus.DRAFT),
-  address: ClientAddressSchema
+  address: ClientAddressSchema,
 });
 
 export const ClientSupplierSiteSchema = z.object({
@@ -211,12 +218,15 @@ export const ClientSupplierSiteSchema = z.object({
   classification: z.string().min(2, "Classification must be at least 2 characters").optional(),
   businessType: z.string().min(2, "Business type must be at least 2 characters").optional(),
   gstNumber: GstSchema.optional(),
-  fssaiNumber: z.string().regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits").optional(),
+  fssaiNumber: z
+    .string()
+    .regex(/^[0-9]{14}$/, "FSSAI number must be 14 digits")
+    .optional(),
   msmeNumber: z.string().min(2, "MSME number must be at least 2 characters").optional(),
   supplierUserUid: UuidSchema,
   status: ApprovalStatusSchema,
   isActive: z.boolean().default(true),
-  address: ClientAddressSchema
+  address: ClientAddressSchema,
 });
 
 export const ClientSupplierSiteTermSchema = z.object({
@@ -288,5 +298,5 @@ export const ClientStoreSchema = z.object({
   name: z.string().min(3, "Store name must be at least 3 characters"),
   storeCode: z.string().min(2, "Store code must be at least 2 characters"),
   extraData: z.any().optional(),
-  address: ClientAddressSchema
+  address: ClientAddressSchema,
 });

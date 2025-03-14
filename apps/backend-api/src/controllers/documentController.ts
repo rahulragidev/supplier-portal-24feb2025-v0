@@ -1,15 +1,19 @@
-import type { Context } from "hono";
-import { z } from "zod";
-import { db } from "../../../../packages/database/database.js";
-import { supplierSiteDocument, documentVerification, supplierSite, supplier } from "@workspace/database/schema";
-import { 
-  NewSupplierSiteDocumentSchema,
-  NewDocumentVerificationSchema
-} from "@workspace/database/zod-schema";
-import { eq, and, isNull } from "drizzle-orm";
-import { handleError } from "../middleware/errorHandler.js";
-import { generateUUID, formatDate } from "../utils/helpers.js";
 import { ApprovalStatus } from "@workspace/database/enums";
+import {
+  documentVerification,
+  supplier,
+  supplierSite,
+  supplierSiteDocument,
+} from "@workspace/database/schema";
+import {
+  NewDocumentVerificationSchema,
+  NewSupplierSiteDocumentSchema,
+} from "@workspace/database/zod-schema";
+import { and, eq, isNull } from "drizzle-orm";
+import type { Context } from "hono";
+import { db } from "../../../../packages/database/database.js";
+import { handleError } from "../middleware/errorHandler.js";
+import { formatDate, generateUUID } from "../utils/helpers.js";
 
 export const documentController = {
   // --- SUPPLIER SITE DOCUMENTS ---
@@ -21,11 +25,13 @@ export const documentController = {
       const documentData = await db
         .select()
         .from(supplierSiteDocument)
-        .where(and(
-          eq(supplierSiteDocument.supplierSiteUserUid, siteUid),
-          isNull(supplierSiteDocument.deletedAt)
-        ));
-      
+        .where(
+          and(
+            eq(supplierSiteDocument.supplierSiteUserUid, siteUid),
+            isNull(supplierSiteDocument.deletedAt)
+          )
+        );
+
       return c.json(documentData);
     } catch (error) {
       return handleError(c, error);
@@ -39,15 +45,12 @@ export const documentController = {
       const documentData = await db
         .select()
         .from(supplierSiteDocument)
-        .where(and(
-          eq(supplierSiteDocument.uid, uid),
-          isNull(supplierSiteDocument.deletedAt)
-        ));
-      
+        .where(and(eq(supplierSiteDocument.uid, uid), isNull(supplierSiteDocument.deletedAt)));
+
       if (documentData.length === 0) {
         return c.json({ error: "Document not found" }, 404);
       }
-      
+
       return c.json(documentData[0]);
     } catch (error) {
       return handleError(c, error);
@@ -58,22 +61,24 @@ export const documentController = {
   async createDocument(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Check if supplier site exists
       const existingSite = await db
         .select()
         .from(supplierSite)
-        .where(and(
-          eq(supplierSite.userUid, data.supplierSiteUserUid),
-          isNull(supplierSite.deletedAt)
-        ));
-      
+        .where(
+          and(eq(supplierSite.userUid, data.supplierSiteUserUid), isNull(supplierSite.deletedAt))
+        );
+
       if (existingSite.length === 0) {
-        return c.json({ 
-          error: "Supplier site does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Supplier site does not exist",
+          },
+          400
+        );
       }
-      
+
       // Prepare the data for the database
       const newDocument = NewSupplierSiteDocumentSchema.parse({
         uid: data.uid || generateUUID(),
@@ -84,9 +89,9 @@ export const documentController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(supplierSiteDocument).values(newDocument).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -99,29 +104,26 @@ export const documentController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       if (!data.verificationStatus) {
         return c.json({ error: "Verification status is required" }, 400);
       }
-      
+
       // Update the status
       const updated = await db
         .update(supplierSiteDocument)
         .set({
           verificationStatus: data.verificationStatus,
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(supplierSiteDocument.uid, uid),
-          isNull(supplierSiteDocument.deletedAt)
-        ))
+        .where(and(eq(supplierSiteDocument.uid, uid), isNull(supplierSiteDocument.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Document not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
@@ -132,23 +134,20 @@ export const documentController = {
   async deleteDocument(c: Context) {
     try {
       const uid = c.req.param("uid");
-      
+
       const updated = await db
         .update(supplierSiteDocument)
         .set({
           deletedAt: formatDate(),
-          lastUpdatedBy: null
+          lastUpdatedBy: null,
         })
-        .where(and(
-          eq(supplierSiteDocument.uid, uid),
-          isNull(supplierSiteDocument.deletedAt)
-        ))
+        .where(and(eq(supplierSiteDocument.uid, uid), isNull(supplierSiteDocument.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Document not found" }, 404);
       }
-      
+
       return c.json({ success: true });
     } catch (error) {
       return handleError(c, error);
@@ -164,7 +163,7 @@ export const documentController = {
         .select()
         .from(documentVerification)
         .where(isNull(documentVerification.deletedAt));
-      
+
       return c.json(allVerifications);
     } catch (error) {
       return handleError(c, error);
@@ -178,11 +177,13 @@ export const documentController = {
       const verificationData = await db
         .select()
         .from(documentVerification)
-        .where(and(
-          eq(documentVerification.supplierUserUid, supplierUid),
-          isNull(documentVerification.deletedAt)
-        ));
-      
+        .where(
+          and(
+            eq(documentVerification.supplierUserUid, supplierUid),
+            isNull(documentVerification.deletedAt)
+          )
+        );
+
       return c.json(verificationData);
     } catch (error) {
       return handleError(c, error);
@@ -193,37 +194,39 @@ export const documentController = {
   async createVerification(c: Context) {
     try {
       const data = await c.req.json();
-      
+
       // Check if supplier exists
       const existingSupplier = await db
         .select()
         .from(supplier)
-        .where(and(
-          eq(supplier.userUid, data.supplierUserUid),
-          isNull(supplier.deletedAt)
-        ));
-      
+        .where(and(eq(supplier.userUid, data.supplierUserUid), isNull(supplier.deletedAt)));
+
       if (existingSupplier.length === 0) {
-        return c.json({ 
-          error: "Supplier does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Supplier does not exist",
+          },
+          400
+        );
       }
 
       // Check if supplier site exists
       const existingSite = await db
         .select()
         .from(supplierSite)
-        .where(and(
-          eq(supplierSite.userUid, data.supplierSiteUserUid),
-          isNull(supplierSite.deletedAt)
-        ));
-      
+        .where(
+          and(eq(supplierSite.userUid, data.supplierSiteUserUid), isNull(supplierSite.deletedAt))
+        );
+
       if (existingSite.length === 0) {
-        return c.json({ 
-          error: "Supplier site does not exist" 
-        }, 400);
+        return c.json(
+          {
+            error: "Supplier site does not exist",
+          },
+          400
+        );
       }
-      
+
       // Prepare the data for the database
       const newVerification = NewDocumentVerificationSchema.parse({
         uid: data.uid || generateUUID(),
@@ -236,9 +239,9 @@ export const documentController = {
         createdAt: formatDate(),
         updatedAt: formatDate(),
         createdBy: data.createdBy || null,
-        lastUpdatedBy: data.createdBy || null
+        lastUpdatedBy: data.createdBy || null,
       });
-      
+
       const inserted = await db.insert(documentVerification).values(newVerification).returning();
       return c.json(inserted[0], 201);
     } catch (error) {
@@ -251,11 +254,11 @@ export const documentController = {
     try {
       const uid = c.req.param("uid");
       const data = await c.req.json();
-      
+
       if (!data.status) {
         return c.json({ error: "Status is required" }, 400);
       }
-      
+
       // Update the status
       const updated = await db
         .update(documentVerification)
@@ -263,21 +266,18 @@ export const documentController = {
           status: data.status,
           responsePayload: data.responsePayload || {},
           updatedAt: formatDate(),
-          lastUpdatedBy: data.lastUpdatedBy || null
+          lastUpdatedBy: data.lastUpdatedBy || null,
         })
-        .where(and(
-          eq(documentVerification.uid, uid),
-          isNull(documentVerification.deletedAt)
-        ))
+        .where(and(eq(documentVerification.uid, uid), isNull(documentVerification.deletedAt)))
         .returning();
-      
+
       if (updated.length === 0) {
         return c.json({ error: "Verification not found" }, 404);
       }
-      
+
       return c.json(updated[0]);
     } catch (error) {
       return handleError(c, error);
     }
-  }
-}; 
+  },
+};

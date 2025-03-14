@@ -1,27 +1,27 @@
 /**
  * Type definitions for the supplier management system
- * 
+ *
  * This file contains TypeScript types derived from the database schema
  * and Zod validation schemas for use throughout the application.
- * 
+ *
  * Types are organized into categories:
  * 1. Utility Types: Basic types like UUID, TimeStamp, etc.
  * 2. Database Model Types: Types derived from database tables
  * 3. Zod Schema Types: Types derived from Zod validation schemas
  * 4. Enum Types: Types for enum values, both as string literals and derived from enum objects
  * 5. Relation Types: Types for entities with their relations included
- * 
+ *
  * Related files:
  * - schema.ts: Source of truth for database schema
  * - enums.ts: Source of truth for enum constants
  * - zod-schema.ts: Zod validation schemas
  */
 
-import { z } from "zod";
-import * as zodSchema from "./zod-schema.js";
-import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
-import * as schema from "./schema.js";
-import * as enums from "./enums.js";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import type { z } from "zod";
+import type * as enums from "./enums.js";
+import type * as schema from "./schema.js";
+import type * as zodSchema from "./zod-schema.js";
 
 // ===================
 // UTILITY TYPES
@@ -136,26 +136,54 @@ export type UserType = "EMPLOYEE" | "SUPPLIER" | "SUPPLIER_SITE" | "ADMIN";
 export type AddressType = "BILLING" | "SHIPPING" | "REGISTERED" | "OPERATIONAL";
 export type TradeType = "GOODS" | "SERVICES" | "BOTH";
 export type SupplierStatus = "DRAFT" | "PENDING_APPROVAL" | "ACTIVE" | "INACTIVE" | "REJECTED";
-export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "ESCALATED" | "DELEGATED";
+export type ApprovalStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELLED"
+  | "ESCALATED"
+  | "DELEGATED";
 export type InvitationStatus = "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED" | "REVOKED";
-export type DocumentType = "PAN" | "GST" | "MSME" | "FSSAI" | "CANCELLED_CHEQUE" | "COMPANY_PROFILE" | 
-  "TAX_CERTIFICATE" | "INSURANCE_CERTIFICATE" | "TRADE_LICENSE" | "OTHER";
-export type OrgUnitType = "DIVISION" | "DEPARTMENT" | "TEAM" | "REGION" | "BUSINESS_UNIT" | "SUBSIDIARY";
-export type VerificationStatus = "PENDING" | "VERIFIED" | "REJECTED" | "EXPIRED" | "REQUIRES_UPDATE";
+export type DocumentType =
+  | "PAN"
+  | "GST"
+  | "MSME"
+  | "FSSAI"
+  | "CANCELLED_CHEQUE"
+  | "COMPANY_PROFILE"
+  | "TAX_CERTIFICATE"
+  | "INSURANCE_CERTIFICATE"
+  | "TRADE_LICENSE"
+  | "OTHER";
+export type OrgUnitType =
+  | "DIVISION"
+  | "DEPARTMENT"
+  | "TEAM"
+  | "REGION"
+  | "BUSINESS_UNIT"
+  | "SUBSIDIARY";
+export type VerificationStatus =
+  | "PENDING"
+  | "VERIFIED"
+  | "REJECTED"
+  | "EXPIRED"
+  | "REQUIRES_UPDATE";
 export type TermType = "FINANCIAL" | "TRADE" | "SUPPORT";
 
 // Types derived from enum objects
-export type UserTypeEnum = typeof enums.UserType[keyof typeof enums.UserType];
-export type AddressTypeEnum = typeof enums.AddressType[keyof typeof enums.AddressType];
-export type TradeTypeEnum = typeof enums.TradeType[keyof typeof enums.TradeType];
-export type SupplierStatusEnum = typeof enums.SupplierStatus[keyof typeof enums.SupplierStatus];
-export type ApprovalStatusEnum = typeof enums.ApprovalStatus[keyof typeof enums.ApprovalStatus];
-export type DocumentStatusEnum = typeof enums.DocumentStatus[keyof typeof enums.DocumentStatus];
-export type TermTypeEnum = typeof enums.TermType[keyof typeof enums.TermType];
-export type OrgUnitTypeEnum = typeof enums.OrgUnitType[keyof typeof enums.OrgUnitType];
-export type ApproverTypeEnum = typeof enums.ApproverType[keyof typeof enums.ApproverType];
-export type InvitationStatusEnum = typeof enums.InvitationStatus[keyof typeof enums.InvitationStatus];
-export type StandardTermTypeEnum = typeof enums.StandardTermType[keyof typeof enums.StandardTermType];
+export type UserTypeEnum = (typeof enums.UserType)[keyof typeof enums.UserType];
+export type AddressTypeEnum = (typeof enums.AddressType)[keyof typeof enums.AddressType];
+export type TradeTypeEnum = (typeof enums.TradeType)[keyof typeof enums.TradeType];
+export type SupplierStatusEnum = (typeof enums.SupplierStatus)[keyof typeof enums.SupplierStatus];
+export type ApprovalStatusEnum = (typeof enums.ApprovalStatus)[keyof typeof enums.ApprovalStatus];
+export type DocumentStatusEnum = (typeof enums.DocumentStatus)[keyof typeof enums.DocumentStatus];
+export type TermTypeEnum = (typeof enums.TermType)[keyof typeof enums.TermType];
+export type OrgUnitTypeEnum = (typeof enums.OrgUnitType)[keyof typeof enums.OrgUnitType];
+export type ApproverTypeEnum = (typeof enums.ApproverType)[keyof typeof enums.ApproverType];
+export type InvitationStatusEnum =
+  (typeof enums.InvitationStatus)[keyof typeof enums.InvitationStatus];
+export type StandardTermTypeEnum =
+  (typeof enums.StandardTermType)[keyof typeof enums.StandardTermType];
 
 // ===================
 // RELATION TYPES

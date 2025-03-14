@@ -1,0 +1,26 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "extends": ["./react.json"],
+  "linter": {
+    "rules": {
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "warn",
+        "useKeyWithClickEvents": "error",
+        "useKeyWithMouseEvents": "error"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      },
+      "style": {
+        "noImplicitBoolean": "warn",
+        "noParameterAssign": "error"
+      }
+    }
+  },
+  "files": {
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/.turbo/**", "**/.next/**"]
+  }
+}

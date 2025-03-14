@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AppUser } from "@workspace/database/types";
 import { api } from "@workspace/api-client";
 import { useStore } from "@workspace/store";
+import { PencilLine, PlusCircle, RefreshCw, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { PlusCircle, Trash2, PencilLine, RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 // Import UI components from your actual UI library path
 import { Button } from "@workspace/ui/components/button";
@@ -21,15 +20,15 @@ export default function UsersPage() {
   const users = useStore((state) => state.users);
   const setUsers = useStore((state) => state.setUsers);
   const deleteStoreUser = useStore((state) => state.deleteUser);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const fetchedUsers = await api.getUsers();
       setUsers(fetchedUsers);
@@ -41,15 +40,15 @@ export default function UsersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setUsers]);
 
   const handleDeleteUser = async (uid: string) => {
     if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       setIsDeleting(uid);
-      
+
       try {
         // Type assertion to handle the string/number mismatch
-        await api.deleteUser(uid as any);
+        await api.deleteUser(uid as string);
         // Update the store
         deleteStoreUser(uid);
         // Simple console notification instead of toast
@@ -66,20 +65,30 @@ export default function UsersPage() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const getUserTypeLabel = (userType: string) => {
     switch (userType) {
       case "EMPLOYEE":
-        return <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">Employee</span>;
+        return (
+          <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">Employee</span>
+        );
       case "SUPPLIER":
-        return <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Supplier</span>;
+        return (
+          <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Supplier</span>
+        );
       case "SUPPLIER_SITE":
-        return <span className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">Supplier Site</span>;
+        return (
+          <span className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
+            Supplier Site
+          </span>
+        );
       case "ADMIN":
         return <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">Admin</span>;
       default:
-        return <span className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">{userType}</span>;
+        return (
+          <span className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">{userType}</span>
+        );
     }
   };
 
@@ -87,7 +96,7 @@ export default function UsersPage() {
     if (!name) return "U";
     return name
       .split(" ")
-      .map(part => part[0])
+      .map((part) => part[0])
       .join("")
       .toUpperCase()
       .substring(0, 2);
@@ -101,11 +110,11 @@ export default function UsersPage() {
           <p className="text-gray-500">Manage system users</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={fetchUsers} variant="outline" size="sm">
+          <Button variant="outline" onClick={fetchUsers} disabled={isLoading}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button asChild>
+          <Button asChild={true}>
             <Link href="/users/new">
               <PlusCircle className="h-4 w-4 mr-2" />
               Add User
@@ -127,24 +136,24 @@ export default function UsersPage() {
         {isLoading ? (
           // Loading skeletons
           Array.from({ length: 6 }).map((_, index) => (
-            <Card key={`skeleton-${index}`} className="overflow-hidden">
+            <Card key={`skeleton-item-${index}-${Math.random()}`} className="overflow-hidden">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-gray-200 animate-pulse"></div>
+                  <div className="h-12 w-12 rounded-full bg-gray-200 animate-pulse" />
                   <div className="space-y-2">
-                    <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
-                    <div className="h-3 w-24 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 w-32 bg-gray-200 animate-pulse rounded" />
+                    <div className="h-3 w-24 bg-gray-200 animate-pulse rounded" />
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="h-3 w-full bg-gray-200 animate-pulse rounded"></div>
-                  <div className="h-3 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+                  <div className="h-3 w-full bg-gray-200 animate-pulse rounded" />
+                  <div className="h-3 w-3/4 bg-gray-200 animate-pulse rounded" />
                 </div>
               </CardContent>
               <CardFooter>
-                <div className="h-9 w-full bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-9 w-full bg-gray-200 animate-pulse rounded" />
               </CardFooter>
             </Card>
           ))
@@ -167,9 +176,7 @@ export default function UsersPage() {
                       <CardDescription>{user.clerkId}</CardDescription>
                     </div>
                   </div>
-                  <div>
-                    {getUserTypeLabel(user.userType)}
-                  </div>
+                  <div>{getUserTypeLabel(user.userType)}</div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -179,20 +186,18 @@ export default function UsersPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button variant="outline" asChild>
-                  <Link href={`/users/${user.uid}`}>
-                    View Details
-                  </Link>
+                <Button variant="outline" asChild={true}>
+                  <Link href={`/users/${user.uid}`}>View Details</Link>
                 </Button>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon" asChild>
+                  <Button variant="outline" size="icon" asChild={true}>
                     <Link href={`/users/${user.uid}/edit`}>
                       <PencilLine className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="icon" 
+                  <Button
+                    variant="destructive"
+                    size="icon"
                     onClick={() => handleDeleteUser(user.uid)}
                     disabled={isDeleting === user.uid}
                   >
