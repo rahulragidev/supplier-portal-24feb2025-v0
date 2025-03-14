@@ -5,5 +5,8 @@
   "license": "PROPRIETARY",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.40.0"
   }
 }

@@ -19,12 +19,13 @@
     "clean": "rm -rf .turbo node_modules dist"
   },
   "dependencies": {
-    "@types/node": "^22.13.4",
-    "@workspace/database": "workspace:*"
+    "@types/node": "^22.13.10",
+    "@workspace/database": "workspace:*",
+    "drizzle-orm": "^0.40.0"
   },
   "devDependencies": {
     "@workspace/biome-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "typescript": "^5"
+    "typescript": "^5.8.2"
   }
 }
