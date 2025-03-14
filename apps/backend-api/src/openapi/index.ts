@@ -1,5 +1,4 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { swaggerUI } from '@hono/swagger-ui';
 import * as routes from './routes.js';
 import type { Context } from 'hono';
 import { Hono } from 'hono';
@@ -201,21 +200,12 @@ openAPIApp.doc('/api-doc', {
   ],
 } as any);
 
-// Serve Swagger UI
-openAPIApp.get('/swagger', swaggerUI({ url: '/api-doc' }));
-
 // This middleware integrates the OpenAPI app with the main app
 export const setupOpenAPI = (app: Hono) => {
   // Mount the OpenAPI app on the main app
   app.get('/api-doc', (c: Context) => {
-    // Pass the original app to the OpenAPI app
-    return openAPIApp.fetch(c.req.raw, { origApp: app });
-  });
-
-  app.get('/swagger', (c: Context) => {
     return openAPIApp.fetch(c.req.raw, { origApp: app });
   });
   
-  // Return the app for chaining
   return app;
 }; 

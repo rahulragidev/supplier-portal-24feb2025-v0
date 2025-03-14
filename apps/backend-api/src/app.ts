@@ -3,7 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { timing } from "hono/timing";
-import { swaggerUI } from "@hono/swagger-ui";
+import { apiReference } from '@scalar/hono-api-reference';
 
 // Import routes
 import userRoutes from "./routes/userRoutes.js";
@@ -38,6 +38,14 @@ app.use(
     allowHeaders: ["Content-Type", "Authorization"],
     exposeHeaders: ["Content-Length", "X-Requested-With"],
   }),
+);
+
+// Add Scalar API Reference
+app.get(
+  '/reference',
+  apiReference({
+    url: '/api-doc',
+  })
 );
 
 // Root route
@@ -103,8 +111,8 @@ app.get("/api", (c) => {
         <h1>Supplier Management System API</h1>
         <div class="card">
           <h2>API Documentation</h2>
-          <p>Interactive API documentation with Swagger UI:</p>
-          <p><a href="/swagger" target="_blank">Open Swagger UI</a></p>
+          <p>Interactive API documentation:</p>
+          <p><a href="/reference" target="_blank">Open API Reference</a></p>
         </div>
         <div class="card">
           <h2>OpenAPI Specification</h2>
