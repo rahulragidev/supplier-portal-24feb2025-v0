@@ -60,19 +60,18 @@ async function checkTablesExist(): Promise<boolean> {
       AND table_type = 'BASE TABLE';
     `);
 
-    // Log the result to debug
-    console.log("Table check result:", result);
-
     // Handle different possible result formats
     if (Array.isArray(result) && result.length > 0) {
-      const count = Number.parseInt(result[0]?.count || "0", 10);
+      const countValue = result[0]?.count;
+      const count = Number.parseInt(String(countValue || "0"), 10);
       return count > 0;
     }
 
     // Alternative format some drivers might return
     if (result && typeof result === "object") {
       if (result.rows) {
-        const count = Number.parseInt(result.rows[0]?.count || "0", 10);
+        const countValue = result.rows[0]?.count;
+        const count = Number.parseInt(String(countValue || "0"), 10);
         return count > 0;
       }
     }
