@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import app from "./app.js";
-// Import our centralized logger
+// Import our logger
 import logger from "./utils/logger.js";
 
 // Update port configuration

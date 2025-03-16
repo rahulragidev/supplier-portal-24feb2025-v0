@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { appUser, employeeOrgUnitRole, role } from "@workspace/database/schema";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "../../../../packages/database/database.js";
+import logger from "../utils/logger.js";
 
 /**
  * Union type of all valid permission strings in the system.
@@ -180,7 +181,7 @@ async function hasPermission(userId: string, requiredPermission: Permission): Pr
     .where(eq(appUser.uid, userId))
     .limit(1);
 
-  console.log("userRecord", userRecord);
+  logger.debug({ userRecord }, "Checking permissions for user");
 
   const userPermissions: string[] = userRecord[0]?.permissions || [];
 

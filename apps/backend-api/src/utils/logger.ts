@@ -1,25 +1,36 @@
-// Using require for pino to fix the import issue with v9
+// utils/logger.ts
+import { pinoLogger as pinoMiddleware } from "hono-pino";
 import pinoModule from "pino";
-const pino = pinoModule as unknown as (options?: pinoModule.LoggerOptions) => pinoModule.Logger;
+import prettyModule from "pino-pretty";
 
-// Configure Pino logger
-const logger = pino({
-  transport:
-    process.env.NODE_ENV === "production"
-      ? undefined
-      : {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-            translateTime: "SYS:standard",
-            ignore: "pid,hostname",
-          },
+// TypeScript workaround for Pino v9
+const pino = pinoModule as unknown as (options?: any, destination?: any) => any;
+// Different workaround for pretty - no params needed
+const pretty = prettyModule as unknown as () => any;
+
+export function pinoLogger() {
+  return pinoMiddleware({
+    pino: pino(
+      {
+        level: process.env.LOG_LEVEL || "info",
+        base: {
+          env: process.env.NODE_ENV || "development",
         },
-  level: process.env.LOG_LEVEL || "info",
-  // Add additional base fields
-  base: {
-    env: process.env.NODE_ENV || "development",
+      },
+      process.env.NODE_ENV === "production" ? undefined : pretty()
+    ),
+  });
+}
+
+// Main logger instance for use throughout the application
+const logger = pino(
+  {
+    level: process.env.LOG_LEVEL || "info",
+    base: {
+      env: process.env.NODE_ENV || "development",
+    },
   },
-});
+  process.env.NODE_ENV === "production" ? undefined : pretty()
+);
 
 export default logger;
