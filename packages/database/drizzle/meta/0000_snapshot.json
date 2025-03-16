@@ -1,5 +1,5 @@
 {
-  "id": "7c4b12fa-b254-4b68-b9a9-70a1dfae9bbc",
+  "id": "a980f09f-da9b-47db-99eb-801ffe2238ac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -202,6 +202,12 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
         },
         "extra_data": {
           "name": "extra_data",
@@ -2387,6 +2393,12 @@
         "role_code": {
           "name": "role_code",
           "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         },

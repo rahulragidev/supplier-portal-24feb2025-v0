@@ -139,3 +139,107 @@ This pattern ensures:
 - Type safety across your application
 - No database connection code in your frontend bundles
 - Single source of truth for your database schema 
+
+## Database Reset
+
+The `@workspace/database` package now includes a database reset functionality using `drizzle-seed`. This is useful for:
+
+- Testing environments
+- Development environments 
+- Resetting to a clean state before seeding data
+
+### Usage
+
+```bash
+# From the root directory
+pnpm --filter @workspace/database db:reset
+
+# Or from within the database package directory
+pnpm run db:reset
+```
+
+### How it works
+
+The reset functionality uses the `drizzle-seed` package to properly clear all tables in your database. The behavior varies by database type:
+
+- **PostgreSQL**: Uses `TRUNCATE tableName1, tableName2, ... CASCADE`
+- **MySQL**: Disables foreign key checks → Truncates tables → Re-enables checks
+- **SQLite**: Disables foreign keys → Deletes from tables → Re-enables foreign keys
+
+### Implementation Details
+
+The reset functionality:
+
+1. Checks if tables exist in the database
+2. If tables exist, it performs the reset operation using the strategy appropriate for your database type
+3. If no tables exist, it skips the reset (useful for first-time setup)
+
+For more advanced usage or programmatic access, you can import the reset functionality directly:
+
+```typescript
+import { db } from "@workspace/database/server";
+import { reset } from "drizzle-seed";
+import * as schema from "@workspace/database/schema";
+
+async function resetDatabase() {
+  await reset(db, schema);
+  console.log("Database reset successful");
+}
+```
+
+## Database Seeding
+
+The package also includes database seeding functionality to populate your database with test data:
+
+### Usage
+
+```bash
+# From the root directory
+pnpm --filter @workspace/database db:seed
+
+# Or from within the database package directory
+pnpm run db:seed
+
+# Reset and seed in one command
+pnpm --filter @workspace/database db:reset-and-seed
+```
+
+### Basic Seeding
+
+By default, the seeding script will create 10 records per table. This is useful for quick development testing.
+
+### Advanced Seeding
+
+For more targeted seeding with custom data, you can modify the seed.ts file to use the `refine` method:
+
+```typescript
+await seed(db, schema).refine((f) => ({
+  users: {
+    columns: {
+      name: f.fullName(),
+      email: f.email(),
+    },
+    count: 20,
+    with: {
+      posts: 5 // Create 5 posts for each user
+    }
+  }
+}));
+```
+
+### Available Generator Functions
+
+The `drizzle-seed` package provides many generator functions for creating realistic test data:
+
+- `f.fullName()` - Generate realistic full names
+- `f.firstName()` - Generate first names
+- `f.lastName()` - Generate last names
+- `f.email()` - Generate email addresses
+- `f.int()` - Generate random integers
+- `f.number()` - Generate random decimal numbers
+- `f.date()` - Generate random dates
+- `f.boolean()` - Generate random boolean values
+- `f.uuid()` - Generate UUIDs
+- ... and many more
+
+For a complete list of generators, refer to the [drizzle-seed documentation](https://orm.drizzle.team/docs/seed-overview). 
