@@ -8,7 +8,7 @@ import type {
   Organization,
   Supplier,
   SupplierStatus,
-} from "@workspace/database/types";
+} from "@workspace/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
 
@@ -323,7 +323,7 @@ export const api = {
     }
   },
 
-  async updateSupplierStatus(userUid: string, status: SupplierStatus): Promise<Supplier> {
+  async updateSupplierStatus(userUid: string, status: typeof SupplierStatus): Promise<Supplier> {
     try {
       const response = await fetch(`${API_BASE_URL}/suppliers/${userUid}/status`, {
         method: "PUT",

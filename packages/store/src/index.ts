@@ -1,4 +1,4 @@
-import type { AppUser } from "@workspace/database/types";
+import type { AppUser } from "@workspace/types";
 import { create } from "zustand";
 
 export interface StoreState {

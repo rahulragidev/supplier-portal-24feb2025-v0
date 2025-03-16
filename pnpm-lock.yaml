@@ -44,6 +44,9 @@ importers:
       '@workspace/database':
         specifier: workspace:^
         version: link:../../packages/database
+      '@workspace/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -90,9 +93,6 @@ importers:
       '@workspace/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@workspace/database':
-        specifier: workspace:^
-        version: link:../../packages/database
       '@workspace/store':
         specifier: workspace:*
         version: link:../../packages/store
@@ -151,9 +151,9 @@ importers:
       '@types/node':
         specifier: ^22.13.10
         version: 22.13.10
-      '@workspace/database':
+      '@workspace/types':
         specifier: workspace:*
-        version: link:../database
+        version: link:../types
       drizzle-orm:
         specifier: ^0.40.0
         version: 0.40.0(@types/pg@8.11.11)(gel@2.0.1)(pg@8.14.0)
@@ -229,9 +229,9 @@ importers:
 
   packages/store:
     dependencies:
-      '@workspace/database':
+      '@workspace/types':
         specifier: workspace:*
-        version: link:../database
+        version: link:../types
       drizzle-orm:
         specifier: ^0.40.0
         version: 0.40.0(@types/pg@8.11.11)(gel@2.0.1)(pg@8.14.0)
@@ -242,6 +242,22 @@ importers:
       '@types/node':
         specifier: ^22.13.10
         version: 22.13.10
+      '@workspace/biome-config':
+        specifier: workspace:*
+        version: link:../biome-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
+
+  packages/types:
+    dependencies:
+      '@workspace/database':
+        specifier: workspace:^
+        version: link:../database
+    devDependencies:
       '@workspace/biome-config':
         specifier: workspace:*
         version: link:../biome-config
@@ -275,12 +291,12 @@ importers:
       '@workspace/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@workspace/database':
-        specifier: workspace:^
-        version: link:../database
       '@workspace/store':
         specifier: workspace:*
         version: link:../store
+      '@workspace/types':
+        specifier: workspace:*
+        version: link:../types
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

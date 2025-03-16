@@ -11,6 +11,7 @@
 import { z } from "@hono/zod-openapi";
 import * as dbEnums from "@workspace/database/enums";
 import * as examples from "@workspace/database/examples";
+import * as zodSchema from "@workspace/database/zod-schema";
 import type {
   AddressType,
   ApprovalStatus,
@@ -22,8 +23,7 @@ import type {
   TermType,
   TradeType,
   UserType,
-} from "@workspace/database/types";
-import * as zodSchema from "@workspace/database/zod-schema";
+} from "@workspace/types";
 
 // Destructure for easier access
 const {

@@ -1,0 +1,25 @@
+{
+  "name": "@workspace/types",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "biome check src",
+    "format": "biome format src --write",
+    "check": "biome check src --apply",
+    "clean": "rm -rf .turbo node_modules dist"
+  },
+  "dependencies": {
+    "@workspace/database": "workspace:^"
+  },
+  "devDependencies": {
+    "@workspace/biome-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "^5.8.2"
+  }
+}
