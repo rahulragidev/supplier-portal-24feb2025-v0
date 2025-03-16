@@ -1,8 +1,8 @@
 import type { Context } from "hono";
 
 import { appUser, employeeOrgUnitRole, role } from "@workspace/database/schema";
+import { db } from "@workspace/database/server";
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { db } from "../../../../packages/database/database.js";
 import logger from "../utils/logger.js";
 
 /**

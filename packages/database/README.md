@@ -91,3 +91,51 @@ If you encounter TypeScript errors with enum imports, check:
 1. Make sure you're importing from "@workspace/database/enums"
 2. When using enums.js with schema.ts, use the `@ts-ignore` comment if needed
 3. For OpenAPI schemas, use the `as [string, ...string[]]` assertion for Zod enum compatibility 
+
+## Usage Guide
+
+### Importing Types (Client and Server)
+
+When you need only types for your forms, components, or API definitions, import from the main package or specific type exports:
+
+```typescript
+// Import specific types
+import type { User, Supplier } from "@workspace/database/types";
+
+// Import type helpers for more flexibility
+import type { Doc, NewDoc } from "@workspace/database";
+
+// Use type helpers (preferred approach)
+type User = Doc<'users'>;
+type NewUser = NewDoc<'users'>;
+
+// Import validation schemas
+import { userSchema } from "@workspace/database/zod-schema";
+```
+
+### Importing Database Runtime (Server Only)
+
+For server-side code that needs to interact with the database, import from the `/server` subpath:
+
+```typescript
+// Server-side code only
+import { db } from "@workspace/database/server";
+import { users, suppliers } from "@workspace/database/server";
+import { eq } from "drizzle-orm";
+
+// Now you can query the database
+async function getUser(id: string) {
+  return await db.select().from(users).where(eq(users.id, id));
+}
+```
+
+### Best Practices
+
+1. **Frontend Code**: Only import types, never the database connection
+2. **Backend Code**: Import from `/server` to access the database
+3. **Use Type Helpers**: Prefer `Doc<'tableName'>` over direct type imports for better maintainability
+
+This pattern ensures:
+- Type safety across your application
+- No database connection code in your frontend bundles
+- Single source of truth for your database schema 

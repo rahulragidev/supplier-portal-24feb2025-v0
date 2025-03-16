@@ -18,10 +18,52 @@
  */
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import type { z } from "zod";
 import type * as enums from "./enums.js";
 import type * as schema from "./schema.js";
 import type * as zodSchema from "./zod-schema.js";
+
+// ===================
+// HELPER TYPES
+// ===================
+
+// Get table names only (exclude relations and other non-table exports)
+type SchemaTableNames = {
+  [TableOrRelationName in keyof typeof schema]: (typeof schema)[TableOrRelationName] extends PgTableWithColumns<any>
+    ? TableOrRelationName
+    : never;
+}[keyof typeof schema];
+
+// Type map for SELECT queries
+type DBSelectTypeMap = {
+  [TableName in SchemaTableNames]: InferSelectModel<(typeof schema)[TableName]>;
+};
+
+// Type map for INSERT operations
+type DBInsertTypeMap = {
+  [TableName in SchemaTableNames]: InferInsertModel<(typeof schema)[TableName]>;
+};
+
+/**
+ * Get the SELECT type for a table by its name in the schema
+ *
+ * Example:
+ * ```
+ * type User = Doc<'users'>;
+ * ```
+ */
+export type Doc<TableName extends SchemaTableNames> = DBSelectTypeMap[TableName];
+
+/**
+ * Get the INSERT type for a table by its name in the schema
+ *
+ * Example:
+ * ```
+ * type NewUser = NewDoc<'users'>;
+ * ```
+ */
+export type NewDoc<TableName extends SchemaTableNames> = DBInsertTypeMap[TableName];
 
 // ===================
 // UTILITY TYPES

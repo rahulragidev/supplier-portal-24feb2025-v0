@@ -4,11 +4,34 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./types": "./types.ts",
-    "./schema": "./schema.ts",
-    "./zod-schema": "./zod-schema.ts",
-    "./enums": "./enums.ts",
-    "./examples": "./examples.ts"
+    ".": {
+      "types": "./types.ts",
+      "import": "./index.js"
+    },
+    "./server": {
+      "types": "./server.ts",
+      "import": "./server.js"
+    },
+    "./types": {
+      "types": "./types.ts",
+      "import": "./types.js"
+    },
+    "./schema": {
+      "types": "./schema.ts",
+      "import": "./schema.js"
+    },
+    "./zod-schema": {
+      "types": "./zod-schema.ts",
+      "import": "./zod-schema.js"
+    },
+    "./enums": {
+      "types": "./enums.ts",
+      "import": "./enums.js"
+    },
+    "./examples": {
+      "types": "./examples.ts",
+      "import": "./examples.js"
+    }
   },
   "scripts": {
     "lint": "biome check .",
