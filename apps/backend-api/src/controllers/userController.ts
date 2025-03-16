@@ -5,15 +5,21 @@ import type { Context } from "hono";
 import { db } from "../../../../packages/database/database.js";
 import { handleError } from "../middleware/errorHandler.js";
 import { formatDate, generateUUID } from "../utils/helpers.js";
+import logger from "../utils/logger.js";
 
 export const userController = {
   // Get all users (non-deleted)
   async getAllUsers(c: Context) {
     try {
+      logger.info("Getting all users");
+
       const allUsers = await db.select().from(appUser).where(isNull(appUser.deletedAt));
+
+      logger.debug({ count: allUsers.length }, "Retrieved users from database");
 
       return c.json(allUsers);
     } catch (error) {
+      logger.error({ error }, "Error getting all users");
       return handleError(c, error);
     }
   },
@@ -22,18 +28,25 @@ export const userController = {
   async getUserById(c: Context) {
     try {
       const uid = c.req.param("uid");
+      logger.info({ userId: uid }, "Getting user by ID");
+
       const userData = await db
         .select()
         .from(appUser)
         .where(and(eq(appUser.uid, uid), isNull(appUser.deletedAt)));
 
       if (userData.length === 0) {
+        logger.warn({ userId: uid }, "User not found");
         return c.json({ error: "User not found" }, 404);
       }
 
+      logger.debug({ userId: uid }, "Retrieved user by ID");
+
       return c.json(userData[0]);
     } catch (error) {
-      return handleError(c, error);
+      const uid = c.req.param("uid");
+      logger.error({ error, userId: uid }, "Error getting user by ID");
+      return c.json({ error: "Failed to retrieve user" }, 500);
     }
   },
 

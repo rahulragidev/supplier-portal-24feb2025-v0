@@ -1,5 +1,8 @@
 import { serve } from "@hono/node-server";
 import app from "./app.js";
+// Import our centralized logger
+import logger from "./utils/logger.js";
+
 // Update port configuration
 const port = Number(process.env.PORT) || 3030;
 const hostname = "localhost";
@@ -12,15 +15,15 @@ const server = serve(
     hostname,
   },
   (info) => {
-    console.log(`Server running at http://${hostname}:${info.port}`);
+    logger.info(`Server running at http://${hostname}:${info.port}`);
   }
 );
 
 // Handle server errors
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
-    console.error(`Port ${port} is already in use`);
+    logger.error(`Port ${port} is already in use`);
     process.exit(1);
   }
-  console.error("Server error:", err);
+  logger.error({ err }, "Server error");
 });
