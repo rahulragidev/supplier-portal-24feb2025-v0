@@ -1,8 +1,12 @@
+import { fileURLToPath } from "node:url";
 import { sql } from "drizzle-orm";
 import { reset } from "drizzle-seed";
 import pg from "pg";
 import { db } from "./database.js";
 import * as schema from "./schema.js";
+
+// Check if this module is being executed directly
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
 
 /**
  * Reset script to clear all tables in the database
@@ -36,13 +40,17 @@ async function main() {
     console.error("Error resetting database:", error);
     process.exit(1);
   } finally {
-    // In drizzle-orm, we need to end the underlying pool
-    // The pool is available via the driver property, but it might not be exposed
-    // directly. Instead, we'll use a timeout to ensure all queries are done.
-    console.log("Shutting down...");
-    setTimeout(() => {
-      process.exit(0);
-    }, 500);
+    // Only exit the process if this script is run directly
+    // If it's being imported for reset-and-seed, we don't want to exit
+    if (isMainModule) {
+      // In drizzle-orm, we need to end the underlying pool
+      // The pool is available via the driver property, but it might not be exposed
+      // directly. Instead, we'll use a timeout to ensure all queries are done.
+      console.log("Shutting down...");
+      setTimeout(() => {
+        process.exit(0);
+      }, 500);
+    }
   }
 }
 
@@ -83,4 +91,10 @@ async function checkTablesExist(): Promise<boolean> {
   }
 }
 
-main();
+// If this script is run directly, call the main function
+if (isMainModule) {
+  main();
+}
+
+// Export the reset function for use in other scripts
+export { main as resetDatabase };

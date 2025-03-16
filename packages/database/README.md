@@ -204,6 +204,18 @@ pnpm run db:seed
 pnpm --filter @workspace/database db:reset-and-seed
 ```
 
+### Admin User Creation
+
+The seeding process automatically creates an admin user with full system permissions:
+
+- Username: `admin`
+- User Type: `ADMIN`
+- Permissions: All system permissions
+- Organization: "Admin Organization" with unlimited user quota
+- Role: "Admin Role" with all permissions assigned
+
+This admin user is always created first during seeding, ensuring there's always a user with full system access after database reset.
+
 ### Basic Seeding
 
 By default, the seeding script will create 10 records per table. This is useful for quick development testing.
