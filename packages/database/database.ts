@@ -35,7 +35,9 @@ console.log(`Connecting to database with ${process.env.NODE_ENV} configuration`)
 
 // Configure SSL based on environment
 const sslConfig =
-  process.env.NODE_ENV === "production" ? { ssl: { rejectUnauthorized: false } } : {};
+  connectionString.includes("render.com") || process.env.NODE_ENV === "production"
+    ? { ssl: { rejectUnauthorized: false } }
+    : {};
 
 const pool = new Pool({
   connectionString,
