@@ -164,11 +164,15 @@ openAPIApp.doc("/api-doc", {
   servers: [
     {
       url: "http://localhost:3030",
-      description: "Development server",
+      description: "Local server",
     },
     {
       url: "https://api.suppliermgmt.example.com",
       description: "Production server",
+    },
+    {
+      url: "https://supplier-portal-v1.onrender.com/",
+      description: "Development server",
     },
   ],
   tags: [
