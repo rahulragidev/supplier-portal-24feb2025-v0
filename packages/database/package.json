@@ -6,31 +6,31 @@
   "exports": {
     ".": {
       "types": "./types.ts",
-      "import": "./index.js"
+      "import": "./dist/index.js"
     },
     "./server": {
       "types": "./server.ts",
-      "import": "./server.js"
+      "import": "./dist/server.js"
     },
     "./types": {
       "types": "./types.ts",
-      "import": "./types.js"
+      "import": "./dist/types.js"
     },
     "./schema": {
       "types": "./schema.ts",
-      "import": "./schema.js"
+      "import": "./dist/schema.js"
     },
     "./zod-schema": {
       "types": "./zod-schema.ts",
-      "import": "./zod-schema.js"
+      "import": "./dist/zod-schema.js"
     },
     "./enums": {
       "types": "./enums.ts",
-      "import": "./enums.js"
+      "import": "./dist/enums.js"
     },
     "./examples": {
       "types": "./examples.ts",
-      "import": "./examples.js"
+      "import": "./dist/examples.js"
     }
   },
   "scripts": {

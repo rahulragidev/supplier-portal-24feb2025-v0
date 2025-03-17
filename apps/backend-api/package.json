@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts --port 3030",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "build": "tsc",
+    "build": "tsc && cp -r node_modules/@workspace dist/node_modules/",
     "start": "node dist/index.js",
     "clean": "rm -rf .turbo node_modules dist"
   },

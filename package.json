@@ -10,7 +10,8 @@
     "format:check": "biome format .",
     "check": "biome check .",
     "clean": "turbo clean && rm -rf node_modules .turbo",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "pnpm build --filter=@workspace/database"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
