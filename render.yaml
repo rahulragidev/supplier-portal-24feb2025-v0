@@ -13,16 +13,3 @@ services:
         sync: false
       - key: DATABASE_URL
         sync: false 
-  
-  - type: web
-    name: supplier-drizzle-studio
-    runtime: node
-    buildCommand: pnpm install && pnpm turbo build --filter=@workspace/database...
-    startCommand: cd packages/database && pnpm db:studio
-    envVars:
-      - key: NODE_ENV
-        value: development
-      - key: PORT
-        value: 3333
-      - key: DATABASE_URL
-        sync: false
