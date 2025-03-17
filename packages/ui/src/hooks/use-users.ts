@@ -1,12 +1,12 @@
 import { api } from "@workspace/api-client";
-import type { User } from "@workspace/database/types";
 import { useStore } from "@workspace/store";
+import type { AppUser, NewAppUser, UUID } from "@workspace/types";
 import useSWR, { useSWRConfig } from "swr";
 
 const USERS_KEY = "users";
 
 interface UseUsersOptions {
-  onSuccess?: (data: User[]) => void;
+  onSuccess?: (data: AppUser[]) => void;
 }
 
 export function useUsers(options: UseUsersOptions = {}) {
@@ -16,7 +16,7 @@ export function useUsers(options: UseUsersOptions = {}) {
     data = [],
     error,
     isLoading,
-  } = useSWR<User[]>(USERS_KEY, () => api.getUsers(), {
+  } = useSWR<AppUser[]>(USERS_KEY, () => api.getUsers(), {
     onSuccess: (data) => {
       setUsers(data);
       options.onSuccess?.(data);
@@ -25,7 +25,7 @@ export function useUsers(options: UseUsersOptions = {}) {
 
   const { mutate } = useSWRConfig();
 
-  const createUser = async (userData: { name: string }) => {
+  const createUser = async (userData: NewAppUser) => {
     try {
       const newUser = await api.createUser(userData);
       await mutate(USERS_KEY);
@@ -36,9 +36,9 @@ export function useUsers(options: UseUsersOptions = {}) {
     }
   };
 
-  const updateUser = async (id: number, userData: { name: string }) => {
+  const updateUser = async (uid: UUID, userData: Partial<AppUser>) => {
     try {
-      const updatedUser = await api.updateUser(id, userData);
+      const updatedUser = await api.updateUser(uid, userData);
       await mutate(USERS_KEY);
       return updatedUser;
     } catch (err) {
@@ -47,9 +47,9 @@ export function useUsers(options: UseUsersOptions = {}) {
     }
   };
 
-  const deleteUser = async (id: number) => {
+  const deleteUser = async (uid: UUID) => {
     try {
-      await api.deleteUser(id);
+      await api.deleteUser(uid);
       await mutate(USERS_KEY);
     } catch (err) {
       console.error("Delete user error:", err);

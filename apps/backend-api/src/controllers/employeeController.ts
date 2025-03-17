@@ -1,9 +1,9 @@
 import { employee } from "@workspace/database/schema";
 import { appUser } from "@workspace/database/schema";
+import { db } from "@workspace/database/server";
 import { ClientEmployeeSchema, NewEmployeeSchema } from "@workspace/database/zod-schema";
 import { and, eq, isNull } from "drizzle-orm";
 import type { Context } from "hono";
-import { db } from "../../../../packages/database/database.js";
 import { handleError } from "../middleware/errorHandler.js";
 import { formatDate, generateUUID } from "../utils/helpers.js";
 

@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^22.13.10",
-    "@workspace/database": "workspace:*",
+    "@workspace/types": "workspace:*",
     "drizzle-orm": "^0.40.0"
   },
   "devDependencies": {

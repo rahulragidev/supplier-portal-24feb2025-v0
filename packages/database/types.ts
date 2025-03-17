@@ -18,10 +18,52 @@
  */
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import type { z } from "zod";
 import type * as enums from "./enums.js";
 import type * as schema from "./schema.js";
 import type * as zodSchema from "./zod-schema.js";
+
+// ===================
+// HELPER TYPES
+// ===================
+
+// Get table names only (exclude relations and other non-table exports)
+type SchemaTableNames = {
+  [TableOrRelationName in keyof typeof schema]: (typeof schema)[TableOrRelationName] extends PgTableWithColumns<any>
+    ? TableOrRelationName
+    : never;
+}[keyof typeof schema];
+
+// Type map for SELECT queries
+type DBSelectTypeMap = {
+  [TableName in SchemaTableNames]: InferSelectModel<(typeof schema)[TableName]>;
+};
+
+// Type map for INSERT operations
+type DBInsertTypeMap = {
+  [TableName in SchemaTableNames]: InferInsertModel<(typeof schema)[TableName]>;
+};
+
+/**
+ * Get the SELECT type for a table by its name in the schema
+ *
+ * Example:
+ * ```
+ * type User = Doc<'users'>;
+ * ```
+ */
+export type Doc<TableName extends SchemaTableNames> = DBSelectTypeMap[TableName];
+
+/**
+ * Get the INSERT type for a table by its name in the schema
+ *
+ * Example:
+ * ```
+ * type NewUser = NewDoc<'users'>;
+ * ```
+ */
+export type NewDoc<TableName extends SchemaTableNames> = DBInsertTypeMap[TableName];
 
 // ===================
 // UTILITY TYPES
@@ -131,44 +173,44 @@ export type ClientApprovalRequestInput = z.infer<typeof zodSchema.ClientApproval
 // ENUM TYPES
 // ===================
 
-// String literal union types
-export type UserType = "EMPLOYEE" | "SUPPLIER" | "SUPPLIER_SITE" | "ADMIN";
-export type AddressType = "BILLING" | "SHIPPING" | "REGISTERED" | "OPERATIONAL";
-export type TradeType = "GOODS" | "SERVICES" | "BOTH";
-export type SupplierStatus = "DRAFT" | "PENDING_APPROVAL" | "ACTIVE" | "INACTIVE" | "REJECTED";
-export type ApprovalStatus =
-  | "PENDING"
-  | "APPROVED"
-  | "REJECTED"
-  | "CANCELLED"
-  | "ESCALATED"
-  | "DELEGATED";
-export type InvitationStatus = "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED" | "REVOKED";
-export type DocumentType =
-  | "PAN"
-  | "GST"
-  | "MSME"
-  | "FSSAI"
-  | "CANCELLED_CHEQUE"
-  | "COMPANY_PROFILE"
-  | "TAX_CERTIFICATE"
-  | "INSURANCE_CERTIFICATE"
-  | "TRADE_LICENSE"
-  | "OTHER";
-export type OrgUnitType =
-  | "DIVISION"
-  | "DEPARTMENT"
-  | "TEAM"
-  | "REGION"
-  | "BUSINESS_UNIT"
-  | "SUBSIDIARY";
-export type VerificationStatus =
-  | "PENDING"
-  | "VERIFIED"
-  | "REJECTED"
-  | "EXPIRED"
-  | "REQUIRES_UPDATE";
-export type TermType = "FINANCIAL" | "TRADE" | "SUPPORT";
+//// String literal union types
+//export type UserType = "EMPLOYEE" | "SUPPLIER" | "SUPPLIER_SITE" | "ADMIN";
+//export type AddressType = "BILLING" | "SHIPPING" | "REGISTERED" | "OPERATIONAL";
+//export type TradeType = "GOODS" | "SERVICES" | "BOTH";
+//export type SupplierStatus = "DRAFT" | "PENDING_APPROVAL" | "ACTIVE" | "INACTIVE" | "REJECTED";
+//export type ApprovalStatus =
+//  | "PENDING"
+//  | "APPROVED"
+//  | "REJECTED"
+//  | "CANCELLED"
+//  | "ESCALATED"
+//  | "DELEGATED";
+//export type InvitationStatus = "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED" | "REVOKED";
+//export type DocumentType =
+//  | "PAN"
+//  | "GST"
+//  | "MSME"
+//  | "FSSAI"
+//  | "CANCELLED_CHEQUE"
+//  | "COMPANY_PROFILE"
+//  | "TAX_CERTIFICATE"
+//  | "INSURANCE_CERTIFICATE"
+//  | "TRADE_LICENSE"
+//  | "OTHER";
+//export type OrgUnitType =
+//  | "DIVISION"
+//  | "DEPARTMENT"
+//  | "TEAM"
+//  | "REGION"
+//  | "BUSINESS_UNIT"
+//  | "SUBSIDIARY";
+//export type VerificationStatus =
+//  | "PENDING"
+//  | "VERIFIED"
+//  | "REJECTED"
+//  | "EXPIRED"
+//  | "REQUIRES_UPDATE";
+//export type TermType = "FINANCIAL" | "TRADE" | "SUPPORT";
 
 // Types derived from enum objects
 export type UserTypeEnum = (typeof enums.UserType)[keyof typeof enums.UserType];
@@ -355,3 +397,29 @@ export interface StoreWithRelations extends Store {
   organization?: Organization;
   address?: Address;
 }
+
+/**
+ * import type * as enums from "@workspace/database/enums";
+import type * as schema from "@workspace/database/schema";
+import type * as zodSchema from "@workspace/database/zod-schema";
+import type * as dbTypes from "@workspace/database/types";
+
+export type {
+  AddressType,
+  ApprovalStatus,
+  ApproverType,
+  DocumentStatus,
+  InvitationStatus,
+  OrgUnitType,
+  SupplierStatus,
+  StandardTermType,
+  TermType,
+  TradeType,
+  UserType,
+} from "@workspace/database/enums";
+
+export * from "@workspace/database/schema";
+export * from "@workspace/database/types";
+export * from "@workspace/database/zod-schema";
+
+ */

@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@workspace/api-client": "workspace:*",
-    "@workspace/database": "workspace:^",
     "@workspace/store": "workspace:*",
     "@workspace/ui": "workspace:*",
     "drizzle-orm": "^0.40.0",

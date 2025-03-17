@@ -1,9 +1,10 @@
 import { apiReference } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { timing } from "hono/timing";
+// Import our logger and middleware function
+import logger, { pinoLogger } from "./utils/logger.js";
 
 import dotenv from "dotenv";
 import addressRoutes from "./routes/addressRoutes.js";
@@ -29,7 +30,8 @@ dotenv.config();
 const app = new Hono();
 
 // Add middleware
-app.use("*", logger());
+// Use createPinoMiddleware for logging
+app.use("*", pinoLogger());
 app.use("*", timing());
 app.use("*", prettyJSON());
 
