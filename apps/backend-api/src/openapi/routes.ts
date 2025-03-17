@@ -8,13 +8,21 @@ export const getUsersRoute = createRoute({
   path: "/users",
   tags: ["Users"],
   summary: "Get all users",
-  description: "Retrieve a list of all non-deleted users",
+  description: "Retrieve a list of all non-deleted users\n\nRequired Permission: `users:list`",
   responses: {
     200: {
       description: "List of users",
       content: {
         "application/json": {
           schema: schemas.UserListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -26,7 +34,8 @@ export const getUserByIdRoute = createRoute({
   path: "/users/{uid}",
   tags: ["Users"],
   summary: "Get user by ID",
-  description: "Retrieve a specific user by their unique identifier",
+  description:
+    "Retrieve a specific user by their unique identifier\n\nRequired Permission: `users:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -36,6 +45,14 @@ export const getUserByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.UserSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -55,7 +72,7 @@ export const createUserRoute = createRoute({
   path: "/users",
   tags: ["Users"],
   summary: "Create a new user",
-  description: "Create a new user with the provided data",
+  description: "Create a new user with the provided data\n\nRequired Permission: `users:create`",
   request: {
     body: {
       content: {
@@ -82,6 +99,14 @@ export const createUserRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -90,7 +115,8 @@ export const updateUserRoute = createRoute({
   path: "/users/{uid}",
   tags: ["Users"],
   summary: "Update a user",
-  description: "Update an existing user with the provided data",
+  description:
+    "Update an existing user with the provided data\n\nRequired Permission: `users:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -110,16 +136,24 @@ export const updateUserRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "User not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "User not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -134,7 +168,8 @@ export const deleteUserRoute = createRoute({
   path: "/users/{uid}",
   tags: ["Users"],
   summary: "Delete a user",
-  description: "Soft delete a user by their unique identifier",
+  description:
+    "Soft delete a user by their unique identifier\n\nRequired Permission: `users:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -144,6 +179,14 @@ export const deleteUserRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -164,13 +207,22 @@ export const getOrganizationsRoute = createRoute({
   path: "/organizations",
   tags: ["Organizations"],
   summary: "Get all organizations",
-  description: "Retrieve a list of all non-deleted organizations",
+  description:
+    "Retrieve a list of all non-deleted organizations\n\nRequired Permission: `organizations:list`",
   responses: {
     200: {
       description: "List of organizations",
       content: {
         "application/json": {
           schema: schemas.OrganizationListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -182,7 +234,8 @@ export const getOrganizationByIdRoute = createRoute({
   path: "/organizations/{uid}",
   tags: ["Organizations"],
   summary: "Get organization by ID",
-  description: "Retrieve a specific organization by its unique identifier",
+  description:
+    "Retrieve a specific organization by its unique identifier\n\nRequired Permission: `organizations:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -192,6 +245,14 @@ export const getOrganizationByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.OrganizationSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -211,7 +272,8 @@ export const createOrganizationRoute = createRoute({
   path: "/organizations",
   tags: ["Organizations"],
   summary: "Create a new organization",
-  description: "Create a new organization with the provided data",
+  description:
+    "Create a new organization with the provided data\n\nRequired Permission: `organizations:create`",
   request: {
     body: {
       content: {
@@ -238,6 +300,14 @@ export const createOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -246,7 +316,8 @@ export const updateOrganizationRoute = createRoute({
   path: "/organizations/{uid}",
   tags: ["Organizations"],
   summary: "Update an organization",
-  description: "Update an existing organization with the provided data",
+  description:
+    "Update an existing organization with the provided data\n\nRequired Permission: `organizations:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -266,16 +337,24 @@ export const updateOrganizationRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Organization not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Organization not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -290,7 +369,8 @@ export const deleteOrganizationRoute = createRoute({
   path: "/organizations/{uid}",
   tags: ["Organizations"],
   summary: "Delete an organization",
-  description: "Soft delete an organization by its unique identifier",
+  description:
+    "Soft delete an organization by its unique identifier\n\nRequired Permission: `organizations:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -300,6 +380,14 @@ export const deleteOrganizationRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -320,13 +408,22 @@ export const getEmployeesRoute = createRoute({
   path: "/employees",
   tags: ["Employees"],
   summary: "Get all employees",
-  description: "Retrieve a list of all non-deleted employees",
+  description:
+    "Retrieve a list of all non-deleted employees\n\nRequired Permission: `employees:list`",
   responses: {
     200: {
       description: "List of employees",
       content: {
         "application/json": {
           schema: schemas.EmployeeListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -338,7 +435,8 @@ export const getEmployeeByIdRoute = createRoute({
   path: "/employees/{userUid}",
   tags: ["Employees"],
   summary: "Get employee by ID",
-  description: "Retrieve a specific employee by their unique identifier",
+  description:
+    "Retrieve a specific employee by their unique identifier\n\nRequired Permission: `employees:get-by-id`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -348,6 +446,14 @@ export const getEmployeeByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.EmployeeSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -367,7 +473,8 @@ export const getEmployeesByOrganizationRoute = createRoute({
   path: "/organizations/{orgUid}/employees",
   tags: ["Employees"],
   summary: "Get employees by organization",
-  description: "Retrieve all employees belonging to a specific organization",
+  description:
+    "Retrieve all employees belonging to a specific organization\n\nRequired Permission: `employees:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -380,6 +487,14 @@ export const getEmployeesByOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -388,7 +503,8 @@ export const createEmployeeRoute = createRoute({
   path: "/employees",
   tags: ["Employees"],
   summary: "Create a new employee",
-  description: "Create a new employee with the provided data",
+  description:
+    "Create a new employee with the provided data\n\nRequired Permission: `employees:create`",
   request: {
     body: {
       content: {
@@ -415,6 +531,14 @@ export const createEmployeeRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -423,7 +547,8 @@ export const updateEmployeeRoute = createRoute({
   path: "/employees/{userUid}",
   tags: ["Employees"],
   summary: "Update an employee",
-  description: "Update an existing employee with the provided data",
+  description:
+    "Update an existing employee with the provided data\n\nRequired Permission: `employees:update`",
   request: {
     params: schemas.UserUidParam,
     body: {
@@ -443,16 +568,24 @@ export const updateEmployeeRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Employee not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Employee not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -467,7 +600,8 @@ export const deleteEmployeeRoute = createRoute({
   path: "/employees/{userUid}",
   tags: ["Employees"],
   summary: "Delete an employee",
-  description: "Soft delete an employee by their unique identifier",
+  description:
+    "Soft delete an employee by their unique identifier\n\nRequired Permission: `employees:delete`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -477,6 +611,14 @@ export const deleteEmployeeRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -497,13 +639,21 @@ export const getSuppliersRoute = createRoute({
   path: "/suppliers",
   tags: ["Suppliers"],
   summary: "Get all suppliers",
-  description: "Retrieve a list of all suppliers",
+  description: "Retrieve a list of all suppliers\n\nRequired Permission: `suppliers:list`",
   responses: {
     200: {
       description: "List of suppliers",
       content: {
         "application/json": {
           schema: schemas.SupplierListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -515,7 +665,8 @@ export const getSupplierByIdRoute = createRoute({
   path: "/suppliers/{userUid}",
   tags: ["Suppliers"],
   summary: "Get supplier by ID",
-  description: "Retrieve a specific supplier by their unique identifier",
+  description:
+    "Retrieve a specific supplier by their unique identifier\n\nRequired Permission: `suppliers:get-by-id`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -525,6 +676,14 @@ export const getSupplierByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SupplierSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -544,7 +703,8 @@ export const createSupplierRoute = createRoute({
   path: "/suppliers",
   tags: ["Suppliers"],
   summary: "Create a new supplier",
-  description: "Create a new supplier with the provided data",
+  description:
+    "Create a new supplier with the provided data\n\nRequired Permission: `suppliers:create`",
   request: {
     body: {
       content: {
@@ -571,6 +731,14 @@ export const createSupplierRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -579,7 +747,8 @@ export const updateSupplierRoute = createRoute({
   path: "/suppliers/{userUid}",
   tags: ["Suppliers"],
   summary: "Update a supplier",
-  description: "Update an existing supplier with the provided data",
+  description:
+    "Update an existing supplier with the provided data\n\nRequired Permission: `suppliers:update`",
   request: {
     params: schemas.UserUidParam,
     body: {
@@ -599,16 +768,24 @@ export const updateSupplierRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Supplier not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Supplier not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -623,7 +800,8 @@ export const updateSupplierStatusRoute = createRoute({
   path: "/suppliers/{userUid}/status",
   tags: ["Suppliers"],
   summary: "Update supplier status",
-  description: "Update the status of an existing supplier",
+  description:
+    "Update the status of an existing supplier\n\nRequired Permission: `suppliers:update-status`",
   request: {
     params: schemas.UserUidParam,
     body: {
@@ -643,6 +821,14 @@ export const updateSupplierStatusRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
     404: {
       description: "Supplier not found",
       content: {
@@ -659,7 +845,8 @@ export const deleteSupplierRoute = createRoute({
   path: "/suppliers/{userUid}",
   tags: ["Suppliers"],
   summary: "Delete a supplier",
-  description: "Soft delete a supplier by their unique identifier",
+  description:
+    "Soft delete a supplier by their unique identifier\n\nRequired Permission: `suppliers:delete`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -669,6 +856,14 @@ export const deleteSupplierRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -688,7 +883,8 @@ export const getSuppliersByOrganizationRoute = createRoute({
   path: "/suppliers/organization/{orgUid}",
   tags: ["Suppliers"],
   summary: "Get suppliers by organization",
-  description: "Retrieve all suppliers for a specific organization",
+  description:
+    "Retrieve all suppliers for a specific organization\n\nRequired Permission: `suppliers:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -698,6 +894,14 @@ export const getSuppliersByOrganizationRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SupplierListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -718,13 +922,22 @@ export const getSupplierInvitationsRoute = createRoute({
   path: "/suppliers/invitations",
   tags: ["Invitations"],
   summary: "Get all supplier invitations",
-  description: "Retrieve a list of all non-deleted supplier invitations",
+  description:
+    "Retrieve a list of all non-deleted supplier invitations\n\nRequired Permission: `supplier-invitations:list`",
   responses: {
     200: {
       description: "List of supplier invitations",
       content: {
         "application/json": {
           schema: schemas.SupplierInvitationListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -736,7 +949,8 @@ export const getSupplierInvitationsByOrganizationRoute = createRoute({
   path: "/suppliers/invitations/organization/{orgUid}",
   tags: ["Invitations"],
   summary: "Get supplier invitations by organization",
-  description: "Retrieve supplier invitations for a specific organization",
+  description:
+    "Retrieve supplier invitations for a specific organization\n\nRequired Permission: `supplier-invitations:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -746,6 +960,14 @@ export const getSupplierInvitationsByOrganizationRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SupplierInvitationListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -765,7 +987,8 @@ export const createSupplierInvitationRoute = createRoute({
   path: "/suppliers/invitations",
   tags: ["Invitations"],
   summary: "Create a supplier invitation",
-  description: "Create a new invitation for a supplier to join the platform",
+  description:
+    "Create a new invitation for a supplier to join the platform\n\nRequired Permission: `supplier-invitations:create`",
   request: {
     body: {
       content: {
@@ -792,6 +1015,14 @@ export const createSupplierInvitationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -800,7 +1031,8 @@ export const updateSupplierInvitationStatusRoute = createRoute({
   path: "/suppliers/invitations/{uid}/status",
   tags: ["Invitations"],
   summary: "Update invitation status",
-  description: "Update the status of a supplier invitation",
+  description:
+    "Update the status of a supplier invitation\n\nRequired Permission: `supplier-invitations:update-status`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -820,16 +1052,24 @@ export const updateSupplierInvitationStatusRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Invitation not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Invitation not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -845,13 +1085,22 @@ export const getAllSitesRoute = createRoute({
   path: "/suppliers/sites",
   tags: ["Suppliers"],
   summary: "Get all supplier sites",
-  description: "Retrieve a list of all supplier sites",
+  description:
+    "Retrieve a list of all supplier sites\n\nRequired Permission: `supplier-sites:list`",
   responses: {
     200: {
       description: "List of supplier sites",
       content: {
         "application/json": {
           schema: schemas.SupplierSiteListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -863,7 +1112,8 @@ export const getSitesBySupplierRoute = createRoute({
   path: "/suppliers/{supplierUserUid}/sites",
   tags: ["Suppliers"],
   summary: "Get sites by supplier",
-  description: "Retrieve all sites for a specific supplier",
+  description:
+    "Retrieve all sites for a specific supplier\n\nRequired Permission: `supplier-sites:get-by-supplier`",
   request: {
     params: schemas.SupplierUserUidParam,
   },
@@ -876,6 +1126,14 @@ export const getSitesBySupplierRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -884,7 +1142,8 @@ export const getSiteByIdRoute = createRoute({
   path: "/suppliers/sites/{userUid}",
   tags: ["Suppliers"],
   summary: "Get supplier site by ID",
-  description: "Retrieve a specific supplier site by its unique identifier",
+  description:
+    "Retrieve a specific supplier site by its unique identifier\n\nRequired Permission: `supplier-sites:get-by-id`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -894,6 +1153,14 @@ export const getSiteByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SupplierSiteSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -913,7 +1180,8 @@ export const createSiteRoute = createRoute({
   path: "/suppliers/sites",
   tags: ["Suppliers"],
   summary: "Create a new supplier site",
-  description: "Create a new supplier site with the provided data",
+  description:
+    "Create a new supplier site with the provided data\n\nRequired Permission: `supplier-sites:create`",
   request: {
     body: {
       content: {
@@ -940,6 +1208,14 @@ export const createSiteRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -948,7 +1224,8 @@ export const updateSiteRoute = createRoute({
   path: "/suppliers/sites/{userUid}",
   tags: ["Suppliers"],
   summary: "Update a supplier site",
-  description: "Update an existing supplier site with the provided data",
+  description:
+    "Update an existing supplier site with the provided data\n\nRequired Permission: `supplier-sites:update`",
   request: {
     params: schemas.UserUidParam,
     body: {
@@ -968,16 +1245,24 @@ export const updateSiteRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Supplier site not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Supplier site not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -992,7 +1277,8 @@ export const updateSiteStatusRoute = createRoute({
   path: "/suppliers/sites/{userUid}/status",
   tags: ["Suppliers"],
   summary: "Update supplier site status",
-  description: "Update the status of an existing supplier site",
+  description:
+    "Update the status of an existing supplier site\n\nRequired Permission: `supplier-sites:update-status`",
   request: {
     params: schemas.UserUidParam,
     body: {
@@ -1012,6 +1298,14 @@ export const updateSiteStatusRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
     404: {
       description: "Supplier site not found",
       content: {
@@ -1028,7 +1322,8 @@ export const deleteSiteRoute = createRoute({
   path: "/suppliers/sites/{userUid}",
   tags: ["Suppliers"],
   summary: "Delete a supplier site",
-  description: "Soft delete a supplier site by its unique identifier",
+  description:
+    "Soft delete a supplier site by its unique identifier\n\nRequired Permission: `supplier-sites:delete`",
   request: {
     params: schemas.UserUidParam,
   },
@@ -1038,6 +1333,14 @@ export const deleteSiteRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1058,13 +1361,21 @@ export const getAddressesRoute = createRoute({
   path: "/addresses",
   tags: ["Addresses"],
   summary: "Get all addresses",
-  description: "Retrieve a list of all addresses",
+  description: "Retrieve a list of all addresses\n\nRequired Permission: `addresses:list`",
   responses: {
     200: {
       description: "List of addresses",
       content: {
         "application/json": {
           schema: schemas.AddressListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1076,7 +1387,8 @@ export const getAddressByIdRoute = createRoute({
   path: "/addresses/{uid}",
   tags: ["Addresses"],
   summary: "Get address by ID",
-  description: "Retrieve a specific address by its unique identifier",
+  description:
+    "Retrieve a specific address by its unique identifier\n\nRequired Permission: `addresses:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1086,6 +1398,14 @@ export const getAddressByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.AddressSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1105,7 +1425,8 @@ export const createAddressRoute = createRoute({
   path: "/addresses",
   tags: ["Addresses"],
   summary: "Create a new address",
-  description: "Create a new address with the provided data",
+  description:
+    "Create a new address with the provided data\n\nRequired Permission: `addresses:create`",
   request: {
     body: {
       content: {
@@ -1132,6 +1453,14 @@ export const createAddressRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1140,7 +1469,8 @@ export const updateAddressRoute = createRoute({
   path: "/addresses/{uid}",
   tags: ["Addresses"],
   summary: "Update an address",
-  description: "Update an existing address with the provided data",
+  description:
+    "Update an existing address with the provided data\n\nRequired Permission: `addresses:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -1160,16 +1490,24 @@ export const updateAddressRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Address not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Address not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -1184,7 +1522,8 @@ export const deleteAddressRoute = createRoute({
   path: "/addresses/{uid}",
   tags: ["Addresses"],
   summary: "Delete an address",
-  description: "Soft delete an address by its unique identifier",
+  description:
+    "Soft delete an address by its unique identifier\n\nRequired Permission: `addresses:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1194,6 +1533,14 @@ export const deleteAddressRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1214,13 +1561,22 @@ export const getOrgUnitsRoute = createRoute({
   path: "/org-units",
   tags: ["OrgUnits"],
   summary: "Get all org units",
-  description: "Retrieve a list of all organizational units",
+  description:
+    "Retrieve a list of all organizational units\n\nRequired Permission: `org-units:list`",
   responses: {
     200: {
       description: "List of org units",
       content: {
         "application/json": {
           schema: schemas.OrgUnitListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1232,7 +1588,8 @@ export const getOrgUnitByIdRoute = createRoute({
   path: "/org-units/{uid}",
   tags: ["OrgUnits"],
   summary: "Get org unit by ID",
-  description: "Retrieve a specific organizational unit by its unique identifier",
+  description:
+    "Retrieve a specific organizational unit by its unique identifier\n\nRequired Permission: `org-units:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1242,6 +1599,14 @@ export const getOrgUnitByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.OrgUnitSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1261,7 +1626,8 @@ export const getOrgUnitsByOrganizationRoute = createRoute({
   path: "/org-units/organization/{orgUid}",
   tags: ["OrgUnits"],
   summary: "Get org units by organization",
-  description: "Retrieve all organizational units for a specific organization",
+  description:
+    "Retrieve all organizational units for a specific organization\n\nRequired Permission: `org-units:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -1274,6 +1640,14 @@ export const getOrgUnitsByOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1282,7 +1656,8 @@ export const createOrgUnitRoute = createRoute({
   path: "/org-units",
   tags: ["OrgUnits"],
   summary: "Create a new org unit",
-  description: "Create a new organizational unit with the provided data",
+  description:
+    "Create a new organizational unit with the provided data\n\nRequired Permission: `org-units:create`",
   request: {
     body: {
       content: {
@@ -1309,6 +1684,14 @@ export const createOrgUnitRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1317,7 +1700,8 @@ export const updateOrgUnitRoute = createRoute({
   path: "/org-units/{uid}",
   tags: ["OrgUnits"],
   summary: "Update an org unit",
-  description: "Update an existing organizational unit with the provided data",
+  description:
+    "Update an existing organizational unit with the provided data\n\nRequired Permission: `org-units:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -1337,16 +1721,24 @@ export const updateOrgUnitRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Org unit not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Org unit not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -1361,7 +1753,8 @@ export const deleteOrgUnitRoute = createRoute({
   path: "/org-units/{uid}",
   tags: ["OrgUnits"],
   summary: "Delete an org unit",
-  description: "Soft delete an organizational unit by its unique identifier",
+  description:
+    "Soft delete an organizational unit by its unique identifier\n\nRequired Permission: `org-units:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1371,6 +1764,14 @@ export const deleteOrgUnitRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1391,13 +1792,21 @@ export const getRolesRoute = createRoute({
   path: "/roles",
   tags: ["Roles"],
   summary: "Get all roles",
-  description: "Retrieve a list of all roles",
+  description: "Retrieve a list of all roles\n\nRequired Permission: `roles:list`",
   responses: {
     200: {
       description: "List of roles",
       content: {
         "application/json": {
           schema: schemas.RoleListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1409,7 +1818,8 @@ export const getRoleByIdRoute = createRoute({
   path: "/roles/{uid}",
   tags: ["Roles"],
   summary: "Get role by ID",
-  description: "Retrieve a specific role by its unique identifier",
+  description:
+    "Retrieve a specific role by its unique identifier\n\nRequired Permission: `roles:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1419,6 +1829,14 @@ export const getRoleByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.RoleSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1438,7 +1856,8 @@ export const getRolesByOrganizationRoute = createRoute({
   path: "/roles/organization/{orgUid}",
   tags: ["Roles"],
   summary: "Get roles by organization",
-  description: "Retrieve all roles for a specific organization",
+  description:
+    "Retrieve all roles for a specific organization\n\nRequired Permission: `roles:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -1451,6 +1870,14 @@ export const getRolesByOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1459,7 +1886,7 @@ export const createRoleRoute = createRoute({
   path: "/roles",
   tags: ["Roles"],
   summary: "Create a new role",
-  description: "Create a new role with the provided data",
+  description: "Create a new role with the provided data\n\nRequired Permission: `roles:create`",
   request: {
     body: {
       content: {
@@ -1486,6 +1913,14 @@ export const createRoleRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1494,7 +1929,8 @@ export const updateRoleRoute = createRoute({
   path: "/roles/{uid}",
   tags: ["Roles"],
   summary: "Update a role",
-  description: "Update an existing role with the provided data",
+  description:
+    "Update an existing role with the provided data\n\nRequired Permission: `roles:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -1514,16 +1950,24 @@ export const updateRoleRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Role not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Role not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -1538,7 +1982,7 @@ export const deleteRoleRoute = createRoute({
   path: "/roles/{uid}",
   tags: ["Roles"],
   summary: "Delete a role",
-  description: "Soft delete a role by its unique identifier",
+  description: "Soft delete a role by its unique identifier\n\nRequired Permission: `roles:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1548,6 +1992,14 @@ export const deleteRoleRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1568,13 +2020,21 @@ export const getStoresRoute = createRoute({
   path: "/stores",
   tags: ["Stores"],
   summary: "Get all stores",
-  description: "Retrieve a list of all stores",
+  description: "Retrieve a list of all stores\n\nRequired Permission: `stores:list`",
   responses: {
     200: {
       description: "List of stores",
       content: {
         "application/json": {
           schema: schemas.StoreListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1586,7 +2046,8 @@ export const getStoreByIdRoute = createRoute({
   path: "/stores/{uid}",
   tags: ["Stores"],
   summary: "Get store by ID",
-  description: "Retrieve a specific store by its unique identifier",
+  description:
+    "Retrieve a specific store by its unique identifier\n\nRequired Permission: `stores:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1596,6 +2057,14 @@ export const getStoreByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.StoreSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1615,7 +2084,8 @@ export const getStoresByOrganizationRoute = createRoute({
   path: "/stores/organization/{orgUid}",
   tags: ["Stores"],
   summary: "Get stores by organization",
-  description: "Retrieve all stores for a specific organization",
+  description:
+    "Retrieve all stores for a specific organization\n\nRequired Permission: `stores:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -1628,6 +2098,14 @@ export const getStoresByOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1636,7 +2114,7 @@ export const createStoreRoute = createRoute({
   path: "/stores",
   tags: ["Stores"],
   summary: "Create a new store",
-  description: "Create a new store with the provided data",
+  description: "Create a new store with the provided data\n\nRequired Permission: `stores:create`",
   request: {
     body: {
       content: {
@@ -1663,6 +2141,14 @@ export const createStoreRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1671,7 +2157,8 @@ export const updateStoreRoute = createRoute({
   path: "/stores/{uid}",
   tags: ["Stores"],
   summary: "Update a store",
-  description: "Update an existing store with the provided data",
+  description:
+    "Update an existing store with the provided data\n\nRequired Permission: `stores:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -1691,16 +2178,24 @@ export const updateStoreRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Store not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Store not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -1715,7 +2210,8 @@ export const deleteStoreRoute = createRoute({
   path: "/stores/{uid}",
   tags: ["Stores"],
   summary: "Delete a store",
-  description: "Soft delete a store by its unique identifier",
+  description:
+    "Soft delete a store by its unique identifier\n\nRequired Permission: `stores:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1725,6 +2221,14 @@ export const deleteStoreRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1745,13 +2249,22 @@ export const getApprovalProcessesRoute = createRoute({
   path: "/approval-processes",
   tags: ["Approvals"],
   summary: "Get all approval processes",
-  description: "Retrieve a list of all approval process definitions",
+  description:
+    "Retrieve a list of all approval process definitions\n\nRequired Permission: `approval-processes:list`",
   responses: {
     200: {
       description: "List of approval processes",
       content: {
         "application/json": {
           schema: schemas.ApprovalProcessListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1763,7 +2276,8 @@ export const getApprovalProcessByIdRoute = createRoute({
   path: "/approval-processes/processes/{uid}",
   tags: ["Approvals"],
   summary: "Get approval process by ID",
-  description: "Retrieve a specific approval process by its unique identifier",
+  description:
+    "Retrieve a specific approval process by its unique identifier\n\nRequired Permission: `approval-processes:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1773,6 +2287,14 @@ export const getApprovalProcessByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.ApprovalProcessSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1792,7 +2314,8 @@ export const getApprovalProcessesByOrganizationRoute = createRoute({
   path: "/approval-processes/processes/organization/{orgUid}",
   tags: ["Approvals"],
   summary: "Get approval processes by organization",
-  description: "Retrieve all approval processes for a specific organization",
+  description:
+    "Retrieve all approval processes for a specific organization\n\nRequired Permission: `approval-processes:get-by-organization`",
   request: {
     params: schemas.OrgUidParam,
   },
@@ -1805,6 +2328,14 @@ export const getApprovalProcessesByOrganizationRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1813,7 +2344,8 @@ export const createApprovalProcessRoute = createRoute({
   path: "/approval-processes/processes",
   tags: ["Approvals"],
   summary: "Create a new approval process",
-  description: "Create a new approval process with the provided data",
+  description:
+    "Create a new approval process with the provided data\n\nRequired Permission: `approval-processes:create`",
   request: {
     body: {
       content: {
@@ -1840,6 +2372,14 @@ export const createApprovalProcessRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -1848,7 +2388,8 @@ export const updateApprovalProcessRoute = createRoute({
   path: "/approval-processes/{uid}",
   tags: ["Approvals"],
   summary: "Update an approval process",
-  description: "Update an existing approval process with the provided data",
+  description:
+    "Update an existing approval process with the provided data\n\nRequired Permission: `approval-processes:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -1868,16 +2409,24 @@ export const updateApprovalProcessRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Approval process not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Approval process not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -1892,7 +2441,8 @@ export const deleteApprovalProcessRoute = createRoute({
   path: "/approval-processes/{uid}",
   tags: ["Approvals"],
   summary: "Delete an approval process",
-  description: "Soft delete an approval process by its unique identifier",
+  description:
+    "Soft delete an approval process by its unique identifier\n\nRequired Permission: `approval-processes:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1902,6 +2452,14 @@ export const deleteApprovalProcessRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1922,7 +2480,8 @@ export const getStepsByProcessRoute = createRoute({
   path: "/approval-processes/processes/{processUid}/steps",
   tags: ["Approvals"],
   summary: "Get steps by process",
-  description: "Retrieve all approval steps for a specific process",
+  description:
+    "Retrieve all approval steps for a specific process\n\nRequired Permission: `approval-steps:get-by-process`",
   request: {
     params: schemas.ProcessUidParam,
   },
@@ -1932,6 +2491,14 @@ export const getStepsByProcessRoute = createRoute({
       content: {
         "application/json": {
           schema: z.array(z.any()).openapi("ApprovalStepList"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1951,7 +2518,8 @@ export const getStepByIdRoute = createRoute({
   path: "/approval-processes/steps/{uid}",
   tags: ["Approvals"],
   summary: "Get step by ID",
-  description: "Retrieve a specific approval step by its unique identifier",
+  description:
+    "Retrieve a specific approval step by its unique identifier\n\nRequired Permission: `approval-steps:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -1961,6 +2529,14 @@ export const getStepByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: z.any().openapi("ApprovalStep"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -1980,7 +2556,8 @@ export const createStepRoute = createRoute({
   path: "/approval-processes/steps",
   tags: ["Approvals"],
   summary: "Create a new approval step",
-  description: "Create a new approval step with the provided data",
+  description:
+    "Create a new approval step with the provided data\n\nRequired Permission: `approval-steps:create`",
   request: {
     body: {
       content: {
@@ -2015,6 +2592,14 @@ export const createStepRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2023,7 +2608,8 @@ export const updateStepRoute = createRoute({
   path: "/approval-processes/steps/{uid}",
   tags: ["Approvals"],
   summary: "Update an approval step",
-  description: "Update an existing approval step with the provided data",
+  description:
+    "Update an existing approval step with the provided data\n\nRequired Permission: `approval-steps:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -2047,6 +2633,14 @@ export const updateStepRoute = createRoute({
       content: {
         "application/json": {
           schema: z.any().openapi("ApprovalStep"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2074,7 +2668,8 @@ export const deleteStepRoute = createRoute({
   path: "/approval-processes/steps/{uid}",
   tags: ["Approvals"],
   summary: "Delete an approval step",
-  description: "Soft delete an approval step by its unique identifier",
+  description:
+    "Soft delete an approval step by its unique identifier\n\nRequired Permission: `approval-steps:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2084,6 +2679,14 @@ export const deleteStepRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2104,7 +2707,8 @@ export const getResponsibilitiesByStepRoute = createRoute({
   path: "/approval-processes/steps/{stepUid}/responsibilities",
   tags: ["Approvals"],
   summary: "Get responsibilities by step",
-  description: "Retrieve all responsibilities for a specific approval step",
+  description:
+    "Retrieve all responsibilities for a specific approval step\n\nRequired Permission: `approval-responsibilities:get-by-step`",
   request: {
     params: schemas.StepUidParam,
   },
@@ -2114,6 +2718,14 @@ export const getResponsibilitiesByStepRoute = createRoute({
       content: {
         "application/json": {
           schema: z.array(z.any()).openapi("ApprovalResponsibilityList"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2133,7 +2745,8 @@ export const createResponsibilityRoute = createRoute({
   path: "/approval-processes/responsibilities",
   tags: ["Approvals"],
   summary: "Create a new approval responsibility",
-  description: "Create a new approval responsibility with the provided data",
+  description:
+    "Create a new approval responsibility with the provided data\n\nRequired Permission: `approval-responsibilities:create`",
   request: {
     body: {
       content: {
@@ -2172,6 +2785,14 @@ export const createResponsibilityRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2180,7 +2801,8 @@ export const updateResponsibilityRoute = createRoute({
   path: "/approval-processes/responsibilities/{uid}",
   tags: ["Approvals"],
   summary: "Update an approval responsibility",
-  description: "Update an existing approval responsibility with the provided data",
+  description:
+    "Update an existing approval responsibility with the provided data\n\nRequired Permission: `approval-responsibilities:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -2211,6 +2833,14 @@ export const updateResponsibilityRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
     404: {
       description: "Responsibility not found",
       content: {
@@ -2235,7 +2865,8 @@ export const deleteResponsibilityRoute = createRoute({
   path: "/approval-processes/responsibilities/{uid}",
   tags: ["Approvals"],
   summary: "Delete an approval responsibility",
-  description: "Soft delete an approval responsibility by its unique identifier",
+  description:
+    "Soft delete an approval responsibility by its unique identifier\n\nRequired Permission: `approval-responsibilities:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2245,6 +2876,14 @@ export const deleteResponsibilityRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2265,13 +2904,22 @@ export const getApprovalRequestsRoute = createRoute({
   path: "/approval-processes/requests",
   tags: ["Approvals"],
   summary: "Get all approval requests",
-  description: "Retrieve a list of all approval requests",
+  description:
+    "Retrieve a list of all approval requests\n\nRequired Permission: `approval-requests:list`",
   responses: {
     200: {
       description: "List of approval requests",
       content: {
         "application/json": {
           schema: schemas.ApprovalRequestListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2283,7 +2931,8 @@ export const getApprovalRequestByIdRoute = createRoute({
   path: "/approval-processes/requests/{uid}",
   tags: ["Approvals"],
   summary: "Get approval request by ID",
-  description: "Retrieve a specific approval request by its unique identifier",
+  description:
+    "Retrieve a specific approval request by its unique identifier\n\nRequired Permission: `approval-requests:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2293,6 +2942,14 @@ export const getApprovalRequestByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.ApprovalRequestSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2312,7 +2969,8 @@ export const getApprovalRequestsBySupplierRoute = createRoute({
   path: "/approval-processes/requests/supplier/{supplierUid}",
   tags: ["Approvals"],
   summary: "Get approval requests by supplier",
-  description: "Retrieve all approval requests for a specific supplier",
+  description:
+    "Retrieve all approval requests for a specific supplier\n\nRequired Permission: `approval-requests:get-by-supplier`",
   request: {
     params: schemas.SupplierUserUidParam,
   },
@@ -2325,6 +2983,14 @@ export const getApprovalRequestsBySupplierRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2333,7 +2999,8 @@ export const createApprovalRequestRoute = createRoute({
   path: "/approval-processes/requests",
   tags: ["Approvals"],
   summary: "Create a new approval request",
-  description: "Create a new approval request with the provided data",
+  description:
+    "Create a new approval request with the provided data\n\nRequired Permission: `approval-requests:create`",
   request: {
     body: {
       content: {
@@ -2360,6 +3027,14 @@ export const createApprovalRequestRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2368,7 +3043,8 @@ export const updateRequestStatusRoute = createRoute({
   path: "/approval-processes/requests/{uid}/status",
   tags: ["Approvals"],
   summary: "Update approval request status",
-  description: "Update the status of an existing approval request",
+  description:
+    "Update the status of an existing approval request\n\nRequired Permission: `approval-requests:update-status`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -2393,16 +3069,24 @@ export const updateRequestStatusRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Approval request not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Approval request not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -2417,7 +3101,8 @@ export const updateRequestStepRoute = createRoute({
   path: "/approval-processes/requests/{uid}/step",
   tags: ["Approvals"],
   summary: "Update approval request step",
-  description: "Update the current step of an existing approval request",
+  description:
+    "Update the current step of an existing approval request\n\nRequired Permission: `approval-requests:update-step`",
   request: {
     params: schemas.RequestUidParam,
     body: {
@@ -2437,16 +3122,24 @@ export const updateRequestStepRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Approval request not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Approval request not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -2462,7 +3155,8 @@ export const getLogsByRequestRoute = createRoute({
   path: "/approval-processes/requests/{requestUid}/logs",
   tags: ["Approvals"],
   summary: "Get logs by request",
-  description: "Retrieve all logs for a specific approval request",
+  description:
+    "Retrieve all logs for a specific approval request\n\nRequired Permission: `approval-logs:get-by-request`",
   request: {
     params: schemas.RequestUidParam,
   },
@@ -2472,6 +3166,14 @@ export const getLogsByRequestRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.ApprovalLogListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2491,7 +3193,8 @@ export const createLogRoute = createRoute({
   path: "/approval-processes/requests/{requestUid}/logs",
   tags: ["Approvals"],
   summary: "Create approval log",
-  description: "Create a new log entry for an approval request",
+  description:
+    "Create a new log entry for an approval request\n\nRequired Permission: `approval-logs:create`",
   request: {
     params: schemas.RequestUidParam,
     body: {
@@ -2519,6 +3222,14 @@ export const createLogRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
     404: {
       description: "Request not found",
       content: {
@@ -2536,7 +3247,8 @@ export const getCommentsByRequestRoute = createRoute({
   path: "/approval-processes/requests/{requestUid}/comments",
   tags: ["Approvals"],
   summary: "Get comments by request",
-  description: "Retrieve all comments for a specific approval request",
+  description:
+    "Retrieve all comments for a specific approval request\n\nRequired Permission: `approval-comments:get-by-request`",
   request: {
     params: schemas.RequestUidParam,
   },
@@ -2546,6 +3258,14 @@ export const getCommentsByRequestRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.ApprovalCommentListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2565,7 +3285,8 @@ export const createCommentRoute = createRoute({
   path: "/approval-processes/requests/{requestUid}/comments",
   tags: ["Approvals"],
   summary: "Create comment",
-  description: "Add a new comment to an approval request",
+  description:
+    "Add a new comment to an approval request\n\nRequired Permission: `approval-comments:create`",
   request: {
     params: schemas.RequestUidParam,
     body: {
@@ -2593,6 +3314,14 @@ export const createCommentRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
     404: {
       description: "Request not found",
       content: {
@@ -2610,13 +3339,21 @@ export const getDocumentsRoute = createRoute({
   path: "/documents",
   tags: ["Documents"],
   summary: "Get all documents",
-  description: "Retrieve a list of all documents",
+  description: "Retrieve a list of all documents\n\nRequired Permission: `documents:list`",
   responses: {
     200: {
       description: "List of documents",
       content: {
         "application/json": {
           schema: schemas.DocumentListSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2628,7 +3365,8 @@ export const getDocumentByIdRoute = createRoute({
   path: "/documents/{uid}",
   tags: ["Documents"],
   summary: "Get document by ID",
-  description: "Retrieve a specific document by its unique identifier",
+  description:
+    "Retrieve a specific document by its unique identifier\n\nRequired Permission: `documents:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2638,6 +3376,14 @@ export const getDocumentByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.DocumentSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2657,7 +3403,8 @@ export const getDocumentsByEntityRoute = createRoute({
   path: "/documents/entity/{entityType}/{entityUid}",
   tags: ["Documents"],
   summary: "Get documents by entity",
-  description: "Retrieve all documents for a specific entity",
+  description:
+    "Retrieve all documents for a specific entity\n\nRequired Permission: `documents:get-by-site`",
   request: {
     params: schemas.EntityParams,
   },
@@ -2670,6 +3417,14 @@ export const getDocumentsByEntityRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2678,7 +3433,8 @@ export const createDocumentRoute = createRoute({
   path: "/documents",
   tags: ["Documents"],
   summary: "Create a new document",
-  description: "Create a new document with the provided data",
+  description:
+    "Create a new document with the provided data\n\nRequired Permission: `documents:create`",
   request: {
     body: {
       content: {
@@ -2705,6 +3461,14 @@ export const createDocumentRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2713,7 +3477,8 @@ export const updateDocumentRoute = createRoute({
   path: "/documents/{uid}",
   tags: ["Documents"],
   summary: "Update a document",
-  description: "Update an existing document with the provided data",
+  description:
+    "Update an existing document with the provided data\n\nRequired Permission: `documents:update-status`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -2741,16 +3506,24 @@ export const updateDocumentRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Document not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Document not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -2765,7 +3538,8 @@ export const deleteDocumentRoute = createRoute({
   path: "/documents/{uid}",
   tags: ["Documents"],
   summary: "Delete a document",
-  description: "Soft delete a document by its unique identifier",
+  description:
+    "Soft delete a document by its unique identifier\n\nRequired Permission: `documents:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2775,6 +3549,14 @@ export const deleteDocumentRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2795,13 +3577,21 @@ export const getSupplierTermsRoute = createRoute({
   path: "/supplier-terms",
   tags: ["Terms"],
   summary: "Get all supplier terms",
-  description: "Retrieve a list of all supplier terms",
+  description: "Retrieve a list of all supplier terms\n\nRequired Permission: `terms:list`",
   responses: {
     200: {
       description: "List of supplier terms",
       content: {
         "application/json": {
           schema: z.array(z.any()).openapi("SupplierTermList"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2813,7 +3603,8 @@ export const getSupplierTermByIdRoute = createRoute({
   path: "/supplier-terms/{uid}",
   tags: ["Terms"],
   summary: "Get supplier term by ID",
-  description: "Retrieve a specific supplier term by its unique identifier",
+  description:
+    "Retrieve a specific supplier term by its unique identifier\n\nRequired Permission: `terms:get-by-id`",
   request: {
     params: schemas.UuidParam,
   },
@@ -2823,6 +3614,14 @@ export const getSupplierTermByIdRoute = createRoute({
       content: {
         "application/json": {
           schema: z.any().openapi("SupplierTerm"),
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
@@ -2842,7 +3641,8 @@ export const getSupplierTermsBySupplierRoute = createRoute({
   path: "/supplier-terms/supplier/{supplierUid}",
   tags: ["Terms"],
   summary: "Get supplier terms by supplier",
-  description: "Retrieve all terms for a specific supplier",
+  description:
+    "Retrieve all terms for a specific supplier\n\nRequired Permission: `terms:get-by-site`",
   request: {
     params: schemas.SupplierUserUidParam,
   },
@@ -2855,6 +3655,14 @@ export const getSupplierTermsBySupplierRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2863,7 +3671,8 @@ export const createFinancialTermRoute = createRoute({
   path: "/supplier-terms/financial",
   tags: ["Terms"],
   summary: "Create a new financial term",
-  description: "Create a new financial term with the provided data",
+  description:
+    "Create a new financial term with the provided data\n\nRequired Permission: `financial-terms:create`",
   request: {
     body: {
       content: {
@@ -2899,6 +3708,14 @@ export const createFinancialTermRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2907,7 +3724,8 @@ export const createTradeTermRoute = createRoute({
   path: "/supplier-terms/trade",
   tags: ["Terms"],
   summary: "Create a new trade term",
-  description: "Create a new trade term with the provided data",
+  description:
+    "Create a new trade term with the provided data\n\nRequired Permission: `trade-terms:create`",
   request: {
     body: {
       content: {
@@ -2942,6 +3760,14 @@ export const createTradeTermRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2950,7 +3776,8 @@ export const createSupportTermRoute = createRoute({
   path: "/supplier-terms/support",
   tags: ["Terms"],
   summary: "Create a new support term",
-  description: "Create a new support term with the provided data",
+  description:
+    "Create a new support term with the provided data\n\nRequired Permission: `support-terms:create`",
   request: {
     body: {
       content: {
@@ -2985,6 +3812,14 @@ export const createSupportTermRoute = createRoute({
         },
       },
     },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
   },
 });
 
@@ -2993,7 +3828,8 @@ export const updateTermRoute = createRoute({
   path: "/supplier-terms/{uid}",
   tags: ["Terms"],
   summary: "Update a supplier term",
-  description: "Update an existing supplier term with the provided data",
+  description:
+    "Update an existing supplier term with the provided data\n\nRequired Permission: `terms:update`",
   request: {
     params: schemas.UuidParam,
     body: {
@@ -3021,16 +3857,24 @@ export const updateTermRoute = createRoute({
         },
       },
     },
-    404: {
-      description: "Supplier term not found",
+    400: {
+      description: "Invalid input",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
         },
       },
     },
-    400: {
-      description: "Invalid input",
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "Supplier term not found",
       content: {
         "application/json": {
           schema: schemas.ErrorResponseSchema,
@@ -3045,7 +3889,8 @@ export const deleteTermRoute = createRoute({
   path: "/supplier-terms/{uid}",
   tags: ["Terms"],
   summary: "Delete a supplier term",
-  description: "Soft delete a supplier term by its unique identifier",
+  description:
+    "Soft delete a supplier term by its unique identifier\n\nRequired Permission: `terms:delete`",
   request: {
     params: schemas.UuidParam,
   },
@@ -3055,6 +3900,14 @@ export const deleteTermRoute = createRoute({
       content: {
         "application/json": {
           schema: schemas.SuccessResponseSchema,
+        },
+      },
+    },
+    403: {
+      description: "Insufficient permissions",
+      content: {
+        "application/json": {
+          schema: schemas.ErrorResponseSchema,
         },
       },
     },
