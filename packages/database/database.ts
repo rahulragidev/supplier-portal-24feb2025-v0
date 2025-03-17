@@ -14,12 +14,28 @@ const __dirname = dirname(__filename);
 // Load .env file from the database package directory
 config({ path: join(__dirname, ".env") });
 
+// Also try to load from parent directory
+config({ path: join(__dirname, "../../../.env") });
+
+// Check for DATABASE_URL in environment
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
+  console.error("WARNING: DATABASE_URL environment variable is not set");
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("DATABASE_URL environment variable is required in production");
+  }
 }
 
+const connectionString =
+  process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5432/postgres";
+
+// Configure SSL based on environment
+const sslConfig =
+  process.env.NODE_ENV === "production" ? { ssl: { rejectUnauthorized: false } } : {};
+
 const pool = new Pool({
-  connectionString: `${process.env.DATABASE_URL}?sslmode=require`,
+  connectionString,
+  ...sslConfig,
   // Add some reasonable defaults for better error handling
   connectionTimeoutMillis: 5000, // 5 seconds
   max: 20, // Maximum number of clients in the pool
