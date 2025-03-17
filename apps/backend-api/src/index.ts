@@ -5,7 +5,7 @@ import logger from "./utils/logger.js";
 
 // Update port configuration
 const port = Number(process.env.PORT) || 3030;
-const hostname = "localhost";
+const hostname = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
 
 // Use this server config instead
 const server = serve(

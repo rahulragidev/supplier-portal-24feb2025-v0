@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: supplier-management-api
+    runtime: node
+    buildCommand: pnpm install && pnpm turbo build --filter=backend-api
+    startCommand: cd apps/backend-api && pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false 
