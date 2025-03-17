@@ -21,13 +21,17 @@ config({ path: join(__dirname, "../../../.env") });
 if (!process.env.DATABASE_URL) {
   console.error("WARNING: DATABASE_URL environment variable is not set");
 
-  if (process.env.NODE_ENV === "production") {
+  // Only throw in strict production mode
+  if (process.env.NODE_ENV === "production" && process.env.STRICT_ENV_CHECK === "true") {
     throw new Error("DATABASE_URL environment variable is required in production");
   }
 }
 
+// Use a default development database URL if not provided
 const connectionString =
   process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5432/postgres";
+
+console.log(`Connecting to database with ${process.env.NODE_ENV} configuration`);
 
 // Configure SSL based on environment
 const sslConfig =

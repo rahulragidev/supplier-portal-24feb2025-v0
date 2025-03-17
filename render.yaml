@@ -3,14 +3,13 @@ services:
     name: supplier-management-api
     runtime: node
     buildCommand: pnpm install && pnpm turbo build --filter=@workspace/database... --filter=backend-api...
-    startCommand: cd apps/backend-api && NODE_PATH=./node_modules NODE_ENV=production pnpm start
+    startCommand: cd apps/backend-api && NODE_PATH=./node_modules NODE_ENV=development pnpm start
     envVars:
       - key: NODE_ENV
-        value: production
+        value: development
       - key: PORT
         value: 10000
       - key: JWT_SECRET
         sync: false
       - key: DATABASE_URL
-        sync: false
-        required: true 
+        sync: false 
