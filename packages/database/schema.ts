@@ -133,7 +133,7 @@ export const organization = pgTable(
     uid: uuid("uid").primaryKey().notNull(),
     name: varchar("name", { length: 200 }).notNull().unique(),
     maxUserCount: integer("max_user_count").notNull(),
-    apiEndPoint: varchar("backend_url", { length: 255 }),
+    apiEndPoint: varchar("api_end_point", { length: 255 }),
     extraData: jsonb("extra_data"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
