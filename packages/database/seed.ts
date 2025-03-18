@@ -274,15 +274,96 @@ async function createDefaultOrganization(adminUid: string) {
 
     // Create the organization
     const organizationUid = uuidv4();
-    await db.insert(schema.organization).values({
-      uid: organizationUid,
-      name: "Admin Organization",
-      maxUserCount: 100,
-      extraData: { isDefault: true },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      createdBy: adminUid,
-    });
+    const now = new Date();
+    const organizationName = "Test Organization";
+
+    // First, try to check if the new columns exist
+    try {
+      const columnsResult = await db.execute(sql`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'organization' 
+        AND column_name IN ('domain_url', 'activated_at', 'expires_at');
+      `);
+
+      let columns: string[] = [];
+      if (Array.isArray(columnsResult) && columnsResult.length > 0) {
+        columns = columnsResult.map((row: any) => row.column_name as string);
+      } else if (columnsResult?.rows) {
+        columns = columnsResult.rows.map((row: any) => row.column_name as string);
+      }
+
+      // Check if all new columns exist
+      const hasAllColumns =
+        columns.includes("backend_url") &&
+        columns.includes("activated_at") &&
+        columns.includes("expires_at");
+
+      if (hasAllColumns) {
+        // If all columns exist, use the schema with new fields
+        const expiryDate = new Date(now);
+        expiryDate.setFullYear(now.getFullYear() + 1);
+
+        await db.insert(schema.organization).values({
+          uid: organizationUid,
+          name: organizationName,
+          maxUserCount: 100,
+          backendUrl: "https://supplier-portal-v1.onrender.com",
+          activatedAt: now,
+          expiresAt: expiryDate,
+          extraData: { isDefault: true },
+          createdAt: now,
+          updatedAt: now,
+          createdBy: adminUid,
+        });
+
+        console.log("Organization created with all fields");
+      } else {
+        // Use direct SQL to bypass schema validation
+        await db.execute(sql`
+          INSERT INTO organization (
+            uid, name, max_user_count, extra_data, created_at, updated_at, created_by
+          ) VALUES (
+            ${organizationUid}, 
+            ${organizationName}, 
+            ${100}, 
+            ${{ isDefault: true }}, 
+            ${now}, 
+            ${now}, 
+            ${adminUid}
+          )
+        `);
+
+        console.log("Organization created with basic fields only");
+      }
+    } catch (error) {
+      console.warn(
+        "Error checking columns or inserting with schema, using basic SQL insert:",
+        error
+      );
+
+      // Fallback to most basic SQL query
+      try {
+        await db.execute(sql`
+          INSERT INTO organization (
+            uid, name, max_user_count, extra_data, created_at, updated_at, created_by
+          ) VALUES (
+            ${organizationUid}, 
+            ${organizationName}, 
+            ${100}, 
+            ${JSON.stringify({ isDefault: true })}, 
+            ${now}, 
+            ${now}, 
+            ${adminUid}
+          )
+        `);
+
+        console.log("Organization created with fallback SQL");
+      } catch (innerError) {
+        console.error("Final fallback insert failed:", innerError);
+        throw innerError;
+      }
+    }
 
     // Create admin role with all permissions
     const roleUid = uuidv4();
@@ -293,8 +374,8 @@ async function createDefaultOrganization(adminUid: string) {
       roleCode: "ADMIN_ROLE",
       permissions: ALL_PERMISSIONS,
       extraData: { isDefaultAdminRole: true },
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
       createdBy: adminUid,
     });
 

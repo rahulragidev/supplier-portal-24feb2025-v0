@@ -186,6 +186,7 @@ export const OrganizationSchema = z
     uid: UuidSchema.openapi({ example: Examples.uuid }),
     name: ClientOrganizationSchema.shape.name.openapi({ example: "ACME Corporation" }),
     maxUserCount: ClientOrganizationSchema.shape.maxUserCount.openapi({ example: 100 }),
+    backendUrl: z.string().url().optional().openapi({ example: "https://acme.example.com" }),
     extraData: z
       .any()
       .optional()
@@ -195,6 +196,8 @@ export const OrganizationSchema = z
     deletedAt: z.string().datetime().nullable().openapi({ example: null }),
     createdBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
     lastUpdatedBy: UuidSchema.nullable().openapi({ example: Examples.uuid }),
+    activatedAt: z.string().datetime().openapi({ example: "2023-01-01T00:00:00Z" }),
+    expiresAt: z.string().datetime().nullable().openapi({ example: "2024-01-01T00:00:00Z" }),
   })
   .openapi("Organization");
 
@@ -202,10 +205,18 @@ export const CreateOrganizationSchema = z
   .object({
     name: ClientOrganizationSchema.shape.name.openapi({ example: "ACME Corporation" }),
     maxUserCount: ClientOrganizationSchema.shape.maxUserCount.openapi({ example: 100 }),
+    domainUrl: z.string().url().optional().openapi({ example: "https://acme.example.com" }),
     extraData: z
       .any()
       .optional()
       .openapi({ example: { industry: "Technology" } }),
+    activatedAt: z.string().datetime().optional().openapi({ example: "2023-01-01T00:00:00Z" }),
+    expiresAt: z
+      .string()
+      .datetime()
+      .optional()
+      .nullable()
+      .openapi({ example: "2024-01-01T00:00:00Z" }),
   })
   .openapi("CreateOrganization");
 

@@ -133,16 +133,21 @@ export const organization = pgTable(
     uid: uuid("uid").primaryKey().notNull(),
     name: varchar("name", { length: 200 }).notNull().unique(),
     maxUserCount: integer("max_user_count").notNull(),
+    backendUrl: varchar("backend_url", { length: 255 }),
     extraData: jsonb("extra_data"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdBy: uuid("created_by"),
     lastUpdatedBy: uuid("last_updated_by"),
+    activatedAt: timestamp("activated_at", { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
   },
   (table) => [
     index("idx_organization_name").on(table.name),
     index("idx_organization_deleted_at").on(table.deletedAt),
+    index("idx_organization_activated_at").on(table.activatedAt),
+    index("idx_organization_expires_at").on(table.expiresAt),
   ]
 ).enableRLS();
 

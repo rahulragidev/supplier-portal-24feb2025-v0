@@ -201,12 +201,15 @@ CREATE TABLE "organization" (
 	"uid" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(200) NOT NULL,
 	"max_user_count" integer NOT NULL,
+	"backend_url" varchar(255),
 	"extra_data" jsonb,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"deleted_at" timestamp with time zone,
 	"created_by" uuid,
 	"last_updated_by" uuid,
+	"activated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"expires_at" timestamp with time zone,
 	CONSTRAINT "organization_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
@@ -497,6 +500,8 @@ CREATE INDEX "idx_org_unit_type" ON "org_unit" USING btree ("unit_type");--> sta
 CREATE INDEX "idx_org_unit_deleted_at" ON "org_unit" USING btree ("deleted_at");--> statement-breakpoint
 CREATE INDEX "idx_organization_name" ON "organization" USING btree ("name");--> statement-breakpoint
 CREATE INDEX "idx_organization_deleted_at" ON "organization" USING btree ("deleted_at");--> statement-breakpoint
+CREATE INDEX "idx_organization_activated_at" ON "organization" USING btree ("activated_at");--> statement-breakpoint
+CREATE INDEX "idx_organization_expires_at" ON "organization" USING btree ("expires_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_role_org_name_unique" ON "role" USING btree ("organization_uid","name");--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_role_org_code_unique" ON "role" USING btree ("organization_uid","role_code");--> statement-breakpoint
 CREATE INDEX "idx_role_org" ON "role" USING btree ("organization_uid");--> statement-breakpoint

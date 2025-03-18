@@ -1,5 +1,5 @@
 {
-  "id": "a980f09f-da9b-47db-99eb-801ffe2238ac",
+  "id": "14533e91-82e1-46d3-bb22-d2d3b549b9e0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2282,6 +2282,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "backend_url": {
+          "name": "backend_url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "extra_data": {
           "name": "extra_data",
           "type": "jsonb",
@@ -2319,6 +2325,19 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "activated_at": {
+          "name": "activated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -2342,6 +2361,36 @@
           "columns": [
             {
               "expression": "deleted_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_organization_activated_at": {
+          "name": "idx_organization_activated_at",
+          "columns": [
+            {
+              "expression": "activated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_organization_expires_at": {
+          "name": "idx_organization_expires_at",
+          "columns": [
+            {
+              "expression": "expires_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
