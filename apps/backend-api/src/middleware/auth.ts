@@ -1,5 +1,6 @@
 import type { Context, Next } from "hono";
 import * as jose from "jose"; // You'll need to install this package
+import logger from "../utils/logger.js";
 
 interface JWTPayload {
   userId: string;
@@ -9,6 +10,7 @@ interface JWTPayload {
 export const authenticateToken = async (c: Context, next: Next) => {
   try {
     const authHeader = c.req.header("Authorization");
+    logger.info({ authHeader }, "Authorization header received");
 
     if (!authHeader?.startsWith("Bearer ")) {
       return c.json({ error: "Missing or invalid authorization header" }, 401);

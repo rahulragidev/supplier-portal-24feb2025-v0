@@ -55,7 +55,7 @@ app.use("/reference", (_c, next) => next());
 
 // Protected routes (require authentication)
 // Comment out the users authentication for now
-// app.use("/users/*", authenticateToken);
+app.use("/users/*", authenticateToken);
 app.use("/organizations/*", authenticateToken);
 app.use("/employees/*", authenticateToken);
 app.use("/suppliers/*", authenticateToken);
