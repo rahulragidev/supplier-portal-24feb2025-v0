@@ -186,7 +186,7 @@ export const OrganizationSchema = z
     uid: UuidSchema.openapi({ example: Examples.uuid }),
     name: ClientOrganizationSchema.shape.name.openapi({ example: "ACME Corporation" }),
     maxUserCount: ClientOrganizationSchema.shape.maxUserCount.openapi({ example: 100 }),
-    backendUrl: z.string().url().optional().openapi({ example: "https://acme.example.com" }),
+    apiEndPoint: z.string().url().optional().openapi({ example: "https://acme.example.com" }),
     extraData: z
       .any()
       .optional()

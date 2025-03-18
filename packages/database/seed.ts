@@ -308,7 +308,7 @@ async function createDefaultOrganization(adminUid: string) {
           uid: organizationUid,
           name: organizationName,
           maxUserCount: 100,
-          backendUrl: "https://supplier-portal-v1.onrender.com",
+          apiEndPoint: "https://supplier-portal-v1.onrender.com",
           activatedAt: now,
           expiresAt: expiryDate,
           extraData: { isDefault: true },
