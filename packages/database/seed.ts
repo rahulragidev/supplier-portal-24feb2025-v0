@@ -380,6 +380,22 @@ async function createDefaultOrganization(adminUid: string) {
     });
 
     console.log("Default organization and admin role created successfully");
+    // Insert admin employee record
+    await db.insert(schema.employee).values({
+      userUid: adminUid,
+      organizationUid: organizationUid,
+      employeeCode: "ADMIN001", // Ideally use a unique code generator
+      firstName: "Admin",
+      lastName: "User",
+      email: "admin@example.com",
+      phone: null,
+      extraData: {},
+      createdAt: now,
+      updatedAt: now,
+      createdBy: adminUid,
+      lastUpdatedBy: adminUid,
+    });
+    console.log("Admin employee record created successfully");
   } catch (error) {
     console.error("Error creating default organization:", error);
     throw error;
