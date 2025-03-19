@@ -229,7 +229,7 @@ async function createAdminUser() {
     // Create the admin user with all permissions
     const adminUser = {
       uid: uuidv4(),
-      clerkId: uuidv4(), // This would normally come from your auth provider
+      clerkId: "clerk_id",
       userName: "admin",
       userType: UserType.ADMIN,
       permissions: ALL_PERMISSIONS,

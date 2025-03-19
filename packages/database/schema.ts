@@ -110,7 +110,7 @@ export const appUser = pgTable(
   "app_user",
   {
     uid: uuid("uid").primaryKey().notNull(),
-    clerkId: uuid("clerk_id").notNull().unique(),
+    clerkId: varchar("clerk_id", { length: 255 }).notNull().unique(),
     userName: varchar("user_name", { length: 100 }).notNull().unique(),
     userType: userTypeEnum("user_type").notNull(),
     permissions: text("permissions").array(),
