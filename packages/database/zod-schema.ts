@@ -172,6 +172,9 @@ export const ClientAppUserSchema = z.object({
 export const ClientOrganizationSchema = z.object({
   name: z.string().min(2, "Organization name must be at least 2 characters"),
   maxUserCount: z.number().int().positive("User count must be a positive number"),
+  apiEndPoint: z.string().url("Backend URL must be a valid URL").optional(),
+  activatedAt: z.date(),
+  expiresAt: z.date().optional(),
 });
 
 export const ClientEmployeeSchema = z.object({
