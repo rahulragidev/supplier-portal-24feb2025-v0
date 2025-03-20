@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Backend API: debug server",
+      "name": "Backend API",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "${workspaceFolder}/apps/backend-api/node_modules/.bin/tsx",
@@ -22,47 +22,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Next.js: debug server-side",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "pnpm --filter web dev",
-      "cwd": "${workspaceFolder}",
-      "skipFiles": ["<node_internals>/**"],
-      "env": {
-        "PORT": "3001"
-      }
-    },
-    {
-      "name": "Next.js: debug client-side",
-      "type": "chrome",
-      "request": "launch",
-      "runtimeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-      "url": "http://localhost:3001",
-      "webRoot": "${workspaceFolder}/apps/web",
-      "sourceMapPathOverrides": {
-        "webpack://_N_E/*": "${webRoot}/*",
-        "webpack://web/*": "${webRoot}/*"
-      }
-    },
-    {
-      "name": "Next.js: debug client-side (Firefox)",
-      "type": "firefox",
-      "request": "launch",
-      "url": "http://localhost:3001",
-      "reAttach": true,
-      "pathMappings": [
-        {
-          "url": "webpack://_N_E",
-          "path": "${workspaceFolder}/apps/web"
-        },
-        {
-          "url": "webpack://web",
-          "path": "${workspaceFolder}/apps/web"
-        }
-      ]
-    },
-    {
-      "name": "Next.js: debug full stack",
+      "name": "Next.js: Full Stack",
       "type": "node-terminal",
       "request": "launch",
       "command": "pnpm --filter web dev",
@@ -83,6 +43,13 @@
         "uriFormat": "%s",
         "action": "debugWithChrome"
       }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack Development",
+      "configurations": ["Backend API", "Next.js: Full Stack"],
+      "stopAll": true
     }
   ]
 }
