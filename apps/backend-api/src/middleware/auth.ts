@@ -1,6 +1,10 @@
+import { createClerkClient } from "@clerk/backend";
 import type { Context, Next } from "hono";
 import * as jose from "jose"; // You'll need to install this package
 import logger from "../utils/logger.js";
+
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+logger.info({ clerkClient }, "Clerk client created");
 
 interface JWTPayload {
   userId: string;

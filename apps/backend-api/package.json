@@ -12,6 +12,7 @@
     "clean": "rm -rf .turbo node_modules dist"
   },
   "dependencies": {
+    "@clerk/backend": "^1.25.4",
     "@hono/node-server": "^1.13.8",
     "@hono/zod-openapi": "^0.19.2",
     "@scalar/hono-api-reference": "^0.7.1",
