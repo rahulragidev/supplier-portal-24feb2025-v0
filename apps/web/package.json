@@ -12,6 +12,7 @@
     "clean": "rm -rf .turbo node_modules .next dist"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.12.7",
     "@workspace/api-client": "workspace:*",
     "@workspace/store": "workspace:*",
     "@workspace/ui": "workspace:*",

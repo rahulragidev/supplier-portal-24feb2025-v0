@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 // import "@/app/globals.css"
 import { Providers } from "@/components/providers";
 import "@workspace/ui/globals.css";
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 
 const fontSans = Geist({
@@ -28,7 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
-        <Providers>{children}</Providers>
+        <ClerkProvider>
+          <header className="flex justify-end items-center p-4 gap-4 h-16">
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </header>
+          <Providers>{children}</Providers>
+        </ClerkProvider>
       </body>
     </html>
   );

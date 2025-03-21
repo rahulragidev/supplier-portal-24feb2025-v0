@@ -10,7 +10,6 @@ interface JWTPayload {
 export const authenticateToken = async (c: Context, next: Next) => {
   try {
     const authHeader = c.req.header("Authorization");
-    logger.info({ authHeader }, "Authorization header received");
 
     if (!authHeader?.startsWith("Bearer ")) {
       return c.json({ error: "Missing or invalid authorization header" }, 401);
